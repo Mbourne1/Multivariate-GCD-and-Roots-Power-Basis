@@ -3,6 +3,8 @@ function [uxy_matrix, vxy_matrix, dxy_matrix,t,t1,t2] = o1(fxy,gxy,...
 % Given two bivariate polynomials, return the GCD d(x,y) and the coprime
 % polynomials u(x,y) and v(x,y) where
 %
+% o1(fxy,gxy,m,n)
+%
 % f/d = u
 % g/d = v
 %
@@ -46,30 +48,22 @@ global LOW_RANK_APPROXIMATION_METHOD
 %% Get Structure of polynomials f(x,y) and g(x,y)
 
 % Get degree of polynomial f(x,y)
-[r,c] = size(fxy);
-m1 = r - 1;
-m2 = c - 1;
+[m1,m2] = GetDegree(fxy);
 
 % Get degree of polynomial g(x,y)
-[r,c] = size(gxy);
-n1 = r - 1;
-n2 = c - 1;
-
+[n1,n2] = GetDegree(gxy);
 
 %% Preprocessing
 switch BOOL_PREPROC
     case 'y'
         % % Include Preprocessing
         
-        % Try to calculate geometric mean of entries
-        try
+       
             lambda  = geomean(abs(nonzeros(fxy)));
             mu      = geomean(abs(nonzeros(gxy)));
-        catch
-            lambda = 1;
-            mu = 1;
-        end
-        
+                        
+            %lambda = GetGeometricMean_Total(fxy,m)
+            %mu = GetGeometricMean_Total(gxy,n)
         
         % Normalise coefficients of f(x,y) and g(x,y) by dividing the
         % coefficients by the geometric mean.
@@ -78,6 +72,7 @@ switch BOOL_PREPROC
         
         % Obtain optimal values of alpha, theta_{1} and theta_{2}
         [alpha, theta1,theta2] = OptimalAlphaAndTheta(fxy_n,gxy_n);
+        
         
         fprintf('Optimal theta_{1}  :  %0.5e \n',theta1)
         fprintf('Optimal theta_{2}  :  %0.5e \n',theta2)
@@ -88,40 +83,18 @@ switch BOOL_PREPROC
         
         % Multiply by the coefficients a_{i,j} by theta_{1}^{i}
         % and theta_{2}^{j} to obtain f(w,w)
-        theta1_mat = diag(theta1.^(0:1:m1));
-        theta2_mat = diag(theta2.^(0:1:m2));
-        fww_n = (theta1_mat * fxy_n * theta2_mat);
-        
+        fww_n = GetWithThetas(fxy_n,theta1,theta2);        
         
         % Multiply by the coefficients b_{i,j} by theta_{1}^{i}
         % and theta_{2}^{j} to obtain g(w,w)
-        theta1_mat = diag(theta1.^(0:1:n1));
-        theta2_mat = diag(theta2.^(0:1:n2));
-        gww_n = alpha.*(theta1_mat * gxy_n * theta2_mat);
-        
-        % Get total number of coefficients in f(x,y)
-        num_coeff_f = (m1 + 1) * (m2 + 1);
-        
-        % Get total number of coefficients in g(x,y)
-        num_coeff_g = (n1 + 1) * (n2 + 1);
-        
+        gww_n = GetWithThetas(gxy_n,theta1,theta2);
+                
         % Get the coefficients of f(x,y) and f(w,w) as vectors
         v_fxy = (GetAsVector(fxy));
         v_fww = (GetAsVector(fww_n));
-        
-        % Get the normalised coefficients of f(x,y)
-        v_fxy_n = v_fxy ./ norm(v_fxy);
-        v_fww_n = v_fww ./ norm(v_fww);
-        
-        % Get the coefficients of g(x,y) and g(w,w) as vectors
-        v_gxy = GetAsVector(gxy);
-        v_gww = GetAsVector(gww_n);
-        
-        % Get the normalised coefficients of g(x,y) and g(w,w)
-        coeff_gxy_n = v_gxy ./ v_gxy(1,1);
-        coeff_gww_n = v_gww ./ v_gww(1,1);
-        
-        PlotCoefficients()
+                   
+        PlotCoefficients(fxy,fww_n,'f')
+        PlotCoefficients(gxy,gww_n,'g')
         
         % Build subresulant of normalised and preprocessed polynomials
         S_Preproc = BuildSylvesterMatrix(fxy_n,gxy_n,0,0,alpha, theta1,theta2 );
@@ -196,13 +169,17 @@ opt_col = GetOptimalColumn(fww_n,gww_n,t1,t2);
 switch LOW_RANK_APPROXIMATION_METHOD
     case 'Standard STLN'
         
-        fww = diag(theta1.^(0:1:m1)) * fxy_n * diag(theta2.^(0:1:m2));
-        gww = diag(theta1.^(0:1:n1)) * gxy_n * diag(theta2.^(0:1:n2));
+        % Get preprocessed polynomials
+        fww = GetWithThetas(fxy_n,theta1,theta2);
+        gww = GetWithThetas(gxy_n,theta1,theta2);
         
+        % Perform STLN
         [fww_lr,a_gww_lr] = STLN(fww, alpha.*gww,m,n,t1,t2,opt_col);
+        
+        
         fxy_lr = diag(1./theta1.^(0:1:m1)) * fww_lr * diag(1./theta2.^(0:1:m2));
         gxy_lr = diag(1./theta1.^(0:1:n1)) * a_gww_lr * diag(1./theta2.^(0:1:n2)) ./ alpha;
-        fprintf('')
+        
         
         % Get the low rank values
         alpha_lr = alpha;

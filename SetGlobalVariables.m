@@ -1,3 +1,5 @@
+function [] =  SetGlobalVariables(bool_preproc, low_rank_approx_method)
+
 global BOOL_PREPROC
 BOOL_PREPROC    = bool_preproc;
 
@@ -25,4 +27,6 @@ MAX_ITERATIONS_SNTLN = 100;
 global MAX_ERROR_SNTLN
 MAX_ERROR_SNTLN = 1e-15;
 
+
+end
 

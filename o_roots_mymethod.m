@@ -11,9 +11,7 @@ qx{1} = fxy_matrix;
 vDegree_qx(1) = m;
 
 % Get dimensions of polynomial f(x,y)
-[r,c] = size(qx{ite_num});
-m1 = r-1;
-m2 = c-1;
+[m1,m2] = GetDegree(qx{ite_num});
 
 % Set the iteration condition to true
 iteration_condition = true;

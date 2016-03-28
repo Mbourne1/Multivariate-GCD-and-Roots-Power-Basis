@@ -1,27 +1,34 @@
 function [] = o_gcd(ex_num,emin,bool_preproc,low_rank_approx_method)
+% o_gcd(ex_num,emin,bool_preproc,low_rank_approx_method)
+%
 % Calculate the GCD d(x,y) of two polynomials f(x,y) and g(x,y) taken from
 % the example file.
 %
-%                   Inputs.
 %
 %
-%   ex_num  : Example Number (String)
+% Inputs.
 %
-%   emin    : Minimum Noise level
 %
-%   bool_preproc ('y'/'n')
+% ex_num  : Example Number (String)
+%
+% emin    : Minimum Noise level
+%
+% bool_preproc ('y'/'n')
 %       'y' - Include Preprocessing
 %       'n' - Exclude Preprocessing
 %
-%   low_rank_approx_method ('y'/'n')
+% low_rank_approx_method ('y'/'n')
 %       'Standard SNTLN'
 %       'None'
-%
-%   SEED    : SEED Number for noise generation
 
-%
+
+
 % Set the Global Variables
-SetGlobalVariables()
+global PLOT_GRAPHS
+
+SetGlobalVariables(bool_preproc,low_rank_approx_method)
+
+
 
 % Get example polynomials
 [fxy_exact, gxy_exact,...
@@ -84,12 +91,16 @@ fprintf('\n')
 fprintf('Comparison of %s exact and %s computed: \n',name,name)
 
 % Normalise f(x,y) exact.
-fxy_exact = fxy_exact ./ fxy_exact(1,1);
+fxy_exact = NormaliseMatrix(fxy_exact);
+
 % Normalise f(x,y) computed.
-fxy_computed = fxy_computed ./ fxy_computed(1,1);
+fxy_computed = NormaliseMatrix(fxy_computed);
+
+
 display([GetAsVector(fxy_exact) GetAsVector(fxy_computed)]);
 
 dist = norm(fxy_exact - fxy_computed) ./ norm(fxy_exact);
+
 fprintf('Distance of %s exact from %s computed a - b / a : \t %2.4e \n',name,name,dist);
 
 

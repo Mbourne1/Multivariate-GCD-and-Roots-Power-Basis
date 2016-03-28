@@ -1,10 +1,11 @@
 function C1 = BuildC1(uxy_matrix,t1,t2,m1,m2)
+% BuildC1(uxy_matrix,t1,t2,m1,m2)
+%
 % Build the Matrix C_{1} consisting of coefficients of u(x,y). Used in the
 % approximate polynomial factorisation (APF).
 % 
 % [ C(u) ; C(v)] d = [f;g]
 %
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 % %                         Inputs
 %
@@ -20,25 +21,23 @@ function C1 = BuildC1(uxy_matrix,t1,t2,m1,m2)
 %
 % m2 :  Degree of polynomial f with respect to y
 %
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 % get size of uxy_matrix
-[rows,cols] = size(uxy_matrix);
+[m1_t1,m2_t2] = GetDegree(uxy_matrix);
 
-% get m1-t1, degree of uxy with respect to x
-m1_t1 = rows - 1;
-
-% Get m2-t2, degree of uxy with respect to y
-m2_t2 = cols - 1;
 
 % initialise a zero matrix to pad uxy
 zero_matrix = zeros(m1+1,m2+1);
 
-%
-C1 = [];
+nRowsC1 = (m1+1) * (m2+1);
+nColsC1 = (t1+1) * (t2+1);
+
+C1 = zeros(nRowsC1,nColsC1);
 
 num_diags = (t1 + 1) + (t2 + 1) + 1;
+
+count = 1;
 
 % for every diagonal of the matrix dxy_mtrx.
 for tot = 0:1:num_diags
@@ -57,8 +56,12 @@ for tot = 0:1:num_diags
                         
             temp_vec = GetAsVector(uxy_matrix_padded);
             
-            C1 = [C1 temp_vec];
+            C1(:,count) = temp_vec;
+            count = count + 1;
         end
     end
     
+end
+
+
 end

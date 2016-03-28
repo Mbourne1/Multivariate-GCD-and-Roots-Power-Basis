@@ -1,20 +1,19 @@
-function [fxy,gxy] = STLN(fxy,gxy,m,n,t1,t2,opt_col)
-% Given coefficients f(x,y) and g(x,y) find the low rank approximation of
+function [fxy_matrix,gxy_matrix] = STLN(fxy_matrix,gxy_matrix,m,n,t1,t2,opt_col)% Given coefficients f(x,y) and g(x,y) find the low rank approximation of
 % the Syvlester subresultant S_{t_{1},t_{2}}.
+%
+% STLN(fxy,gxy,m,n,t1,t2,opt_col)
+%
+% Inputs.
 
 global MAX_ERROR_SNTLN
 global MAX_ITERATIONS_SNTLN
 global PLOT_GRAPHS
 
 % Get degree of polynomials f(x,y)
-[r,c] = size(fxy);
-m1 = r - 1;
-m2 = c - 1;
+[m1,m2] = GetDegree(fxy_matrix);
 
 % Get degree of polynomial g(x,y)
-[r,c] = size(gxy);
-n1 = r - 1;
-n2 = c - 1;
+[n1,n2] = GetDegree(gxy_matrix);
 
 % Get the number of coefficients in the polynomial f(x,y)
 num_coeff_f = (m1+1) * (m2+1);
@@ -31,33 +30,39 @@ num_coeff_v = (n1-t1+1) * (n2-t2+1);
 % Get the number of coefficients in u(x,y)
 num_coeff_u = (m1-t1+1) * (m2-t2+1);
 
-% Get number of zeros in f(x,y)
-fxy
-diff_f = m1 + m2 - m
-gxy
-diff_g = n1 + n2 - n
-
-if diff_f ~=0
-num_zeros_f = nchoosek(diff_f + 1,2)
-else 
-    num_zeros_f = 0;
+% Since we know m,m1,m2,n,n1,n2 we can remove columns corresponding to the
+% coefficients which will definitely be zeros.
+BOOL_REMOVECOLS = 'n';
+switch BOOL_REMOVECOLS
+    case 'y'
+        % % Get number of zeros in f(x,y)
+        diff_f = m1 + m2 - m;
+        diff_g = n1 + n2 - n;
+        
+        if diff_f ~=0
+            num_zeros_f = nchoosek(diff_f + 1,2);
+        else
+            num_zeros_f = 0;
+        end
+        
+        if diff_g ~=0
+            num_zeros_g = nchoosek(diff_g + 1,2);
+        else
+            num_zeros_g = 0;
+        end
+    case 'n'
+        
+        num_zeros_f = 0 ;
+        num_zeros_g = 0;
 end
-
-if diff_g ~=0
-    num_zeros_g = nchoosek(diff_g + 1,2)
-else 
-    num_zeros_g = 0;
-end
-
-
 
 % Get the number of coefficients in the unknown vector x, where A_{t}x =
 % c_{t}.
 %num_coeff_x = num_coeff_u + num_coeff_v - 1;
 
 % Build the Sylvester Matrix S(f,g)
-T1 = BuildT1(fxy,n1-t1,n2-t2);
-T2 = BuildT1(gxy,m1-t1,m2-t2);
+T1 = BuildT1(fxy_matrix,n1-t1,n2-t2);
+T2 = BuildT1(gxy_matrix,m1-t1,m2-t2);
 St = [T1 T2];
 
 % Remove optimal column
@@ -83,6 +88,7 @@ vZ_gxy = z(num_coeff_f-num_zeros_f+1:end);
 % EDIT 10/03/2016 - vZ_fxy has zeros removed, so include the zeros to form
 % a matrix m1+1 * m2+1
 matZ_fxy = GetAsMatrix([vZ_fxy; zeros(num_zeros_f,1)],m1,m2);
+
 % Get zg as a matrix
 matZ_gxy = GetAsMatrix([vZ_gxy; zeros(num_zeros_g,1)],n1,n2);
 
@@ -102,10 +108,10 @@ x = ...
 % Where Y(x) * z = E(z) * x
 
 Yt = BuildYt(x,m,m1,m2,n,n1,n2,t1,t2);
-v_fxy = GetAsVector(fxy);
+v_fxy = GetAsVector(fxy_matrix);
 v_fxy(end-(num_zeros_f-1):end) = [];
 
-v_gxy = GetAsVector(gxy);
+v_gxy = GetAsVector(gxy_matrix);
 v_gxy(end-(num_zeros_g-1):end) = [];
 
 test1 = Yt * [v_fxy;v_gxy];
@@ -119,8 +125,10 @@ test1 = Pt * [v_fxy;v_gxy];
 test2 = ct;
 
 % Get initial residual (A_{t}+E_{t})x = (c_{t} + h_{t})
-x_ls = pinv(At+Et) * (ct + ht);
-g = (ct + ht) - (At+Et)*x_ls;
+%x_ls = pinv(At+Et) * (ct + ht);
+x_ls = SolveAx_b(At+Et,ct+ht);
+
+res_vec = (ct + ht) - (At+Et)*x_ls;
 
 
 H_z = Yt - Pt;
@@ -144,30 +152,30 @@ start_point     =   ...
     x_ls;
     ];
 
-f = -(yy - start_point);
+f = -(yy);
 
 
 % Initialise the iteration counter
 ite = 1;
 
 % Set the termination criterion
-condition(ite) = norm(g);
+condition(ite) = norm(res_vec)./norm(ct);
 
 while condition(ite) >  MAX_ERROR_SNTLN &&  ite < MAX_ITERATIONS_SNTLN
     
     % Increment interation counter
     ite = ite + 1;
     
-    % Get small petrubations by LSE
-    y_lse = LSE(E,f,C,g);
+    % Get small petrubations by LSE problem ||Ey-f||  subject to  Cy=g
+    y_lse = LSE(E,f,C,res_vec);
     
     % Increment cummulative peturbations
     yy = yy + y_lse;
     
     % obtain the small changes to z and x
-    nEntries_z      = num_coeff_f + num_coeff_g;
+    nEntries_z      = num_coeff_f + num_coeff_g - num_zeros_f - num_zeros_g;
     delta_zk        = y_lse(1:nEntries_z);
-    delta_xk        = y_lse((nEntries_z+1):end);
+    %delta_xk        = y_lse((nEntries_z+1):end);
     
     % Update z and x
     z       = z + delta_zk;
@@ -207,7 +215,7 @@ while condition(ite) >  MAX_ERROR_SNTLN &&  ite < MAX_ITERATIONS_SNTLN
     Yt = BuildYt(x,m,m1,m2,n,n1,n2,t1,t2);
     
     % Get the residual vector
-    g = (ct+ht) - ((At+Et)*x_ls);
+    res_vec = (ct+ht) - ((At+Et)*x_ls);
     
     % Update the matrix C
     H_z = Yt - Pt;
@@ -218,7 +226,7 @@ while condition(ite) >  MAX_ERROR_SNTLN &&  ite < MAX_ITERATIONS_SNTLN
     f = -(yy+start_point);
     
     % Update the termination criterion
-    condition(ite) = norm(g) ;
+    condition(ite) = norm(res_vec)./ norm(ct+ht) ;
     
     
 end
@@ -236,10 +244,10 @@ switch PLOT_GRAPHS
 end
 
 
-if cond(ite) < cond(1)
+if condition(ite) < condition(1)
     
-    fxy = fxy + matZ_fxy;
-    gxy = gxy + matZ_gxy;
+    fxy_matrix = fxy_matrix + matZ_fxy;
+    gxy_matrix = gxy_matrix + matZ_gxy;
 else
     %fxy = fxy;
     %gxy = gxy;
@@ -268,18 +276,18 @@ C2 = BuildT1(mat_xu,n1,n2);
 % Remove the columns of C1 which correspond to zero values in the vector
 % of coefficients of f
 
-diff_f = m1 + m2 - m
-diff_g = n1 + n2 - n
+diff_f = m1 + m2 - m;
+diff_g = n1 + n2 - n;
 
 if diff_f ~=0
-num_zeros_f = nchoosek(diff_f + 1,2)
-else 
+    num_zeros_f = nchoosek(diff_f + 1,2);
+else
     num_zeros_f = 0;
 end
 
 if diff_g ~=0
-    num_zeros_g = nchoosek(diff_g + 1,2)
-else 
+    num_zeros_g = nchoosek(diff_g + 1,2);
+else
     num_zeros_g = 0;
 end
 
@@ -292,9 +300,33 @@ Yt = [C1 C2];
 
 end
 
-function Pt = BuildPt(m,m1,m2,n,n1,n2,opt_col,t1,t2)
-% Build the matrix P_{t}
-% Where P * [f;g] = c_{t}
+function Pt = BuildPt(m,m1,m2,n,n1,n2,opt_col_index,t1,t2)
+% BuildPt(m,m1,m2,n,n1,n2,opt_col,t1,t2)
+% 
+% Build the matrix P_{t}, such that the matrix vector product P*[f;g] gives
+% the column c_{t}.
+% 
+% P_{t} * [f;g] = c_{t}
+%
+% Inputs
+%
+% m  : 
+% 
+% m1 : 
+%
+% m2 : 
+%
+% n  :
+% 
+% n1 :
+% 
+% n2 :
+%  
+% opt_col :
+% 
+% t1 :
+% 
+% t2 :
 
 
 % Get the number of coefficients in polynomial f
@@ -306,13 +338,13 @@ num_coeff_g = (n1+1).*(n2+1);
 % Number of columns in T1 of the sylvester matrix
 num_cols_T1 = (n1-t1+1) * (n2-t2+1);
 
-if opt_col <= num_cols_T1
+if opt_col_index <= num_cols_T1
     % Optimal column in first partition
     
     % % Build the matrix P
     
     % Build the matrix P1
-    P1 = BuildPt_sub(m1,m2,n1,n2,opt_col,t1,t2);
+    P1 = BuildPt_sub(m1,m2,n1,n2,opt_col_index,t1,t2);
     
     % Build the matrix P2
     rows = (m1+n1-t1+1)*(m2+n2-t2+1);
@@ -329,25 +361,25 @@ else
     
     % Build the matrix P2
     % Get the position of the optimal column with respect to T(g)
-    opt_col_rel = opt_col - num_cols_T1;
+    opt_col_rel = opt_col_index - num_cols_T1;
     P2 = BuildPt_sub(n1,n2,m1,m2,opt_col_rel,t1,t2);
     
     % Build the matrix P.
     
     
 end
-diff_f = m1 + m2 - m
-diff_g = n1 + n2 - n
+diff_f = m1 + m2 - m;
+diff_g = n1 + n2 - n;
 
 if diff_f ~=0
     num_zeros_f = nchoosek(diff_f + 1,2);
-else 
+else
     num_zeros_f = 0;
 end
 
 if diff_g ~=0
     num_zeros_g = nchoosek(diff_g + 1,2);
-else 
+else
     num_zeros_g = 0;
 end
 
@@ -359,6 +391,8 @@ Pt = [P1 P2];
 end
 
 function P = BuildPt_sub(m1,m2,n1,n2,opt_col,t1,t2)
+% BuildPt_sub(m1,m2,n1,n2,opt_col,t1,t2)
+% 
 % Build the matrix P, used in SNTLN function. P is a matrix which is
 % obtained from the decomposition of a column vector c_{t} into a matrix
 % vector product P_{t} [f;g]
@@ -374,9 +408,6 @@ function P = BuildPt_sub(m1,m2,n1,n2,opt_col,t1,t2)
 %
 %   n2 :    Degree of polynomial g(x,y) with respect to y
 %
-%   theta1 : Optimal value of theta_{1}
-%
-%   theta2 : Optimal value of theta_{2}
 %
 %   opt_col : Optimal column for removal from S(f,g)
 %

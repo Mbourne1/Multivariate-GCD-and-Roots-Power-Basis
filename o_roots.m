@@ -1,5 +1,6 @@
 function [] = o_roots(ex_num,el,bool_preproc,low_rank_approx_method)
-%%
+% o_roots(ex_num,el,bool_preproc,low_rank_approx_method)
+%
 % Given an example number and set of parameters, obtain the roots of the
 % example polynomial, where the polynomial is in the power basis
 %
@@ -19,7 +20,7 @@ function [] = o_roots(ex_num,el,bool_preproc,low_rank_approx_method)
 %
 
 
-SetGlobalVariables()
+SetGlobalVariables(bool_preproc,low_rank_approx_method)
 
 %%
 

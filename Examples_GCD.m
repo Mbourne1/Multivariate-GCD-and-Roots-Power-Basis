@@ -100,26 +100,26 @@ switch ex
         g_roots_y = ...
             [
             0.7725  3;
-];
+            ];
         
         g_roots_xy = ...
             [
             ];
         d_roots_x = ...
             [
-                -0.5161 5
-                -7.1052 5
+            -0.5161 5
+            -7.1052 5
             ];
         d_roots_y = ...
             [
-                0.7725  3
-               ];
+            0.7725  3
+            ];
         d_roots_xy = ...
             [
             ];
         u_roots_x = ...
             [
-                -0.1132 3
+            -0.1132 3
             ];
         u_roots_y = ...
             [
@@ -130,16 +130,16 @@ switch ex
             [
             -2.0476     7;
             -8.8614     7;
-];
+            ];
         
         v_roots_y = ...
             [
             ];
-
-    m = 16;
-    n = 27;
-    t = 13;
-    
+        
+        m = 16;
+        n = 27;
+        t = 13;
+        
     case '1'
         f_roots_x = ...
             [
@@ -1331,11 +1331,11 @@ switch ex
         
     case 'univariate'
         f_roots_x =  ...
-        [
+            [
             0.1 2
             0.2 1
             0.5 1
-        ];
+            ];
         g_roots_x = ...
             [
             0.1 2
@@ -1360,7 +1360,7 @@ switch ex
         t = 3;
     otherwise
         error('Not a valid example number')
-       
+        
 end
 
 f_roots_x = mult_roots_x(f_roots_x);

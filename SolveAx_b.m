@@ -3,7 +3,6 @@ function [x] = SolveAx_b(A,b)
 
 
 % Get the residuals associated with both QR and Pinv methods
-
 [~,n2] = size(A);
 [Q2,R] = qr(A);
 R1 = R(1:n2,:);
@@ -12,7 +11,7 @@ c1 = cd(1:n2,:);
 x_QR = R1\c1;
 res_QR = b - A*x_QR;
 
-
+% Get by SVD method
 x_SVD = pinv(A) * b;
 res_SVD = b - A*x_SVD;
 

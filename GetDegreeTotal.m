@@ -92,8 +92,8 @@ data = [];
 for k = 1:1:min(m,n)
     
     % Build the partitions of the Sylvester matrix
-    T1 = BuildT1_totaldegree(fww_matrix_padd,m,n,k);
-    T2 = BuildT1_totaldegree(gww_matrix_padd,n,m,k);
+    T1 = BuildT1_totaldegree(fww_matrix_padd,m,n-k);
+    T2 = BuildT1_totaldegree(gww_matrix_padd,n,m-k);
     
     % Build the sylvester matrix
     Sk = [T1 opt_alpha.*T2];

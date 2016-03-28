@@ -1,14 +1,24 @@
-function [alpha,theta1,theta2] = OptimalAlphaAndTheta(fxy_mtrx, gxy_mtrx)
+function [alpha,theta1,theta2] = OptimalAlphaAndTheta(fxy_matrix, gxy_matrix)
+% OptimalAlphaAndTheta(fxy_matrix, gxy_matrix)
+%
+% Obtain the optimal values of alpha, theta1 and theta2 for the Sylvester 
+% matrix of the two polynomials f(x,y) and g(x,y)
+% 
+% Inputs.
+% 
+% fxy_matrix : Coefficients of the polynomial f(x,y)
+%
+% gxy_matrix : Coefficients of the polynomial g(x,y)
 
 
-% define vector f
+% Define vector f
 f = [1 -1 0 0 0];
 
 % get the degree of polynomial f and g
-m1 = size(fxy_mtrx,1) -1;
-m2 = size(fxy_mtrx,2) -1;
-n1 = size(gxy_mtrx,1) -1;
-n2 = size(gxy_mtrx,2) -1;
+m1 = size(fxy_matrix,1) -1;
+m2 = size(fxy_matrix,2) -1;
+n1 = size(gxy_matrix,1) -1;
+n2 = size(gxy_matrix,2) -1;
 
 % Assemble the four submatrices of Matrix A
 PartOne = zeros((m1+1)*(m2+1),5);
@@ -31,6 +41,7 @@ for i1 = 0:1:n1
     end
 end
 
+
 PartThree = zeros((m1+1)*(m2+1),5);
 count = 1;
 for i1 = 0:1:m1
@@ -52,45 +63,52 @@ for i1 = 0:1:n1
 end
 
 
-
-
-% Now build the vector b
-
+% Now build the vector b = [\lambda ; \mu ;  \rho ;  \tau]
 lambda_vec = zeros((m1+1)*(m2+1),1);
 count = 1;
 for i1 = 0:1:m1
     for i2 = 0:1:m2
-        lambda_vec(count) = fxy_mtrx(i1+1,i2+1);
+        lambda_vec(count) = fxy_matrix(i1+1,i2+1);
         count = count + 1;
     end
 end
+
+% lambda_vec2 = GetAsVector(fxy_matrix);
+
 
 mu_vec = zeros((n1+1)*(n2+1),1);
 count = 1;
 for i1 = 0:1:n1
     for i2 = 0:1:n2
-        mu_vec(count) = gxy_mtrx(i1+1,i2+1);
+        mu_vec(count) = gxy_matrix(i1+1,i2+1);
         count = count + 1;
     end
 end
+
+% mu_vec = GetAsVector(gxy_matrix);
+
 
 rho_vec = zeros((m1+1)*(m2+1),1);
 count = 1;
 for i1 = 0:1:m1
     for i2 = 0:1:m2
-        rho_vec(count) = fxy_mtrx(i1+1,i2+1);
+        rho_vec(count) = fxy_matrix(i1+1,i2+1);
         count = count + 1;
     end
 end
+
+% rho_vec = GetAsVector(fxy_matrix);
 
 tau_vec = zeros((n1+1)*(n2+1),1);
 count = 1;
 for i1 = 0:1:n1
     for i2 = 0:1:n2
-        tau_vec(count) = gxy_mtrx(i1+1,i2+1);
+        tau_vec(count) = gxy_matrix(i1+1,i2+1);
         count = count + 1;
     end
 end
+
+% tau_vec = GetAsVector(gxy_matrix)
 
 
 
