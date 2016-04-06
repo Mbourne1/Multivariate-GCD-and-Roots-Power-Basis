@@ -57,7 +57,7 @@ while iteration_condition
     end
 end
 
-%% Obtain the series h_{i}
+% % Obtain the series h_{i}
 % Each h_{x}(i) is obtained by the deconvolution of q_{x}(i) and q_{x}(i+1)
 
 % Get number of polynomials in the series of polynomials q_{i}
@@ -119,15 +119,13 @@ else
 end
 
 
-%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Now calculate w_{i} in terms of y
-
 fprintf('################################################################\n')
-
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% Stage 2 - Perform GCD calculations for derivatives with respect to y
+%
+
+% Stage 2 - Perform GCD calculations for derivatives with respect to y
 
 
 % Set the iteration number

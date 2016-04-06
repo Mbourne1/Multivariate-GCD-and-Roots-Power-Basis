@@ -1,6 +1,6 @@
-function [t] = GetDegreeTotal(fxy_matrix,gxy_matrix,m,n,...
+function [t] = GetGCDDegreeTotal(fxy_matrix,gxy_matrix,m,n,...
     lambda,mu,...
-    opt_alpha, opt_theta_1,opt_theta_2)
+    alpha, th1,th2)
 % Calculate the degree of the GCD of two bivariate Power Basis polynomials.
 %
 % %                 Inputs
@@ -15,31 +15,12 @@ function [t] = GetDegreeTotal(fxy_matrix,gxy_matrix,m,n,...
 %
 % Opt_theta_2   :
 %
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
 
 global PLOT_GRAPHS
 global THRESHOLD % USED ON LINE
 
-
-% Get degrees of f(x,y)
-[rows,cols] = size(fxy_matrix);
-
-% Get degree of f(x,y) in terms of x
-m1 = rows - 1;
-
-% Get degree of f(x,y) in terms of y
-m2 = cols - 1;
-
-% Get degree of g(x,y)
-[rows,cols] = size(gxy_matrix);
-
-% Get degree of g(x,y) in terms of x
-n1 = rows - 1;
-
-% Get degree of g(x,y) in terms of y
-n2 = cols - 1;
-
-%% 
+% % 
 % Preprocess the polynomials
 
 % Normalise Polynomial f(x,y) by geometric mean
@@ -49,14 +30,10 @@ fxy_matrix_n = fxy_matrix ./ lambda;
 gxy_matrix_n = gxy_matrix ./ mu;
 
 % Preprocess Polynomial f(x,y) to obtain f(w,w)
-th1_mat = diag(opt_theta_1.^(0:1:m1));
-th2_mat = diag(opt_theta_2.^(0:1:m2));
-fww_matrix = th1_mat * fxy_matrix_n * th2_mat;
+fww_matrix = GetWithThetas(fxy_matrix_n,th1,th2);
 
 % Preprocess polynomial g(x,y) to obtain g(w,w)
-th1_mat = diag(opt_theta_1.^(0:1:n1));
-th2_mat = diag(opt_theta_2.^(0:1:n2));
-gww_matrix = th1_mat * gxy_matrix_n * th2_mat;
+gww_matrix = GetWithThetas(gxy_matrix_n,th1,th2);
 
 
 %% 
@@ -92,11 +69,11 @@ data = [];
 for k = 1:1:min(m,n)
     
     % Build the partitions of the Sylvester matrix
-    T1 = BuildT1_totaldegree(fww_matrix_padd,m,n-k);
-    T2 = BuildT1_totaldegree(gww_matrix_padd,n,m-k);
+    T1 = BuildT1_TotalDegree(fww_matrix_padd,m,n-k);
+    T2 = BuildT1_TotalDegree(gww_matrix_padd,n,m-k);
     
     % Build the sylvester matrix
-    Sk = [T1 opt_alpha.*T2];
+    Sk = [T1 alpha.*T2];
     
     % Using QR Decomposition of the sylvester matrix
     [~,R] = qr(Sk);
@@ -160,7 +137,7 @@ end
 if (r == 1)
     fprintf('Only one subresultant exists. Check if near rank deficient \n')
     
-    vSingularValues = svd(Sk)
+    vSingularValues = svd(Sk);
     
     % Plot all singular values of S_{1}(f,g)
     figure('name','GetDegreeTotal - SVD')
@@ -168,9 +145,9 @@ if (r == 1)
     plot(log10(vSingularValues),'-s')
     hold off
     
-    vDelta_MinSingularValues = abs(diff(log10(vSingularValues)))
+    vDelta_MinSingularValues = abs(diff(log10(vSingularValues)));
     
-    max_change = max(abs(diff(log10(vSingularValues))))
+    max_change = max(abs(diff(log10(vSingularValues))));
     
     if max_change < THRESHOLD
         %
@@ -189,7 +166,8 @@ end
 
 switch PLOT_GRAPHS
     case 'y'
-        figure('name','Get Degree Total : R Diagonals')
+        figure_name = sprintf('%s - R Diagonals',mfilename);
+        figure('name',figure_name)
         hold on
         title('Diagonal entries of R matrix where S_{k,k} = QR')
         xlabel('k')
@@ -197,12 +175,13 @@ switch PLOT_GRAPHS
         scatter(data(:,1),log10(data(:,2)))
         hold off
         
-        figure('name','Minimum Singular values')
+        figure_name = sprintf('%s - Minimum Singular Values',mfilename);
+        figure('name',figure_name)
         titleString = sprintf(['Minimal singular values of each subresultant S_{k} \n'...
             'alpha  = %0.5e ' ...
             'theta1 = %0.5e ' ...
             'theta2 = %0.5e '], ...
-            opt_alpha , opt_theta_1 , opt_theta_2 );
+            alpha , th1 , th2 );
         title(titleString)
         xlabel('k: total degree')
         ylabel('log_{10} \sigma_{i}')
@@ -211,7 +190,8 @@ switch PLOT_GRAPHS
         hold off
         
         % plot all the largest ratios for k = 1,...,min(m,n)
-        figure('name','Get Degree Total : R max:min diagonals')
+        figure_name = sprintf('%s - QR max:min diagonals',mfilename);
+        figure('name',figure_name)
         hold on
         title('Plotting max:min diagonal entries of QR decomposition of S_{k}')
         plot(log10(ratio_maxmin_diag_vec),'-s');
@@ -219,7 +199,8 @@ switch PLOT_GRAPHS
         ylabel('log_{10}')
         hold off
         
-        figure('name','GetDegreeTotal : QR max:min row sum')
+        figure_name = sprintf('%s - QR max:min Row Sum',mfilename);
+        figure('name',figure_name)
         hold on
         title('Plotting max:min rowsums of QR decomposition of S_{k}')
         plot(log10(ratio_maxmin_rowsum_vec),'-s');

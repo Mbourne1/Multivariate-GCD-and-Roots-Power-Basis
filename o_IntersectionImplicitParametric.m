@@ -1,84 +1,72 @@
 function [] = o_IntersectionImplicitParametric()
-% Get the intersection between an Implicitly defined surface and a
+% Get the intersection between an Implicitly defined surface S_{1}(x,y,z) and a
 % parametrically defined surface.
 
 % S_Explicit
 % An Explicitly defined surface z = f(x,y)
 
-% The surface S_{1} is defined by z = f(x,y)
-S_Explicit = ...
-    [
-        0 1 
-        1 0
-    ];
 
+% Initialise the symbolic parametric variables s and t
 s = sym('s');
 t = sym('t');
 
-S1_funx = s;
-S1_funy = t;
-S1_funz = s + t;
-
-
-
-
+% Initialise the symbolic variables x y and z
 x = sym('x');
 y = sym('y');
 z = sym('z');
 
-% Print the explicit surface
-surfaces{1} = S_Explicit;
 
-
-
+% The surface S_{1} is implicitly given by S_{1} = x + y - z.
+% f(x,y,z) = 0
 S1 = x + y - z;
 
+% The parametric definitions of S_{1} are given as follows, and are used in
+% plotting.
+S1_fun_x = s;
+S1_fun_y = t;
+S1_fun_z = s + t;
 
-%% 
-% Get the parametrically defined surface
-x_st = ...
+% Get the parametrically defined surface S2
+S2_fun_x_coef = ...
     [
         5   0
         1   0
     ];
-S2_funx = GetSymBivariatePoly(x_st)
+S2_fun_x = GetSymBivariatePoly(S2_fun_x_coef);
 
-y_st = ...
+S2_fun_y_coef = ...
     [
         0   1
         0   0
     ];
-S2_funy = GetSymBivariatePoly(y_st)
+S2_fun_y = GetSymBivariatePoly(S2_fun_y_coef);
 
-z_st = ...
+S2_fun_z_coeff = ...
     [
         0   1
         1   1
     ];
-S2_funz = GetSymBivariatePoly(z_st)
+S2_fun_z = GetSymBivariatePoly(S2_fun_z_coeff);
 
-%%
+% Plot the surfaces
 figure('name','Surface Plot')
 hold on
-Surf1 = ezsurf(S1_funx,S1_funy,S1_funz)
-Surf2 = ezsurf(S2_funx,S2_funy,S2_funz)
+Surf1 = ezsurf(S1_fun_x,S1_fun_y,S1_fun_z);
+Surf2 = ezsurf(S2_fun_x,S2_fun_y,S2_fun_z);
 hold off
 
-f_st = subs(S1,{x y z},{x_st, y_st,z_st})
+% Substitute x(s,t),y(s,t) and z(s,t) from S2 into S1(x,y,z) to obtain a
+% bivariate polynomial h(s,t).
+h_st = subs(S1,{x y z},{S2_fun_x_coef, S2_fun_y_coef,S2_fun_z_coeff});
+h_st = double(h_st);
 
-f_st = double(f_st);
-[r,c] = size(f_st);
-
-m1 = r - 1;
-m2 = c - 1;
+% Get degree of h(s,t)
+[m1,m2] = GetDegree(h_st);
 m = m1 + m2;
 
+% Get the roots of h(s,t).
+o_roots_mymethod(h_st,m)
 
-
-o_roots_mymethod(f_st,m)
-
-% S_Parametric
-% A Parametrically defined Surface S(x,y,z) = x(s,t), y(s,t), z(s,t)
 
 
 end

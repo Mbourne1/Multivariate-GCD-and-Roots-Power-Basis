@@ -24,11 +24,13 @@ v_fww = GetAsVector(fww);
 label1 = sprintf('%s(x,y)',name);
 label2 = sprintf('%s(w,w)',name);
 
+title_label = sprintf('- Coefficients %s(x,y)',name);
+
 x_axis_f = (1:1:num_coeff_f);
-figure('name','Coefficients f(x,y)')
+figure('name',strcat(mfilename(),title_label))
 hold on
-plot(x_axis_f, v_fxy, '-s','DisplayName',label1)
-plot(x_axis_f, v_fww,'-s','DisplayName',label2)
+plot(x_axis_f, log10(v_fxy), '-s','DisplayName',label1)
+plot(x_axis_f, log10(v_fww),'-s','DisplayName',label2)
 legend(gca,'show')
 hold off
 end

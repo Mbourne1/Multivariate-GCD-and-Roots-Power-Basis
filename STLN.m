@@ -32,7 +32,9 @@ num_coeff_u = (m1-t1+1) * (m2-t2+1);
 
 % Since we know m,m1,m2,n,n1,n2 we can remove columns corresponding to the
 % coefficients which will definitely be zeros.
+global BOOL_REMOVECOLS
 BOOL_REMOVECOLS = 'n';
+
 switch BOOL_REMOVECOLS
     case 'y'
         % % Get number of zeros in f(x,y)
@@ -78,7 +80,6 @@ ht = zeros(size(ct));
 z = zeros(num_coeff_f + num_coeff_g - num_zeros_f - num_zeros_g,1);
 
 % Get the vector of coefficients zf
-% EDIT 10/03/2016
 vZ_fxy = z(1:num_coeff_f-num_zeros_f);
 
 % Get the vector of coefficeints zg
@@ -106,7 +107,6 @@ x = ...
 
 % Build the matrix Y_{t}
 % Where Y(x) * z = E(z) * x
-
 Yt = BuildYt(x,m,m1,m2,n,n1,n2,t1,t2);
 v_fxy = GetAsVector(fxy_matrix);
 v_fxy(end-(num_zeros_f-1):end) = [];
@@ -125,11 +125,10 @@ test1 = Pt * [v_fxy;v_gxy];
 test2 = ct;
 
 % Get initial residual (A_{t}+E_{t})x = (c_{t} + h_{t})
-%x_ls = pinv(At+Et) * (ct + ht);
 x_ls = SolveAx_b(At+Et,ct+ht);
 
+% Get the residual vector
 res_vec = (ct + ht) - (At+Et)*x_ls;
-
 
 H_z = Yt - Pt;
 
@@ -139,7 +138,6 @@ C = [H_z H_x];
 
 % Build the matrix E
 nEntries = (num_coeff_f-num_zeros_f) + (num_coeff_g-num_zeros_g) + num_coeff_u + num_coeff_v - 1;
-
 
 %E = blkdiag( eye(num_coeff_f -  + num_coeff_g) , zeros(num_coeff_u + num_coeff_v - 1));
 E = eye(nEntries);
@@ -236,7 +234,8 @@ fprintf('\nRequired number of iterations: %i\n',ite)
 switch PLOT_GRAPHS
     case 'y'
         
-        figure('name','STLN - Residuals')
+        title = sprintf('%s - Residuals',mfilename())
+        figure('name',title)
         hold on
         plot(log10(condition),'-s')
         hold off
@@ -279,18 +278,28 @@ C2 = BuildT1(mat_xu,n1,n2);
 diff_f = m1 + m2 - m;
 diff_g = n1 + n2 - n;
 
-if diff_f ~=0
-    num_zeros_f = nchoosek(diff_f + 1,2);
-else
-    num_zeros_f = 0;
+global BOOL_REMOVECOLS
+switch BOOL_REMOVECOLS
+    case 'y'
+        
+        if diff_f ~=0
+            num_zeros_f = nchoosek(diff_f + 1,2);
+        else
+            num_zeros_f = 0;
+        end
+        
+        if diff_g ~=0
+            num_zeros_g = nchoosek(diff_g + 1,2);
+        else
+            num_zeros_g = 0;
+        end
+        
+    case 'n'
+        num_zeros_f = 0;
+        num_zeros_g = 0;
+    otherwise
+        error('err')
 end
-
-if diff_g ~=0
-    num_zeros_g = nchoosek(diff_g + 1,2);
-else
-    num_zeros_g = 0;
-end
-
 C1(:,end-(num_zeros_f-1) : end) = [];
 C2(:,end-(num_zeros_g-1) : end) = [];
 
@@ -302,30 +311,30 @@ end
 
 function Pt = BuildPt(m,m1,m2,n,n1,n2,opt_col_index,t1,t2)
 % BuildPt(m,m1,m2,n,n1,n2,opt_col,t1,t2)
-% 
+%
 % Build the matrix P_{t}, such that the matrix vector product P*[f;g] gives
 % the column c_{t}.
-% 
+%
 % P_{t} * [f;g] = c_{t}
 %
 % Inputs
 %
-% m  : 
-% 
-% m1 : 
+% m  :
 %
-% m2 : 
+% m1 :
+%
+% m2 :
 %
 % n  :
-% 
+%
 % n1 :
-% 
+%
 % n2 :
-%  
+%
 % opt_col :
-% 
+%
 % t1 :
-% 
+%
 % t2 :
 
 
@@ -370,17 +379,23 @@ else
 end
 diff_f = m1 + m2 - m;
 diff_g = n1 + n2 - n;
-
-if diff_f ~=0
-    num_zeros_f = nchoosek(diff_f + 1,2);
-else
-    num_zeros_f = 0;
-end
-
-if diff_g ~=0
-    num_zeros_g = nchoosek(diff_g + 1,2);
-else
-    num_zeros_g = 0;
+global BOOL_REMOVECOLS
+switch BOOL_REMOVECOLS
+    case 'y'
+        if diff_f ~=0
+            num_zeros_f = nchoosek(diff_f + 1,2);
+        else
+            num_zeros_f = 0;
+        end
+        
+        if diff_g ~=0
+            num_zeros_g = nchoosek(diff_g + 1,2);
+        else
+            num_zeros_g = 0;
+        end
+    case 'n'
+        num_zeros_f = 0;
+        num_zeros_g = 0;
 end
 
 P1(:,end-(num_zeros_f-1) : end) = [];
@@ -392,7 +407,7 @@ end
 
 function P = BuildPt_sub(m1,m2,n1,n2,opt_col,t1,t2)
 % BuildPt_sub(m1,m2,n1,n2,opt_col,t1,t2)
-% 
+%
 % Build the matrix P, used in SNTLN function. P is a matrix which is
 % obtained from the decomposition of a column vector c_{t} into a matrix
 % vector product P_{t} [f;g]

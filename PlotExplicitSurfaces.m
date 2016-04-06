@@ -19,7 +19,7 @@ y_val_vec = lwr_bound_y : inc : upr_bound_y;
 
 [p,q] = meshgrid(x_val_vec, y_val_vec);
 
-figure('name','Surface Plot')
+figure('name',strcat(mfilename() , ' - Surface Plot'))
 hold on
 %zlim([-2,2])
 

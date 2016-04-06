@@ -6,14 +6,10 @@ function [opt_col] = GetOptimalColumn(fxy_matrix,gxy_matrix,t1,t2)
 global PLOT_GRAPHS
 
 % Get degree structure of polynomial f(x,y)
-[r,c] = size(fxy_matrix);
-m1 = r-1;
-m2 = c-1;
+[m1,m2] = GetDegree(fxy_matrix);
 
 % Get degree structure of polynomial g(x,y)
-[r,c] = size(gxy_matrix);
-n1 = r-1;
-n2 = c-1;
+[n1,n2] = GetDegree(gxy_matrix);
 
 % % Build the partitions of the Sylvester matrix S_{t}
 
@@ -35,7 +31,7 @@ fprintf('Condition of the Sylvester subresultant S_{t1,t2} %0.5e \n',cond(St))
 % Take the QR decomposition of the Subresultant
 [Qk,Rk] = qr(St);
 
-% get the number of
+
 n = n1+n2;
 
 residuals_QR = zeros(cols_T1,1);

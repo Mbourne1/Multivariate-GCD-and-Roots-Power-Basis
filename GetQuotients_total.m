@@ -1,53 +1,42 @@
 function [uxy_calc_mtrx,vxy_calc_mtrx] = ...
-    GetQuotients_total(fxy_matrix,gxy_matrix,m,n,t,opt_alpha,opt_theta_1,opt_theta_2)
+    GetQuotients_total(fxy,gxy,m,n,t,alpha,th1,th2)
 % Given two polynomials and the knowledge of the degree of the GCD. Obtain
 % the two quotient polynomials u and v.
 %
 %       Inputs.
 %
-%   fxy_matrix :
+%   fxy : Coefficients of polynomail f(x,y)
 %
-%   gxy_matrix :
+%   gxy : Coefficinets of polynomial g(x,y)
 %
-%   t :
+%   t : Degree of GCD
 %
-%   opt_alpha :
+%   alpha : Optimal value of alpha
 %
-%   opt_theta_1 :
+%   th1 : Optimal value of theta_{1}
 %   
-%   opt_theta_2 :
+%   th2 : Optimal value of theta_{2}
 
 % Replace fxy_matrix with the padded version
-[r,c] = size(fxy_matrix);
-m1 = r - 1;
-m2 = c - 1;
+[m1,m2] = GetDegree(fxy);
 padd_matrix = zeros(m+1,m+1);
-padd_matrix(1:m1+1,1:m2+1) = fxy_matrix;
-fxy_matrix = padd_matrix;
+padd_matrix(1:m1+1,1:m2+1) = fxy;
+fxy = padd_matrix;
 
 % Replace gxy_matrix with the padded version
-[r,c] = size(gxy_matrix);
-n1 = r - 1;
-n2 = c - 1;
+[n1,n2] = size(gxy);
 padd_matrix = zeros(n+1,n+1);
-padd_matrix(1:n1+1,1:n2+1) = gxy_matrix;
-gxy_matrix = padd_matrix;
+padd_matrix(1:n1+1,1:n2+1) = gxy;
+gxy = padd_matrix;
 
 
 %% Preprocess
-% Add the preprocessors
-% multiply fxy by optimal theta 1
-% each row of the matrix is multiplied by theta_{1}^{i} where i is
-theta1_mat = diag(opt_theta_1.^(0:1:m));
-theta2_mat = diag(opt_theta_2.^(0:1:m));
-fww_matrix = (theta1_mat * fxy_matrix * theta2_mat);
 
+% Get f(w,w) from f(x,y)
+fww_matrix = GetWithThetas(fxy,th1,th2);
 
-% Preprocess polynomial gxy
-theta1_mat = diag(opt_theta_1.^(0:1:n));
-theta2_mat = diag(opt_theta_2.^(0:1:n));
-gww_matrix = (theta1_mat * gxy_matrix * theta2_mat);
-
+% Get g(w,w) from g(x,y)
+gww_matrix = GetWithThetas(gxy,th1,th2);
 
 % % Build the partitions of the Sylvester matrix S_{t}
 
@@ -58,17 +47,17 @@ T1 = BuildT1_totaldegree(fww_matrix,m,n,t);
 T2 = BuildT1_totaldegree(gww_matrix,n,m,t);
 
 % Concatenate the two partitions
-St = [T1 opt_alpha.*T2];
+St = [T1 alpha.*T2];
 
 num_zeros_remove_T1 = 0;
 num_zeros_remove_T2 = 0;
 
-%%%%%%%%%%%%%%%%%%%%%
-%% Get the optimal column for removal
-opt_col = getOptimalColumn_total(fww_matrix,opt_alpha.*gww_matrix,m,n,t);
+
+% % Get the optimal column for removal
+opt_col = GetOptimalColumn_total(fww_matrix,alpha.*gww_matrix,m,n,t);
 
 
-%% Having found the optimal column, obtain u and v the quotient polynomials.
+% % Having found the optimal column, obtain u and v the quotient polynomials.
 Atj = St;
 cki = St(:,opt_col);
 Atj(:,opt_col) = [];
@@ -121,13 +110,13 @@ vww_calc_mtrx = getAsMatrix([vww_calc;zeros_vww],n-t,n-t);
 
 %% Get u(x,y) and v(x,y) from u(w,w) and v(w,w)
 
-th1 = diag(1./opt_theta_1.^(0:1:m-t));
-th2 = diag(1./opt_theta_2.^(0:1:m-t));
+th1 = diag(1./th1.^(0:1:m-t));
+th2 = diag(1./th2.^(0:1:m-t));
 
 uxy_calc_mtrx = th1 * uww_calc_mtrx * th2;
 
-th1 = diag(1./opt_theta_1.^(0:1:n-t));
-th2 = diag(1./opt_theta_2.^(0:1:n-t));
+th1 = diag(1./th1.^(0:1:n-t));
+th2 = diag(1./th2.^(0:1:n-t));
 
 vxy_calc_mtrx = th1 * vww_calc_mtrx * th2;
 

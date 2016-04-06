@@ -3,11 +3,10 @@ function fxy_sym = GetSymBivariatePoly(fxy_matrix)
 % Given the coefficients of a bivariate polynomial f(x,y), get the symbolic
 % polynomial.
 
-[nRows,nCols] = size(fxy_matrix)
+% Get number of rows and columns in f(x,y)
+[nRows,nCols] = size(fxy_matrix);
 
-m1 = nRows - 1;
-m2 = nCols - 1;
-
+% Initialise the symbolic variables x and y
 x = sym('x');
 y = sym('y');
 

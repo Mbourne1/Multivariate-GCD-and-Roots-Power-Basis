@@ -1,50 +1,41 @@
-function dxy_matrix = GetGCDCoefficients_total(fxy_matrix,gxy_matrix,...
-    uxy_matrix, vxy_matrix,...
-    opt_alpha,opt_theta_1,opt_theta_2,m,n,t)
+function dxy_matrix = GetGCDCoefficients_total(fxy,gxy,...
+    uxy, vxy,alpha,th1,th2,m,n,t)
 % Given the matrices of coefficients of f(x,y) and g(x,y), the quotient
 % polynomials u(x,y) and v(x,y), and optimal values for alpha, theta_{1}
 % and theta_{2}, calculate the coefficients of the GCD d(x,y).
 %
 % %         Inputs
 %
-% fxy_matrix
+% fxy : Coefficients of polynomial f(x,y)
 %
-% gxy_matrix
+% gxy : Coefficients of polynomial g(x,y)
 %
-% uxy_matrix
+% uxy : Coefficients of polynomial u(x,y)
 %
-% vxy_matrix
+% vxy : Coefficients of polynomial v(x,y)
 %
-% opt_alpha
+% alpha : Optimal value of alpha
 %
-% opt_theta_1
+% th1 : Optimal value of theta_{1}
 %
-% opt_theta_2
-
-% Calculate the GCD of two bivariate polynomials f(x,y) and g(x,y)
+% th2 : Optimal value of theta_{2}
 
 
-%% Preprocess u and v
+% % Preprocess u and v
 
 % Preprocess u(x,y) to obtain u(w,w)
-th1_mat = diag(opt_theta_1.^(0:1:m-t));
-th2_mat = diag(opt_theta_2.^(0:1:m-t));
-
-uww_matrix = th1_mat * uxy_matrix * th2_mat;
+uww_matrix = GetWithThetas(uxy,th1,th2);
 
 % Preprocess v(x,y) to obtain v(w,w)
-th1_mat = diag(opt_theta_1.^(0:1:n-t));
-th2_mat = diag(opt_theta_2.^(0:1:n-t));
+vww_matrix = GetWithThetas(vxy,th1,th2);
 
-vww_matrix = th1_mat * vxy_matrix * th2_mat;
-
-%% Build Matrix C
+% % Build Matrix C
 
 % Build the Cauchy matrix of coefficients of u(w,w)
-C1 = BuildC1_total(uww_matrix,m,t);
+C1 = BuildT1_TotalDegree(uww_matrix,m,n-t);
 
 % Build the Cauchy matrix of coefficients of v(w,w)
-C2 = BuildC1_total(vww_matrix,n,t);
+C2 = BuildT1_TotalDegree(vww_matrix,n,m-t);
 
 % Build the RHS vector of coefficients of f and g
 C = [C1;C2];
@@ -54,75 +45,55 @@ C = [C1;C2];
 
 % padd f so that it is in terms of its total degree
 
-[r,c] = size(fxy_matrix);
-m1 = r -1;
-m2 = c -1;
+[m1,m2] = GetDegree(fxy);
 padd = zeros(m+1,m+1);
-padd(1:m1+1,1:m2+1) = fxy_matrix;
-fxy_matrix = padd;
+padd(1:m1+1,1:m2+1) = fxy;
+fxy = padd;
 
-[r,c] = size(gxy_matrix);
-n1 = r -1;
-n2 = c -1;
+[n1,n2] = GetDegree(gxy);
 padd = zeros(n+1,n+1);
-padd(1:n1+1,1:n2+1) = gxy_matrix;
-gxy_matrix = padd;
+padd(1:n1+1,1:n2+1) = gxy;
+gxy = padd;
 
-th1_mat = diag(opt_theta_1.^(0:1:m));
-th2_mat = diag(opt_theta_2.^(0:1:m));
-fww_matrix = th1_mat * fxy_matrix * th2_mat;
+% Get f(w,w) from f(x,y)
+fww_matrix = GetWithThetas(fxy,th1,th2);
 
 % Get fww_matrix as a vector
-fww_vec = getAsVector(fww_matrix);
+fww_vec = GetAsVector(fww_matrix);
 
 % Remove the zeros associated with the polynomial by total degree
 num_elements_f = nchoosek(m+2,2);
 fww_vec = fww_vec(1:num_elements_f);
 
-%% Build Vector g(w,w)
-
-th1_mat = diag(opt_theta_1.^(0:1:n));
-th2_mat = diag(opt_theta_2.^(0:1:n));
-gww_matrix = th1_mat * gxy_matrix * th2_mat;
+% % Build Vector g(w,w)
+gww_matrix = GetWithThetas(gxy,th1,th2);
 
 % get gww_matrix as a vector
-gww_vec = getAsVector(gww_matrix);
+gww_vec = GetAsVector(gww_matrix);
 
 % Remove the zeros associated with the polynomial by total degree
 num_elements_g = nchoosek(n+2,2);
 gww_vec = gww_vec(1:num_elements_g);
 
-%% Build the RHS vector
+% % Build the RHS vector
 rhs_vec = [fww_vec;
-           opt_alpha .*gww_vec];
+           alpha .*gww_vec];
 
-%% Calculate the solution vector
+% % Calculate the solution vector
 
-% Calculate the x vector by pinv       
-x = pinv(C) * rhs_vec;
-dww_vec = x;
-
-% % Calculate the x vector by QR decomposition
-% [~,n2] = size(C);
-% [Q,R] = qr(C);
-% R1 = R(1:n2,:);
-% cd = Q'*rhs_vec;
-% c = cd(1:n2,:);
-% x_ls = R1\c;
-% dww_vec = x_ls;
+% Calculate the x vector by pinv 
+x = SolveAx_b(C,rhs_vec);
     
 % Get the residual associated with the solution x. (Small residual implies good approximation)    
 residual = pinv(C)*rhs_vec - x;
 
 % Padd d(w,w) with zeros so that it can be put back into matrix form
 dww_vec = [dww_vec ; zeros(nchoosek(t+2-1,2),1)];
+
 % Arrange dw into a matrix form based on its dimensions.
-dww_calc_mtrx = getAsMatrix(dww_vec,t,t);
+dww_calc_matrix = getAsMatrix(dww_vec,t,t);
 
 % % Obtain d(x,y) from d(w,w)
-th1_mat = diag(1./(opt_theta_1.^(0:1:t)));
-th2_mat = diag(1./(opt_theta_2.^(0:1:t)));
-dxy_matrix = th1_mat * dww_calc_mtrx * th2_mat;
-
+dxy_matrix = GetWithoutThetas(dww_calc_matrix,th1,th2);
 
 end

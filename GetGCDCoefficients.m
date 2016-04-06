@@ -28,9 +28,6 @@ function dxy_matrix = GetGCDCoefficients(fxy_matrix,gxy_matrix,...
 % Get degrees of polynomial f
 [m1,m2] = GetDegree(fxy_matrix);
 
-% Get degrees of polynomial g
-[n1,n2] = GetDegree(gxy_matrix);
-
 % Get degrees of polynomial u
 [m1_t1,m2_t2] = GetDegree(uxy_matrix);
 
@@ -59,7 +56,7 @@ C = [C1;C2];
 
 %% Build Vector f(w,w)
 % Get f with thetas included
-fww_matrix = GetWithThetas(fxy_matrix,th1,th2)
+fww_matrix = GetWithThetas(fxy_matrix,th1,th2);
 
 % Get fww_matrix as a vector
 fww_vec = GetAsVector(fww_matrix);
@@ -77,7 +74,7 @@ rhs_vec = [fww_vec;
 %% Calculate the solution vector
 
 % Calculate the x vector by pinv       
-x = SolveAx_b(C,rhs_vec)
+x = SolveAx_b(C,rhs_vec);
 dww_vec = x;
 
 % Arrange dw into a matrix form based on its dimensions.

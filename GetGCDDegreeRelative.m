@@ -1,40 +1,33 @@
-function [t1,t2] = GetDegreeRelative(fxy_matrix,gxy_matrix,...
+function [t1,t2] = GetGCDDegreeRelative(fxy_matrix,gxy_matrix,...
     m,n,t,...
     lambda,mu,...
-    opt_alpha,opt_theta_1,opt_theta_2)
+    alpha,th1,th2)
 
 global PLOT_GRAPHS
 
 % Get degree structure of polynomial f(x,y)
-[r,c] = size(fxy_matrix);
-m1 = r - 1;
-m2 = c - 1;
+[m1,m2] = GetDegree(fxy_matrix);
 
 % Get degree structure of polynomial g(x,y)
-[r,c] = size(gxy_matrix);
-n1 = r - 1;
-n2 = c - 1;
+[n1,n2] = GetDegree(gxy_matrix);
 
-%% 
+
+% % 
 % Preprocess
 
 % Normalise by geometric mean
-fxy_matrix_working_n = fxy_matrix ./ lambda;
+fxy_matrix_n = fxy_matrix ./ lambda;
 
 % Normalise by geometric mean
-gxy_matrix_working_n = gxy_matrix ./ mu;
+gxy_matrix_n = gxy_matrix ./ mu;
 
 % Preprocess polynomial f(x,y) to obtain f(w,w)
-th1_mat = diag(opt_theta_1.^(0:1:m1));
-th2_mat = diag(opt_theta_2.^(0:1:m2));
-fww_working = th1_mat * fxy_matrix_working_n * th2_mat;
+fww = GetWithThetas(fxy_matrix_n,th1,th2);
 
 % Preprocess polynomial g(x,y) to obtain g(w,w)
-th1_mat = diag(opt_theta_1.^(0:1:n1));
-th2_mat = diag(opt_theta_2.^(0:1:n2));
-gww_working = th1_mat * gxy_matrix_working_n * th2_mat;
+gww = GetWithThetas(gxy_matrix_n,th1,th2);
 
-%%
+% %
 % Produce the set of all possible t1 and t2 values
 method = 'All';
 
@@ -118,11 +111,11 @@ for i = 1:1:nPairs
     k2 = t1t2_pair_mat(i,2);
     
     % Build the partitions of the Sylvester matrix
-    T1 = BuildT1(fww_working,n1-k1,n2-k2);
-    T2 = BuildT1(gww_working,m1-k1,m2-k2);
+    T1 = BuildT1(fww,n1-k1,n2-k2);
+    T2 = BuildT1(gww,m1-k1,m2-k2);
     
     % Build the sylvester matrix
-    Sk1k2 = [T1 opt_alpha.*T2];
+    Sk1k2 = [T1 alpha.*T2];
     min_sing_val = min(svd(Sk1k2));
     
     try
@@ -157,7 +150,8 @@ z = [z zeros(r,1); zeros(1,c+1)];
 switch PLOT_GRAPHS
     case 'y'
         [x,y] = meshgrid(x,y);
-        figure('name','Calculating (t1,t2)')
+        figure_name = sprintf('%s - Calculating (t1,t2)',mfilename);
+        figure('name',figure_name)
         hold on
         s1 = surf(x,y,z');
         title('Minimum Singular Values \lambda_{i} of S_{k_{1},k_{2}}')
@@ -166,7 +160,7 @@ switch PLOT_GRAPHS
         zlabel('log_{10} Min Sing Val')
         xlim([0,max_k1+3])
         ylim([0,max_k2+3])
-        alpha(s1,0.5)
+        
         xlabel('t_{1}')
         ylabel('t_{2}')
         hold off
@@ -174,7 +168,8 @@ switch PLOT_GRAPHS
         
         %%
         % Plot 3d data points
-        figure('name','3dplot')
+        figure_name = sprintf('%s - 3d plot',mfilename);
+        figure('name',figure_name)
         hold on
         title('Minimum Singular Values in S_{t_{1},t_{2}}')
         xlabel('t_{1}')
@@ -244,5 +239,13 @@ if r == 1
     t2 = mSingularValues(1,2);
     return;
 end
+
+fprintf('----------------------------------------------------------------\n')
+fprintf('\n')
+fprintf('The Calculated Degree of the GCD is given by \n')
+fprintf('Degree of GCD wrt x : t1 = %i\n',t1)
+fprintf('Degree of GCD wrt y : t2 = %i\n',t2)
+fprintf('\n')
+fprintf('----------------------------------------------------------------\n')
 
 end

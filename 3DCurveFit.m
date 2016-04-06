@@ -19,9 +19,9 @@ b = ...
 % Plot the points
 figure()
 hold on
-X = CP(1,:)
-Y = CP(2,:)
-Z = CP(3,:)
+X = CP(1,:);
+Y = CP(2,:);
+Z = CP(3,:);
 scatter3(X,Y,Z)
 hold off
 

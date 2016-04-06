@@ -1,4 +1,4 @@
-function T1 = BuildT1_totaldegree(fxy_matrix,m,n_k)
+function T1 = BuildT1_TotalDegree(fxy_matrix,m,n_k)
 % BuildT1_totaldegree(fxy_matrix,m,n,k)
 %
 % Construct the matrix T(f), which is a partition of the Sylvester matrix
