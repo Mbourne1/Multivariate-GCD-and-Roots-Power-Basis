@@ -3,3 +3,5 @@
    16 	    27 	    13 	 7.371640e-09 	 y 	 1.000000e-10 	 None
    16 	    27 	    13 	 7.443545e-09 	 y 	 1.000000e-10 	 Standard STLN
     6 	     6 	     3 	 2.323239e-08 	 y 	  	 Standard SNTLN
+    6 	     7 	     4 	 NaN 	 y 	  	 None
+    6 	     7 	     4 	 NaN 	 y 	  	 None

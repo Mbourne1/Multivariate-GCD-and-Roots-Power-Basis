@@ -28,7 +28,9 @@ global PLOT_GRAPHS
 
 SetGlobalVariables(bool_preproc,low_rank_approx_method)
 
-
+EXAMPLE_TYPE = 'FromCoefficients'
+switch EXAMPLE_TYPE
+    case 'FromRoots'
 
 % Get example polynomials
 [fxy_exact, gxy_exact,...
@@ -38,6 +40,40 @@ SetGlobalVariables(bool_preproc,low_rank_approx_method)
     n,n1,n2,...
     t_exact,t1_exact,t2_exact] = Examples_GCD(ex_num);
 
+   case 'FromCoefficients'
+       %'-45*x*y - 15*x^3*y - 20*x*y^2 + 27*x*y^3 + 9*x^3*y^3 + 12*x*y^4';
+       fxy_exact = ...
+           [
+           0   0   0   0  0
+           0 -45 -20 +27 12
+           0   0   0   0  0
+           0 -15   0   9  0
+           ];
+       m = 6;
+       m1 = 3;
+       m2 = 4;
+       % 45*x^2*y^2 + 15*x^2*y^3 - 27*x^2*y^4 - 9*x^2*y^5
+       gxy_exact = ...
+           [
+           0 0  0  0   0  0
+           0 0  0  0   0  0
+           0 0 45 15 -27 -9
+           ];
+       n = 7;
+       n1 = 2;
+       n2 = 5;
+       
+       %'-70*x*y + 42*x*y^3'
+       dxy_exact = ...
+           [
+           0 0 0 0;
+           0 -70 0 42
+           ]
+       t_exact = 4;
+       t1_exact = 1;
+       t2_exact = 3;
+       
+end
 
 DisplayDegreeStructure();
 
@@ -52,28 +88,36 @@ DisplayDegreeStructure();
 
 
 %% Get the GCD by zengs method
-[u,v,w] = o_gcd_zeng(fxy,gxy);
+%[u,v,w] = o_gcd_zeng(fxy,gxy);
 
 
 % Get GCD d(x,y) and quotient polynomials u(x,y) and v(x,y)
 [uxy_calc, vxy_calc, dxy_calc,t,t1,t2] = o1(fxy,gxy,m,n);
 
-
+[dxy_zeng,uxy_zeng,vxy_zeng] = o_gcd_zeng(fxy,gxy,1e-10);
 
 %                          Results
 
-% Compare exact u(x,y) and calculated u(x,y)
-PrintCoefficients(uxy_calc,uxy_exact,'u(x,y)');
-GetDistance(uxy_calc,uxy_exact,'u(x,y');
+try
+    % Compare exact u(x,y) and calculated u(x,y)
+    PrintCoefficients(uxy_calc,uxy_exact,'u(x,y)');
+    GetDistanceBetweenPolynomials(uxy_calc,uxy_exact,'u(x,y');
 
-% Compare exact v(x,y) and calculated v(x,y)
-PrintCoefficients(vxy_calc,vxy_exact,'v(x,y)');
-GetDistance(vxy_calc,vxy_exact,'v(x,y');
+    % Compare exact v(x,y) and calculated v(x,y)
+    PrintCoefficients(vxy_calc,vxy_exact,'v(x,y)');
+    GetDistanceBetweenPolynomials(vxy_calc,vxy_exact,'v(x,y');
+catch
+    fprintf('U and V are not known')
+end
+
 
 % Compare exact d(x,y) and calculated d(x,y)
 PrintCoefficients(dxy_calc,dxy_exact,'d(x,y)');
-error_dxy = GetDistance(dxy_calc,dxy_exact,'d(x,y');
+error_dxy = GetDistanceBetweenPolynomials(dxy_calc,dxy_exact,'d(x,y');
 
+% Compare exact d(x,y) and d(x,y) calculated by zengs method
+PrintCoefficients(dxy_zeng,dxy_exact,'d(x,y)');
+error_dxy_zeng = GetDistanceBetweenPolynomials(dxy_zeng,dxy_calc,'d(x,y)');
 
 PrintToFile(m,n,t,error_dxy)
 
@@ -115,17 +159,7 @@ display([GetAsVector(fxy_exact) GetAsVector(fxy_computed)]);
 
 end
 
-function [dist] = GetDistance(fxy_exact,fxy_computed,name)
 
-% Normalise f(x,y) exact.
-fxy_exact = NormaliseMatrix(fxy_exact);
-
-% Normalise f(x,y) computed.
-fxy_computed = NormaliseMatrix(fxy_computed);
-
-dist = norm(fxy_exact - fxy_computed) ./ norm(fxy_exact);
-fprintf('Distance of %s exact from %s computed a - b / a : \t %2.4e \n',name,name,dist);
-end
 
 
 function []= PrintToFile(m,n,t,error_dx)
