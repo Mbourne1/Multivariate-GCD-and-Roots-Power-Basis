@@ -1,4 +1,4 @@
-function x = normalise(x)
+function x = Normalise(x)
 
 x = x./x(1);
 

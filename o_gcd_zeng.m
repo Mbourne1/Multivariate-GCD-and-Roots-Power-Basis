@@ -2,6 +2,8 @@ function [dxy_mat,uxy_mat,vxy_mat] = o_gcd_zeng(fxy,gxy,tol)
 % Prepare the polynomials f(x,y) and g(x,y) for input into Zengs method.
 % Note that the inputs must be polynomials in string form
 
+addpath('NAClabForMatlab2013')
+
 x = sym('x');
 y = sym('y');
 

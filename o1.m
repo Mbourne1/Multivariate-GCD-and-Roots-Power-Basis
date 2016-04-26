@@ -40,7 +40,7 @@ function [uxy, vxy, dxy, t, t1, t2] = o1(fxy, gxy, m, n)
 % % Initialise the global variables
 
 
-global BOOL_PREPROC
+global BOOL_ALPHA_THETA
 global PLOT_GRAPHS
 global LOW_RANK_APPROXIMATION_METHOD
 
@@ -152,7 +152,7 @@ end
 % Build Subresultant of noisy unprocessed polynomials
 S_Unproc = BuildSylvesterMatrix(fxy,gxy,0,0);
 vSingularValues_S_Unproc = svd(S_Unproc);
-vSingularValues_S_Unproc  = normalise(vSingularValues_S_Unproc);
+vSingularValues_S_Unproc  = Normalise(vSingularValues_S_Unproc);
 
 switch PLOT_GRAPHS
     case 'y'
@@ -163,7 +163,7 @@ switch PLOT_GRAPHS
         switch LOW_RANK_APPROXIMATION_METHOD
             case {'Standard SNTLN', 'Standard STLN'}
                 vSingularValues_S_LowRank = svd(S_LowRankApprox);
-                vSingularValues_S_LowRank = normalise(vSingularValues_S_LowRank);
+                vSingularValues_S_LowRank = Normalise(vSingularValues_S_LowRank);
                 label = 'S(f(x,y),g(x,y)) SNTLN';
                 plot(log10(vSingularValues_S_LowRank),'-s','DisplayName',label)
             case {'None'}
@@ -172,10 +172,10 @@ switch PLOT_GRAPHS
                 
         end
         
-        switch BOOL_PREPROC
+        switch BOOL_ALPHA_THETA
             case 'y'
                 vSingularValues_S_Preproc = svd(S_Preproc);
-                vSingularValues_S_Preproc = normalise(vSingularValues_S_Preproc);
+                vSingularValues_S_Preproc = Normalise(vSingularValues_S_Preproc);
                 label = 'S(f(\omega_{1},\omega_{2}),g(\omega_{1},\omega_{2})) Preprocessed';
                 plot(log10(vSingularValues_S_Preproc),'-o','DisplayName',label)
             case 'n'

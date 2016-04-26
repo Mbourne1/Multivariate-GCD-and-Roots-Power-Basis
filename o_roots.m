@@ -1,5 +1,5 @@
-function [] = o_roots(ex_num,el,bool_preproc,low_rank_approx_method)
-% o_roots(ex_num,el,bool_preproc,low_rank_approx_method)
+function [] = o_roots(ex_num,el,mean_method,bool_alpha_theta,low_rank_approx_method)
+% o_roots(ex_num,el,mean_method,bool_alpha_theta,low_rank_approx_method)
 %
 % Given an example number and set of parameters, obtain the roots of the
 % example polynomial, where the polynomial is in the power basis
@@ -10,7 +10,11 @@ function [] = o_roots(ex_num,el,bool_preproc,low_rank_approx_method)
 %
 % el - Lower noise level
 %
-% bool_preproc ('y'/'n')
+% mean_method : 
+%       'Geometric Mean Matlab Method'
+%       'None'
+%
+% bool_alpha_theta ('y'/'n')
 %       'y' - Include Preprocessing
 %       'n' - Exclude Preprocessing
 %
@@ -20,11 +24,11 @@ function [] = o_roots(ex_num,el,bool_preproc,low_rank_approx_method)
 %
 
 
-SetGlobalVariables(bool_preproc,low_rank_approx_method)
+SetGlobalVariables(mean_method,bool_alpha_theta,low_rank_approx_method)
 
-%%
-
-%           Get Example
+% %
+% %
+% Get Example
 
 % Given the example number get the polynomial coefficients of f(x,y) and
 % the total degree of f.
@@ -34,7 +38,9 @@ SetGlobalVariables(bool_preproc,low_rank_approx_method)
 [fxy,~] = Noise2(fxy_exact,el);
 
 
-
+% % 
+% %
+% Get roots by my method
 o_roots_mymethod(fxy,m);
 
 end

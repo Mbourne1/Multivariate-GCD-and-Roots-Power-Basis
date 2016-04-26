@@ -15,10 +15,9 @@ function [alpha,theta1,theta2] = OptimalAlphaAndTheta(fxy_matrix, gxy_matrix)
 f = [1 -1 0 0 0];
 
 % get the degree of polynomial f and g
-m1 = size(fxy_matrix,1) -1;
-m2 = size(fxy_matrix,2) -1;
-n1 = size(gxy_matrix,1) -1;
-n2 = size(gxy_matrix,2) -1;
+
+[m1,m2] = GetDegree(fxy_matrix);
+[n1,n2] = GetDegree(gxy_matrix);
 
 % Assemble the four submatrices of Matrix A
 PartOne = zeros((m1+1)*(m2+1),5);

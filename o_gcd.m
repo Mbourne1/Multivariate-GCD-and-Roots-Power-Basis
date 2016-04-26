@@ -1,10 +1,8 @@
-function [] = o_gcd(ex_num,emin,bool_preproc,low_rank_approx_method)
-% o_gcd(ex_num,emin,bool_preproc,low_rank_approx_method)
+function [] = o_gcd(ex_num,emin,mean_method,bool_alpha_theta,low_rank_approx_method)
+% o_gcd(ex_num,emin,mean_method,bool_alpha_theta,low_rank_approx_method)
 %
 % Calculate the GCD d(x,y) of two polynomials f(x,y) and g(x,y) taken from
 % the example file.
-%
-%
 %
 % Inputs.
 %
@@ -13,7 +11,11 @@ function [] = o_gcd(ex_num,emin,bool_preproc,low_rank_approx_method)
 %
 % emin    : Minimum Noise level
 %
-% bool_preproc ('y'/'n')
+% mean_method : 
+%       'Geometric Mean Matlab Method'
+%       'None'
+%
+% bool_alpha_theta ('y'/'n')
 %       'y' - Include Preprocessing
 %       'n' - Exclude Preprocessing
 %
@@ -26,9 +28,9 @@ function [] = o_gcd(ex_num,emin,bool_preproc,low_rank_approx_method)
 % Set the Global Variables
 global PLOT_GRAPHS
 
-SetGlobalVariables(bool_preproc,low_rank_approx_method)
+SetGlobalVariables(mean_method,bool_alpha_theta,low_rank_approx_method)
 
-EXAMPLE_TYPE = 'FromCoefficients'
+EXAMPLE_TYPE = 'FromRoots';
 switch EXAMPLE_TYPE
     case 'FromRoots'
 
@@ -78,8 +80,6 @@ end
 DisplayDegreeStructure();
 
 
-
-
 %% Noise
 
 % Add noise to the coefficients of f and g
@@ -116,9 +116,13 @@ PrintCoefficients(dxy_calc,dxy_exact,'d(x,y)');
 error_dxy = GetDistanceBetweenPolynomials(dxy_calc,dxy_exact,'d(x,y');
 
 % Compare exact d(x,y) and d(x,y) calculated by zengs method
+try
 PrintCoefficients(dxy_zeng,dxy_exact,'d(x,y)');
 error_dxy_zeng = GetDistanceBetweenPolynomials(dxy_zeng,dxy_calc,'d(x,y)');
 
+catch
+    display(dxy_zeng)
+end
 PrintToFile(m,n,t,error_dxy)
 
 % Given the two polynomials f(x,y) and g(x,y), Plot the explicit surfaces 
