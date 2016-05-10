@@ -11,9 +11,8 @@ function [partial_fxy] = Differentiate_wrt_x(fxy_matrix)
 %
 
 % Get the degree of fxy with respect to x and y
-[rows,cols] = size(fxy_matrix);
-m1 = rows -1;
-m2 = cols -1;
+[m1,m2] = GetDegree(fxy_matrix);
+
 
 % create a vector to multiply coefficients by
 

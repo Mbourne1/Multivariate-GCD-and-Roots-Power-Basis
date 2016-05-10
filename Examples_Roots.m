@@ -85,6 +85,7 @@ end
 
 fprintf('Roots with respect to x:\n\n')
 disp(roots_f_x)
+
 fprintf('Roots with respect to y:\n\n')
 disp(roots_f_y)
 fprintf('Non Separable roots \n\n')

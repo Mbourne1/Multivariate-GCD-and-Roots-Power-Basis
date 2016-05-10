@@ -1,4 +1,4 @@
-function [t] = GetGCDDegreeTotal(fxy_matrix,gxy_matrix,m,n)
+function [t] = GetGCDDegreeTotal2(fxy_matrix,gxy_matrix,m,n,limits_t)
 % Calculate the degree of the GCD of two bivariate Power Basis polynomials.
 %
 % %                 Inputs
@@ -7,28 +7,24 @@ function [t] = GetGCDDegreeTotal(fxy_matrix,gxy_matrix,m,n)
 %
 % gxy_matrix    :
 %
-% m
 %
-% n
 
-global SETTINGS
+global SETTINGS % USED ON LINE
 
-% % 
-% Calculate the Degree of the GCD
 
-% Initialise some empty vectors for storing during the loop
-v_MinimumSingularValue = zeros(min(m,n),1);
 
-v_maxDiagR1 = zeros(min(m,n),1);
-v_minDiagR1 = zeros(min(m,n),1);
+lower_lim = limits_t(1);
+upper_lim = limits_t(2);
 
-v_maxRowNormR1 = zeros(min(m,n),1);
-v_minRowNormR1 = zeros(min(m,n),1);
+if (lower_lim == upper_lim)
+    t = lower_lim;
+    return;
+end
+
 
 % initialise some useful vectors
 Data_RowNorm    = [];
 Data_DiagNorm   = [];
-
 
 
 %%
@@ -44,10 +40,23 @@ fxy_matrix_padd(1:r,1:c) = fxy_matrix;
 [r,c] = size(gxy_matrix);
 gxy_matrix_padd(1:r,1:c) = gxy_matrix;
 
-%%
+n_Subresultants = upper_lim - lower_lim + 1;
+
+v_maxDiagR1 = zeros(n_Subresultants,1);
+v_minDiagR1 = zeros(n_Subresultants,1);
+v_maxRowNormR1 = zeros(n_Subresultants,1);
+v_minRowNormR1 = zeros(n_Subresultants,1);
+v_MinimumSingularValue = zeros(n_Subresultants,1);
+
+% %
 data = [];
+
+
 % let k represent the total degree of the common divisor
-for k = 1:1:min(m,n)
+for k = lower_lim:1:upper_lim
+    
+    % Get i, an index for any storage vectors which will always start at 1.
+    i = k - lower_lim + 1;
     
     % Build the partitions of the Sylvester matrix
     T1 = BuildT1_TotalDegree(fxy_matrix_padd,m,n-k);
@@ -67,7 +76,6 @@ for k = 1:1:min(m,n)
     ks = k.* ones(length(vec_diags),1);
     
     data = [data ; ks vec_diags];
-    
     
     % Get number of rows in R1
     [R1_rows,~] = size(diag(R));
@@ -97,109 +105,40 @@ for k = 1:1:min(m,n)
     X2 = [ks R1_DiagNorm ns'];
     Data_DiagNorm = [Data_DiagNorm;X2];
     
+    % Get maximum entry on the diagonal of R1
+    v_maxDiagR1(i) = max(diag(R1));
     
-    %
-    v_maxDiagR1(k) = max(diag(R1));
+    % Get minimum entry on the diagonal of R1
+    v_minDiagR1(i) = min(diag(R1));
     
-    %
-    v_minDiagR1(k) = min(diag(R1));
+    % Get maximum Row Norm of R1
+    v_maxRowNormR1(i) = max(R1_RowNorm);
     
-    %
-    v_maxRowNormR1(k) = max(R1_RowNorm);
-    
-    %
-    v_minRowNormR1(k) = min(R1_RowNorm);
+    % Get minimum Row Norm of R1
+    v_minRowNormR1(i) = min(R1_RowNorm);
     
     % Get minimum singular value of S_{k}
-    v_MinimumSingularValue(k) = min(svd(Sk));
-    
+    vSingularValues = svd(Sk);
+    v_MinimumSingularValue(i) = min(vSingularValues);
     
 end
 
+% Get ratio of max to min entry on the diagonal of R1_{i} for each
+% subresultant S_{i} = QR_{i}.
 vRatio_MaxMin_Diags_R1 = v_maxDiagR1./v_minDiagR1;
 
+% Get the ratio of max to min row norm in R1_{i} for each subresultant S_{i} = QR_{i}
 vRatio_MaxMin_RowNorm_R1 = v_maxRowNormR1./v_minRowNormR1;
 
-
-if k == 1 
-   fprintf('Only one subresultant exists')
+% if only one subresultant exists.
+if lower_lim == upper_lim
+    GetRank_One_Subresultant(vSingularValues);
+else
 end
+   
 
-% first check if only one subresultant exists
-[r,~] = size(v_MinimumSingularValue);
-if (r == 1)
-    fprintf('Only one subresultant exists. Check if near rank deficient \n')
-    
-    vSingularValues = svd(Sk);
-    
-    % Plot all singular values of S_{1}(f,g)
-    figure('name','GetDegreeTotal - SVD')
-    hold on
-    plot(log10(vSingularValues),'-s')
-    hold off
-    
-    vDelta_MinSingularValues = abs(diff(log10(vSingularValues)));
-    
-    max_change = max(abs(diff(log10(vSingularValues))));
-    
-    if max_change < THRESHOLD
-        %
-        fprintf('Change in Singular values is not significant \n')
-        t = 0;
-        
-        
-    else
-        fprintf('Change in Singular values is signficant \n')
-        t = 1;
-    end
-    
-    fprintf('Degree of GCD : %i \n',t)
-    return
-end
+plotgraphs()
 
-switch SETTINGS.PLOT_GRAPHS
-    case 'y'
-        figure_name = sprintf('%s - R Diagonals',mfilename);
-        figure('name',figure_name)
-        hold on
-        title('Diagonal entries of R matrix where S_{k,k} = QR')
-        xlabel('k')
-        ylabel('log_{10} diagonal r_{i,i}')
-        scatter(data(:,1),log10(data(:,2)))
-        hold off
-        
-        figure_name = sprintf('%s - Minimum Singular Values',mfilename);
-        figure('name',figure_name)
-        titleString = sprintf('Singular Values');
-        title(titleString)
-        xlabel('k: total degree')
-        ylabel('log_{10} \sigma_{i}')
-        hold on
-        plot(log10(v_MinimumSingularValue),'-s');
-        hold off
-        
-        % plot all the largest ratios for k = 1,...,min(m,n)
-        figure_name = sprintf('%s - QR max:min diagonals',mfilename);
-        figure('name',figure_name)
-        hold on
-        title('Plotting max:min diagonal entries of QR decomposition of S_{k}')
-        plot(log10(vRatio_MaxMin_Diags_R1),'-s');
-        xlabel('k')
-        ylabel('log_{10}')
-        hold off
-        
-        figure_name = sprintf('%s - QR max:min Row Sum',mfilename);
-        figure('name',figure_name)
-        hold on
-        title('Plotting max:min rowsums of QR decomposition of S_{k}')
-        plot(log10(vRatio_MaxMin_RowNorm_R1),'-s');
-        xlabel('k')
-        ylabel('log_{10}')
-        hold off
-    case 'n'
-    otherwise
-        error('plot_graphs is either y or n')
-end
 
 % Calculate the total degree
 
@@ -236,4 +175,49 @@ else
 end
 
 
+end
+
+
+
+function t = GetRank_One_Subresultant(vMinSingVal)
+% Given the vector
+% Get the rank, where only one subresultant exists.
+
+global SETTINGS
+
+% Only one subresultant
+fprintf('Only one subresultant exists. \n')
+switch SETTINGS.PLOT_GRAPHS
+    case 'y'
+        figure('name','GetDegree - One Subresultant - Singular Values of S1')
+        hold on
+        title('Singular values of S_{1}')
+        plot(log10(vMinSingVal))
+        hold off
+    case 'n'
+end
+
+% Get the differences between singular values of S_{1}
+vDiffSingularValues = diff(log10(vMinSingVal));
+
+% Get the index of the largest change in singular values of S_{1}
+[deltaSingularValues, ~] = max(vDiffSingularValues);
+
+% If the change is smaller than the predefined threshold value, then plot
+% is considered 'flat'.
+if deltaSingularValues < SETTINGS.THRESHOLD
+    
+    % The subresultant is of full rank, in which case t = 0
+    t = 0;
+    fprintf('The only Subresultant S_{1} appears to be of NonSingular. \n');
+    return
+    
+else % val > threshold
+    
+    % The subresultant S_{1} is rank deficient, in which case t = 1
+    t = 1;
+    fprintf('The only Subresultant S_{1} appears to be Singular \n');
+    return
+    
+end
 end

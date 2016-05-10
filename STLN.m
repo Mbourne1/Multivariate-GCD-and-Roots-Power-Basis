@@ -5,8 +5,7 @@ function [fxy_matrix,gxy_matrix] = STLN(fxy_matrix,gxy_matrix,m,n,t1,t2,opt_col)
 %
 % Inputs.
 
-global MAX_ERROR_SNTLN
-global MAX_ITERATIONS_SNTLN
+global SETTINGS
 global PLOT_GRAPHS
 
 % Get degree of polynomials f(x,y)
@@ -32,10 +31,9 @@ num_coeff_u = (m1-t1+1) * (m2-t2+1);
 
 % Since we know m,m1,m2,n,n1,n2 we can remove columns corresponding to the
 % coefficients which will definitely be zeros.
-global BOOL_REMOVECOLS
-BOOL_REMOVECOLS = 'n';
+SETTINGS.BOOL_REMOVECOLS = 'n';
 
-switch BOOL_REMOVECOLS
+switch SETTINGS.BOOL_REMOVECOLS
     case 'y'
         % % Get number of zeros in f(x,y)
         diff_f = m1 + m2 - m;
@@ -159,7 +157,7 @@ ite = 1;
 % Set the termination criterion
 condition(ite) = norm(res_vec)./norm(ct);
 
-while condition(ite) >  MAX_ERROR_SNTLN &&  ite < MAX_ITERATIONS_SNTLN
+while condition(ite) >  SETTINGS.MAX_ERROR_SNTLN &&  ite < SETTINGS.MAX_ITERATIONS_SNTLN
     
     % Increment interation counter
     ite = ite + 1;
@@ -231,7 +229,7 @@ end
 
 fprintf('\nRequired number of iterations: %i\n',ite)
 
-switch PLOT_GRAPHS
+switch SETTINGS.PLOT_GRAPHS
     case 'y'
         
         title = sprintf('%s - Residuals',mfilename())
@@ -278,8 +276,8 @@ C2 = BuildT1(mat_xu,n1,n2);
 diff_f = m1 + m2 - m;
 diff_g = n1 + n2 - n;
 
-global BOOL_REMOVECOLS
-switch BOOL_REMOVECOLS
+global SETTINGS
+switch SETTINGS.BOOL_REMOVECOLS
     case 'y'
         
         if diff_f ~=0
@@ -379,8 +377,8 @@ else
 end
 diff_f = m1 + m2 - m;
 diff_g = n1 + n2 - n;
-global BOOL_REMOVECOLS
-switch BOOL_REMOVECOLS
+global SETTINGS
+switch SETTINGS.BOOL_REMOVECOLS
     case 'y'
         if diff_f ~=0
             num_zeros_f = nchoosek(diff_f + 1,2);

@@ -1,4 +1,4 @@
-function [uxy, vxy, dxy, t, t1, t2] = o1(fxy, gxy, m, n)
+function [fxy,gxy,dxy,uxy, vxy, t, t1, t2] = o_gcd_mymethod(fxy, gxy, m,n, limits_t)
 % Given two bivariate polynomials, return the GCD d(x,y) and the coprime
 % polynomials u(x,y) and v(x,y) where
 %
@@ -40,9 +40,8 @@ function [uxy, vxy, dxy, t, t1, t2] = o1(fxy, gxy, m, n)
 % % Initialise the global variables
 
 
-global BOOL_ALPHA_THETA
-global PLOT_GRAPHS
-global LOW_RANK_APPROXIMATION_METHOD
+global SETTINGS
+
 
 % % Preprocessing
 [lambda,mu,alpha,theta1,theta2] = Preprocess(fxy,gxy);
@@ -58,14 +57,15 @@ fww = GetWithThetas(fxy_n,theta1,theta2);
 gww = GetWithThetas(gxy_n,theta1,theta2);
 
 % Build the 0-th Subresultant of the preprocessed polynomials.
-S_Preproc = BuildSylvesterMatrix(fww,alpha.*gww,0,0);
+S_Preproc = BuildSylvesterMatrix(fxy,gxy,0,0);
 
 % % Get the Degree of the GCD d(x,y)
 
 % Get degree using total degree method
-[t] = GetGCDDegreeTotal(fxy,gxy,m,n,...
-    lambda,mu,...
-    alpha, theta1, theta2);
+t_old = GetGCDDegreeTotal(fww,alpha.*gww,m,n);
+%t_new = GetGCDDegreeTotal2(fww,alpha.*gww,m,n,limits_t);
+
+t = t_old;
 
 if t == 0
     uxy = fxy;
@@ -81,10 +81,15 @@ fprintf('The calculated total degree is : %i',t)
 fprintf('\n')
 
 % Given the total degree, obtain t_{1} and t_{2}
-[t1,t2] = GetGCDDegreeRelative(fxy,gxy,m,n,t,...
-    lambda,mu,...
-    alpha,theta1,theta2);
+[t1_old,t2_old] = GetGCDDegreeRelative(fww,alpha.*gww,m,n,t);
+[t1_new,t2_new] = GetGCDDegreeRelative2(fww,alpha.*gww,m,n,t);
 
+if ((t1_old ~= t1_new) || (t2_old ~= t2_new))
+    display(t1_old)
+end
+
+t1 = t1_new
+t2 = t2_new
 
 % % Get optimal column for removal from S_{t_{1},t_{2}}
 opt_col = GetOptimalColumn(fww,alpha.*gww,t1,t2);
@@ -93,7 +98,7 @@ opt_col = GetOptimalColumn(fww,alpha.*gww,t1,t2);
 
 % Note. Use the notation 'lr' for low rank approximation.
 
-switch LOW_RANK_APPROXIMATION_METHOD
+switch SETTINGS.LOW_RANK_APPROXIMATION_METHOD
     case 'Standard STLN'
         
         % Get preprocessed polynomials
@@ -154,13 +159,13 @@ S_Unproc = BuildSylvesterMatrix(fxy,gxy,0,0);
 vSingularValues_S_Unproc = svd(S_Unproc);
 vSingularValues_S_Unproc  = Normalise(vSingularValues_S_Unproc);
 
-switch PLOT_GRAPHS
+switch SETTINGS.PLOT_GRAPHS
     case 'y'
         % Plot singular values of fxy_working and fxy_output
         figure('name','Singular Values of S with and without SNTLN')
         hold on
         
-        switch LOW_RANK_APPROXIMATION_METHOD
+        switch SETTINGS.LOW_RANK_APPROXIMATION_METHOD
             case {'Standard SNTLN', 'Standard STLN'}
                 vSingularValues_S_LowRank = svd(S_LowRankApprox);
                 vSingularValues_S_LowRank = Normalise(vSingularValues_S_LowRank);
@@ -172,7 +177,7 @@ switch PLOT_GRAPHS
                 
         end
         
-        switch BOOL_ALPHA_THETA
+        switch SETTINGS.BOOL_ALPHA_THETA
             case 'y'
                 vSingularValues_S_Preproc = svd(S_Preproc);
                 vSingularValues_S_Preproc = Normalise(vSingularValues_S_Preproc);

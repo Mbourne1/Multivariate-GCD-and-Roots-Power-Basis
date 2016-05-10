@@ -1,13 +1,11 @@
 function [fxy_noisy, noise_matrix] = Noise2(fxy_matrix,el)
 
-        global SEED
-        rng(SEED)
+        global SETTINGS
+        rng(SETTINGS.SEED)
 
         % Get the degrees of polynomial f(x,y)
-        [r,c] = size(fxy_matrix);
-        m1 = r - 1;
-        m2 = c - 1;
-
+        [m1,m2] = GetDegree(fxy_matrix);
+        
         % Obtain a matrix of randomly distributed numbers between [-1 and 1]
         rp = (2*rand(m1+1,m2+1))-ones(m1+1,m2+1);
         

@@ -18,10 +18,7 @@ function [sum] = Evaluate_PowerPoly_Bivariate(t1,t2,fxy)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Get the degree of the polynomial with respect to x
-m1 = size(fxy,1)-1;
-
-% Get the degree of the polynomial with respect to y
-m2 = size(fxy,2)-1;
+[m1,m2] = GetDegree(fxy);
 
 % Perform a summing function to evaluate the curve at the given point
 sum = 0;

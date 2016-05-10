@@ -1,34 +1,26 @@
 function [] =  SetGlobalVariables(mean_method,bool_alpha_theta, low_rank_approx_method)
 
-global MEAN_METHOD
-MEAN_METHOD = mean_method
+global SETTINGS
 
-global BOOL_ALPHA_THETA
-BOOL_ALPHA_THETA    = bool_alpha_theta;
+SETTINGS.MEAN_METHOD = mean_method;
 
-global LOW_RANK_APPROXIMATION_METHOD
-LOW_RANK_APPROXIMATION_METHOD = low_rank_approx_method;
+SETTINGS.BOOL_ALPHA_THETA    = bool_alpha_theta;
 
-global bool_degreeMethod
-bool_degreeMethod = '2';
+SETTINGS.LOW_RANK_APPROXIMATION_METHOD = low_rank_approx_method;
 
-global bool_remove_cols
-bool_remove_cols = 'n';
+SETTINGS.BOOL_DEGREE_METHOD = '2';
 
-global PLOT_GRAPHS
-PLOT_GRAPHS = 'y';
+SETTINGS.BOOL_REMOVE_COLS = 'n';
 
-global SEED 
-SEED = 1024;
+SETTINGS.PLOT_GRAPHS = 'n';
 
-global THRESHOLD
-THRESHOLD = 1;
+SETTINGS.SEED = 1024;
 
-global MAX_ITERATIONS_SNTLN
-MAX_ITERATIONS_SNTLN = 100;
+SETTINGS.THRESHOLD = 1;
 
-global MAX_ERROR_SNTLN
-MAX_ERROR_SNTLN = 1e-15;
+SETTINGS.MAX_ITERATIONS_SNTLN = 100;
+
+SETTINGS.MAX_ERROR_SNTLN = 1e-15;
 
 
 end

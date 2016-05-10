@@ -1,31 +1,17 @@
-function [t1,t2] = GetGCDDegreeRelative(fxy_matrix,gxy_matrix,...
-    m,n,t,...
-    lambda,mu,...
-    alpha,th1,th2)
-
-global PLOT_GRAPHS
+function [t1,t2] = GetGCDDegreeRelative(fxy,gxy,...
+    m,n,t)
+global SETTINGS
 
 % Get degree structure of polynomial f(x,y)
-[m1,m2] = GetDegree(fxy_matrix);
+[m1,m2] = GetDegree(fxy);
 
 % Get degree structure of polynomial g(x,y)
-[n1,n2] = GetDegree(gxy_matrix);
+[n1,n2] = GetDegree(gxy);
 
 
 % % 
 % Preprocess
 
-% Normalise by geometric mean
-fxy_matrix_n = fxy_matrix ./ lambda;
-
-% Normalise by geometric mean
-gxy_matrix_n = gxy_matrix ./ mu;
-
-% Preprocess polynomial f(x,y) to obtain f(w,w)
-fww = GetWithThetas(fxy_matrix_n,th1,th2);
-
-% Preprocess polynomial g(x,y) to obtain g(w,w)
-gww = GetWithThetas(gxy_matrix_n,th1,th2);
 
 % %
 % Produce the set of all possible t1 and t2 values
@@ -111,11 +97,11 @@ for i = 1:1:nPairs
     k2 = t1t2_pair_mat(i,2);
     
     % Build the partitions of the Sylvester matrix
-    T1 = BuildT1(fww,n1-k1,n2-k2);
-    T2 = BuildT1(gww,m1-k1,m2-k2);
+    T1 = BuildT1(fxy,n1-k1,n2-k2);
+    T2 = BuildT1(gxy,m1-k1,m2-k2);
     
     % Build the sylvester matrix
-    Sk1k2 = [T1 alpha.*T2];
+    Sk1k2 = [T1 T2];
     min_sing_val = min(svd(Sk1k2));
     
     try
@@ -147,7 +133,7 @@ z = [z zeros(r,1); zeros(1,c+1)];
 
 %%
 % Plot 3d surface
-switch PLOT_GRAPHS
+switch SETTINGS.PLOT_GRAPHS
     case 'y'
         [x,y] = meshgrid(x,y);
         figure_name = sprintf('%s - Calculating (t1,t2)',mfilename);
@@ -160,13 +146,11 @@ switch PLOT_GRAPHS
         zlabel('log_{10} Min Sing Val')
         xlim([0,max_k1+3])
         ylim([0,max_k2+3])
-        
         xlabel('t_{1}')
         ylabel('t_{2}')
         hold off
         
-        
-        %%
+       
         % Plot 3d data points
         figure_name = sprintf('%s - 3d plot',mfilename);
         figure('name',figure_name)
@@ -210,9 +194,9 @@ delta_zz(delta_zz~=0);
 
 criterion = max((abs((delta_zz(:)))));
 
-global THRESHOLD
 
-if log10(criterion) < THRESHOLD
+
+if log10(criterion) < SETTINGS.THRESHOLD
     fprintf('Value below threshold \n')
     fprintf('All subresultants are either full rank or rank deficient')
     fprintf('Degree of GCD is either 0 or min(m,n)')

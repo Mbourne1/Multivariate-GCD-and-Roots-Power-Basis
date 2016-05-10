@@ -12,12 +12,6 @@ function S = BuildSylvesterMatrix(fxy_matrix,gxy_matrix,k1,k2)
 %
 % k2 : With respect to y.
 %
-% alpha : Optimal value of alpha.
-%
-% theta1 : Optimal value of theta_{1}.
-%
-% theta2 : Optimal value of theta_{2}.
-%
 %       Outputs.
 %
 % S : The Sylvester Subresultant S_{k_{1},k_{2}}

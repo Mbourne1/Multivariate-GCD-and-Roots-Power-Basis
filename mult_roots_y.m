@@ -14,14 +14,19 @@ cellArr = {};
 [num_roots,~ ] = size(root_mult_mat);
 
 for i = 1:1:num_roots
+    
     % get the multiplicity of the root
     mult = root_mult_mat(i,2);
+    
     % get the root;
     root = root_mult_mat(i,1);
+    
     for j = 1:1:mult
         cellArr{count,1} = root_y(root);
         count = count + 1;
     end
+    
+    
 end
 
 end

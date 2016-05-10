@@ -5,11 +5,8 @@ function f_vec = GetAsVector(fxy_matrix)
 
 %% Get Structure of f(x,y)
 
-[r,c] = size(fxy_matrix);
 % Get degree of polynomial f(x,y) with respect to x
-m1 = r - 1;
-% Get degree of polynomial f(x,y) with respect to y
-m2 = c - 1;
+[m1,m2] = GetDegree(fxy_matrix);
 
 % Initialise a count
 count = 1;

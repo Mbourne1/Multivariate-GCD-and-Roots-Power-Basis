@@ -22,7 +22,8 @@ function [] = o_roots(ex_num,el,mean_method,bool_alpha_theta,low_rank_approx_met
 %       'Standard SNTLN' : Include SNTLN
 %       'None'           : Exclude SNTLN
 %
-
+% % Examples
+% >> o_roots('1',1e-10,'Geometric Mean Matlab Method', 'y','None')
 
 SetGlobalVariables(mean_method,bool_alpha_theta,low_rank_approx_method)
 

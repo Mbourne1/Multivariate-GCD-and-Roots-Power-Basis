@@ -3,7 +3,7 @@ function [opt_col] = GetOptimalColumn(fxy_matrix,gxy_matrix,t1,t2)
 % their GCD, pick the optimal column for removal from the Sylvester matrix
 % S_{t_{1},t_{2}}(f,g).
 
-global PLOT_GRAPHS
+global SETTINGS
 
 % Get degree structure of polynomial f(x,y)
 [m1,m2] = GetDegree(fxy_matrix);
@@ -50,7 +50,7 @@ end
 [~,opt_col] = min(log10(residuals_QR));
 
 
-switch PLOT_GRAPHS
+switch SETTINGS.PLOT_GRAPHS
     case 'y'       
         figure('name','Optimal Column Calculation')
         plot(log10(residuals_QR),'-s');
