@@ -4,12 +4,10 @@ function [fxy_matrix, m] = Examples_Roots(ex_num)
 %
 % Inputs.
 %
-%
 % ex_num : Example Number
 %
 %
 % Outputs.
-%
 %
 % fxy_matrix : Coefficient matrix of polynomial f(x,y)
 %
@@ -199,7 +197,15 @@ switch ex_num
         m = double(feval(symengine, 'degree', f));
         
         fxy_matrix = double(rot90(coeffs(f,[x,y],'All'),2));
-       
+    case '2'
+        x = sym('x');
+        y = sym('y');
+
+        f = (x + y + 1)^2 * (x+1)^2 * (y-1)^3 * (y-3);
+        
+        m = double(feval(symengine, 'degree', f));
+        
+        fxy_matrix = double(rot90(coeffs(f,[x,y],'All'),2)); 
 end
 
 end

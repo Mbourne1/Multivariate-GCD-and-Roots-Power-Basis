@@ -123,8 +123,7 @@ end
 
 [t] = GetGCDDegree_MultipleSubresultants(vMinimumSingularValues,[min_val,max_val]);
 
-my_index = t - min_val +1;
-
+global SETTINGS
 
 if (maxChange < SETTINGS.THRESHOLD_RANK)
     fprintf([mfilename 'Insignificant Change\n'])

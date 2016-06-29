@@ -146,3 +146,34 @@ now,EX_NUM,m,n,t,error_dx,MEAN_METHOD,BOOL_ALPHA_THETA,EMIN,EMAX,LOW_RANK_APPROX
 29-Jun-2016 09:30:16, 	 3, 	 7, 	 6, 	 5, 	 4.709944e-09, 	 None, 	 y, 	 1.000000e-08, 	 1.000000e-08, 	 None
 29-Jun-2016 09:30:31, 	 3, 	 7, 	 6, 	 5, 	 4.708822e-09, 	 Geometric Mean Matlab Method, 	 y, 	 1.000000e-08, 	 1.000000e-08, 	 None
 29-Jun-2016 09:35:02, 	 3, 	 7, 	 6, 	 5, 	 4.708822e-09, 	 Geometric Mean Matlab Method, 	 y, 	 1.000000e-08, 	 1.000000e-08, 	 None
+29-Jun-2016 12:01:19, 	 1, 	 6, 	 7, 	 4, 	 NaN, 	 Geometric Mean Matlab Method, 	 y, 	 1.000000e-10, 	 1.000000e-12, 	 None
+29-Jun-2016 12:08:13, 	 1, 	 6, 	 7, 	 4, 	 NaN, 	 Geometric Mean Matlab Method, 	 y, 	 1.000000e-10, 	 1.000000e-12, 	 None
+29-Jun-2016 12:09:39, 	 1, 	 6, 	 7, 	 4, 	 , 	 Geometric Mean Matlab Method, 	 y, 	 1.000000e-10, 	 1.000000e-12, 	 None
+29-Jun-2016 12:10:03, 	 1, 	 6, 	 7, 	 4, 	 1.000000e+00, 	 Geometric Mean Matlab Method, 	 y, 	 1.000000e-10, 	 1.000000e-12, 	 None
+29-Jun-2016 12:16:48, 	 2, 	 2, 	 2, 	 0, 	 , 	 Geometric Mean Matlab Method, 	 y, 	 1.000000e-10, 	 1.000000e-12, 	 None
+29-Jun-2016 12:16:57, 	 2, 	 2, 	 2, 	 0, 	 , 	 Geometric Mean Matlab Method, 	 y, 	 1.000000e-10, 	 1.000000e-12, 	 None
+29-Jun-2016 12:17:06, 	 3, 	 7, 	 6, 	 5, 	 4.708855e-11, 	 Geometric Mean Matlab Method, 	 y, 	 1.000000e-10, 	 1.000000e-12, 	 None
+29-Jun-2016 12:17:20, 	 4, 	 2, 	 2, 	 1, 	 5.739628e-11, 	 Geometric Mean Matlab Method, 	 y, 	 1.000000e-10, 	 1.000000e-12, 	 None
+29-Jun-2016 12:17:29, 	 5, 	 9, 	 15, 	 5, 	 1.929899e-09, 	 Geometric Mean Matlab Method, 	 y, 	 1.000000e-10, 	 1.000000e-12, 	 None
+29-Jun-2016 13:15:00, 	 5, 	 9, 	 15, 	 5, 	 1.930829e-09, 	 Geometric Mean Matlab Method, 	 y, 	 1.000000e-10, 	 1.000000e-12, 	 Standard STLN
+29-Jun-2016 13:15:51, 	 1, 	 6, 	 7, 	 4, 	 , 	 Geometric Mean Matlab Method, 	 y, 	 1.000000e-10, 	 1.000000e-12, 	 Standard STLN
+29-Jun-2016 13:16:29, 	 1, 	 6, 	 7, 	 4, 	 , 	 Geometric Mean Matlab Method, 	 y, 	 1.000000e-10, 	 1.000000e-12, 	 Standard STLN
+29-Jun-2016 13:17:33, 	 1, 	 6, 	 7, 	 4, 	 , 	 Geometric Mean Matlab Method, 	 y, 	 1.000000e-10, 	 1.000000e-12, 	 Standard STLN
+29-Jun-2016 13:21:02, 	 1, 	 6, 	 7, 	 4, 	 , 	 Geometric Mean Matlab Method, 	 y, 	 1.000000e-10, 	 1.000000e-12, 	 Standard STLN
+29-Jun-2016 13:21:18, 	 2, 	 2, 	 2, 	 0, 	 , 	 Geometric Mean Matlab Method, 	 y, 	 1.000000e-10, 	 1.000000e-12, 	 Standard STLN
+29-Jun-2016 13:21:34, 	 2, 	 2, 	 2, 	 0, 	 , 	 Geometric Mean Matlab Method, 	 y, 	 1.000000e-10, 	 1.000000e-12, 	 Standard SNTLN
+29-Jun-2016 15:13:43, 	 1, 	 6, 	 7, 	 4, 	 1.000000e+00, 	 Geometric Mean Matlab Method, 	 y, 	 1.000000e-10, 	 1.000000e-12, 	 None
+29-Jun-2016 15:14:51, 	 2, 	 2, 	 2, 	 0, 	 , 	 Geometric Mean Matlab Method, 	 y, 	 1.000000e-10, 	 1.000000e-12, 	 None
+29-Jun-2016 15:15:00, 	 3, 	 7, 	 6, 	 5, 	 4.708855e-11, 	 Geometric Mean Matlab Method, 	 y, 	 1.000000e-10, 	 1.000000e-12, 	 None
+29-Jun-2016 15:15:22, 	 3, 	 12, 	 11, 	 6, 	 1.047291e-07, 	 Geometric Mean Matlab Method, 	 y, 	 1.000000e-10, 	 1.000000e-12, 	 None
+29-Jun-2016 15:15:35, 	 3, 	 12, 	 11, 	 6, 	 1.047358e-05, 	 Geometric Mean Matlab Method, 	 y, 	 1.000000e-08, 	 1.000000e-12, 	 None
+29-Jun-2016 15:15:55, 	 3, 	 12, 	 11, 	 6, 	 4.284595e-02, 	 Geometric Mean Matlab Method, 	 y, 	 1.000000e-08, 	 1.000000e-12, 	 Standard STLN
+29-Jun-2016 15:24:10, 	 3, 	 12, 	 11, 	 6, 	 4.284595e-02, 	 Geometric Mean Matlab Method, 	 y, 	 1.000000e-08, 	 1.000000e-12, 	 Standard STLN
+29-Jun-2016 15:25:05, 	 3, 	 12, 	 11, 	 6, 	 1.047358e-05, 	 Geometric Mean Matlab Method, 	 y, 	 1.000000e-08, 	 1.000000e-12, 	 None
+29-Jun-2016 15:26:15, 	 4, 	 14, 	 13, 	 8, 	 2.774489e-05, 	 Geometric Mean Matlab Method, 	 y, 	 1.000000e-08, 	 1.000000e-12, 	 None
+29-Jun-2016 15:29:07, 	 4, 	 14, 	 13, 	 8, 	 2.774489e-05, 	 Geometric Mean Matlab Method, 	 y, 	 1.000000e-08, 	 1.000000e-12, 	 None
+29-Jun-2016 15:31:41, 	 1, 	 6, 	 7, 	 4, 	 , 	 Geometric Mean Matlab Method, 	 y, 	 1.000000e-08, 	 1.000000e-12, 	 None
+29-Jun-2016 15:32:26, 	 1, 	 6, 	 7, 	 4, 	 1.000000e+00, 	 Geometric Mean Matlab Method, 	 y, 	 1.000000e-08, 	 1.000000e-12, 	 None
+29-Jun-2016 15:32:55, 	 2, 	 2, 	 2, 	 0, 	 , 	 Geometric Mean Matlab Method, 	 y, 	 1.000000e-08, 	 1.000000e-12, 	 None
+29-Jun-2016 15:33:02, 	 3, 	 7, 	 6, 	 5, 	 , 	 Geometric Mean Matlab Method, 	 y, 	 1.000000e-08, 	 1.000000e-12, 	 None
+29-Jun-2016 15:33:40, 	 3, 	 7, 	 6, 	 5, 	 , 	 Geometric Mean Matlab Method, 	 y, 	 1.000000e-08, 	 1.000000e-12, 	 None

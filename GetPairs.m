@@ -1,7 +1,8 @@
-function t1t2_pair_mat = GetPairs(m,m1,m2,n,n1,n2,t,method)
-% %
+function t1t2_pair_mat = GetPairs(m,m1,m2,n,n1,n2,t)
+% Get the set of (k1,k2) pairs for computing S_{k_{1},k_{2}}
 
-method = 'All'
+% method is either 'All' or 'Refined'
+method = 'Refined';
 
 switch method
     case 'All'

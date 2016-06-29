@@ -29,11 +29,19 @@ try
     [wx,wy,wxy] = o_roots_mymethod_xy(wx,wy,vDegt_x,vDegt_y);
     
     for i = 1:1:length(wx)
+        fprintf([mfilename sprintf(' : Roots of x, of degree : %i', i)])
+        wx{i}
     end
     for i = 1:1:length(wy)
+        fprintf([mfilename sprintf(' : Roots of y, of degree : %i', i)])
+        wy{i}
     end
-    for i = 1:1:lenght
-catch
+    for i = 1:1:length(wxy)
+        fprintf([mfilename sprintf(' : Roots of x and y, of degree : %i', i)])
+        wxy{i}
+    end
+catch err
+    fprintf([mfilename err.message])
     
 end
 

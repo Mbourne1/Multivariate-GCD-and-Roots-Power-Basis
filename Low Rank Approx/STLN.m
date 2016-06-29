@@ -1,10 +1,28 @@
-function [fxy_matrix,gxy_matrix] = STLN(fxy_matrix,gxy_matrix,m,n,t1,t2,opt_col)% Given coefficients f(x,y) and g(x,y) find the low rank approximation of
+function [fxy_matrix_out,gxy_matrix_out] = STLN(fxy_matrix,gxy_matrix,m,n,t1,t2,opt_col)
+% Given coefficients f(x,y) and g(x,y) find the low rank approximation of
 % the Syvlester subresultant S_{t_{1},t_{2}}.
 %
 % STLN(fxy,gxy,m,n,t1,t2,opt_col)
 %
 % Inputs.
-
+%
+% fxy_matrix : Coefficients of polynomial f(x,y)
+%
+% gxy_matrix : Coefficients of polynomial g(x,y)
+%
+% m : total degree of f
+%
+% n : total degree of g
+%
+% t1 : degree of d(x,y) with respect to x
+%
+% t2 : degree of d(x,y) with respect to y
+%
+% opt_col : index of optimal column for removal from S_{t_{1},t_{2}}(f,g)
+%
+% Outputs 
+%
+% fxy_matrix : Coefficients of f(x,y) with added perturbations
 global SETTINGS
 
 
@@ -143,7 +161,7 @@ C = [H_z H_x];
 nEntries = (nCoeff_f-nZeros_f) + (nCoeff_g-nZeros_g) + nCoeff_u + nCoeff_v - 1;
 
 E = blkdiag( eye(nCoeff_f -  + nCoeff_g) , zeros(nCoeff_u + nCoeff_v - 1));
-E = eye(nEntries);
+%E = eye(nEntries);
 
 yy = zeros((nCoeff_f-nZeros_f) + (nCoeff_g-nZeros_g) + nCoeff_u + nCoeff_v - 1,1);
 
@@ -179,11 +197,11 @@ while condition(ite) >  SETTINGS.MAX_ERROR_SNTLN &&  ite < SETTINGS.MAX_ITERATIO
     % obtain the small changes to z and x
     nEntries_z      = nCoeff_f + nCoeff_g - nZeros_f - nZeros_g;
     delta_zk        = y_lse(1:nEntries_z);
-    %delta_xk        = y_lse((nEntries_z+1):end);
+    delta_xk        = y_lse((nEntries_z+1):end);
     
     % Update z and x
     z       = z + delta_zk;
-    %x_ls    = x_ls + delta_xk;
+    x_ls    = x_ls + delta_xk;
     
     % Split vector z into vectors z_f and z_g
     vZ_fxy = z(1:nCoeff_f-nZeros_f);
@@ -211,7 +229,7 @@ while condition(ite) >  SETTINGS.MAX_ERROR_SNTLN &&  ite < SETTINGS.MAX_ITERATIO
     ht = Bt(:,opt_col);
     
     % Get the updated vector x
-    x_ls = SolveAx_b(At+Et,ct+ht);
+    %x_ls = SolveAx_b(At+Et,ct+ht);
     
     x = [...
         x_ls(1:opt_col-1);...
@@ -254,15 +272,15 @@ end
 
 if condition(ite) < condition(1)
     
-    fxy_matrix = fxy_matrix + matZ_fxy;
-    gxy_matrix = gxy_matrix + matZ_gxy;
+    fxy_matrix_out = fxy_matrix + matZ_fxy;
+    gxy_matrix_out = gxy_matrix + matZ_gxy;
 else
-    %fxy = fxy;
-    %gxy = gxy;
+    fxy_matrix_out = fxy_matrix;
+    gxy_matrix_out = gxy_matrix;
 end
 
 display([GetAsVector(fxy_matrix) GetAsVector(matZ_fxy)]);
-
+display([GetAsVector(gxy_matrix) GetAsVector(matZ_gxy)]);
 
 end
 

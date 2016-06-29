@@ -12,16 +12,15 @@ function T1 = BuildT1(fxy_matrix,n1_k1,n2_k2)
 % n1_k1 : Degree of v(x,y) with respect to x
 %
 % n2_k2 : Degree of v(x,y) with respect to y
+% 
+% Outputs.
+%
+% T1 : Partiton T_{n1-k1,n2-k2}(f) of the Sylvester matrix
 
+% Get degree of polynomial f(x,y) with respect to x and y
+[m1,m2] = GetDegree(fxy_matrix);
 
-% Get size of f(x,y)
 [nRows_f,nCols_f] = size(fxy_matrix);
-
-% Get degree of f(x,y) with respect to x
-m1 = nRows_f - 1;
-
-% Get degree of f(x,y) with respect to y
-m2 = nCols_f - 1;
 
 % The coefficients of f(x,y) must be multiplied by the basis elements of
 % v(x,y) to form the columns of S_{k_{1},k_{2}}(f,g). 

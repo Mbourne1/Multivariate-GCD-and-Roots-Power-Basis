@@ -1,6 +1,5 @@
 function [ o_fxy, o_gxy, o_alpha,o_th1,o_th2,o_X] = ...
     SNTLN( fxy_matrix,gxy_matrix, i_alpha, i_th1, i_th2,t1,t2,opt_col)
-%
 % Obtain the low rank approximation of the Sylvester matrix D*T_{t}(f,g)*Q =
 % S_{t}(f,g)
 %
@@ -549,6 +548,7 @@ while condition(ite) >(MAX_ERROR_SNTLN) &&  ite < MAX_ITERATIONS_SNTLN
     
     % Calculate the matrix P where ck = P * [f,g]
     P = BuildP(m1,m2,n1,n2,alpha(ite),th1(ite),th2(ite),opt_col,t1,t2,num_cols_T1);
+    
     % Test P
     %ck;
     %ck2 = P*[fxy_vec;gxy_vec];
