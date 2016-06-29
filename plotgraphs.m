@@ -31,7 +31,7 @@ switch SETTINGS.PLOT_GRAPHS
         plot(x,log10(vRatio_MaxMin_Diags_R1),'-s');
         
         xlabel('k')
-        ylabel('log_{10}')
+        ylabel('log_{10} max r_{k} / min r_{k}')
         hold off
         
         figure_name = sprintf('%s - QR max:min Row Sum',mfilename);
@@ -41,7 +41,7 @@ switch SETTINGS.PLOT_GRAPHS
         vRatio_MaxMin_RowNorm_R1 = v_maxRowNormR1 ./ v_minRowNormR1;
         plot(x,log10(vRatio_MaxMin_RowNorm_R1),'-s');
         xlabel('k')
-        ylabel('log_{10}')
+        ylabel('log_{10} max r_{k} / min r_{k}')
         hold off
     case 'n'
     otherwise

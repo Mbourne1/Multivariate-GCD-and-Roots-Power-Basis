@@ -32,6 +32,9 @@ function [] = o_gcd(ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_appro
 % Set the Global Variables
 global SETTINGS
 
+% add path
+addpath('Examples','Low Rank Approx');
+
 problem_type = 'GCD';
 
 SetGlobalVariables(problem_type,ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_approx_method)
