@@ -19,98 +19,61 @@ f = [1 -1 0 0 0];
 [m1,m2] = GetDegree(fxy_matrix);
 [n1,n2] = GetDegree(gxy_matrix);
 
-% Assemble the four submatrices of Matrix A
-PartOne = zeros((m1+1)*(m2+1),5);
-count = 1;
-for i1 = 0:1:m1
-    for i2 = 0:1:m2
-        % Replace all of the 'count-th row'
-        PartOne(count,:) = [1 0 -i1 -i2 0];
-        count = count + 1 ;
-    end
-end
-
-PartTwo = zeros((n1+1)*(n2+1),5);
-count = 1;
-for i1 = 0:1:n1
-    for i2 = 0:1:n2
-        % Replace all of the 'count-th row'
-        PartTwo(count,:) = [1 0 -i1 -i2 -1];
-        count = count + 1;
-    end
-end
+nEntries_f = (m1 + 1) * (m2 + 1);
+nEntries_g = (n1 + 1) * (n2 + 1);
 
 
-PartThree = zeros((m1+1)*(m2+1),5);
-count = 1;
-for i1 = 0:1:m1
-    for i2 = 0:1:m2
-        % Replace all of the 'count-th row'
-        PartThree(count,:) = [0 -1 i1 i2 0];
-        count = count + 1;
-    end
-end
+v_i1_f = GetAsVector(diag(0:1:m1) * ones(m1+1,m2+1));
+v_i2_f = GetAsVector(ones(m1+1,m2+1) * diag(0:1:m2));
 
-PartFour = zeros((n1+1)*(n2+1),5);
-count = 1;
-for i1 = 0:1:n1
-    for i2 = 0:1:n2
-        % Replace all of the 'count-th row'
-        PartFour(count,:) = [0 -1 i1 i2 1];
-        count = count + 1;
-    end
-end
+v_i1_g = GetAsVector(diag(0:1:n1) * ones(n1+1,n2+1));
+v_i2_g = GetAsVector(ones(n1+1,n2+1) * diag(0:1:n2));
+
+PartOne = ...
+    [
+    ones(nEntries_f,1),...
+    zeros(nEntries_f,1),...
+    -1 .* v_i1_f ,...
+    -1 .* v_i2_f ,...
+    zeros(nEntries_f,1) ...
+    ];
+
+PartTwo = ...
+    [
+    ones(nEntries_g,1) ,...
+    zeros(nEntries_g,1) ,...
+    -1 .* v_i1_g ,...
+    -1 .* v_i2_g ,...
+    -1.* ones(nEntries_g,1) ...
+    ];
+
+PartThree = ...
+    [
+    zeros(nEntries_f,1) ,...
+    -1 .* ones(nEntries_f,1) ,...
+    v_i1_f ,...
+    v_i2_f ,...
+    zeros(nEntries_f,1) ...
+    ];
+
+PartFour = ...
+    [
+    zeros(nEntries_g,1) ,...
+    -1 .* ones(nEntries_g,1) ,...
+    v_i1_g ,...
+    v_i2_g ,...
+    ones(nEntries_g,1)
+    ];
 
 
 % Now build the vector b = [\lambda ; \mu ;  \rho ;  \tau]
-lambda_vec = zeros((m1+1)*(m2+1),1);
-count = 1;
-for i1 = 0:1:m1
-    for i2 = 0:1:m2
-        lambda_vec(count) = fxy_matrix(i1+1,i2+1);
-        count = count + 1;
-    end
-end
-
-% lambda_vec2 = GetAsVector(fxy_matrix);
+lambda_vec = GetAsVector(abs(fxy_matrix));
+mu_vec = GetAsVector(abs(gxy_matrix));
+rho_vec = GetAsVector(abs(fxy_matrix));
+tau_vec = GetAsVector(abs(gxy_matrix));
 
 
-mu_vec = zeros((n1+1)*(n2+1),1);
-count = 1;
-for i1 = 0:1:n1
-    for i2 = 0:1:n2
-        mu_vec(count) = gxy_matrix(i1+1,i2+1);
-        count = count + 1;
-    end
-end
-
-% mu_vec = GetAsVector(gxy_matrix);
-
-
-rho_vec = zeros((m1+1)*(m2+1),1);
-count = 1;
-for i1 = 0:1:m1
-    for i2 = 0:1:m2
-        rho_vec(count) = fxy_matrix(i1+1,i2+1);
-        count = count + 1;
-    end
-end
-
-% rho_vec = GetAsVector(fxy_matrix);
-
-tau_vec = zeros((n1+1)*(n2+1),1);
-count = 1;
-for i1 = 0:1:n1
-    for i2 = 0:1:n2
-        tau_vec(count) = gxy_matrix(i1+1,i2+1);
-        count = count + 1;
-    end
-end
-
-% tau_vec = GetAsVector(gxy_matrix)
-
-
-
+% 
 % Get the index of the zero rows in lambda
 index_zero_lambda = find(lambda_vec==0);
 % Remove the corresponding zeros from lambda
@@ -119,9 +82,9 @@ lambda_vec(index_zero_lambda,:) = [];
 PartOne(index_zero_lambda,:) = [];
 
 
-% Get the index of the zero rows in lambda
+% Get the index of the zero rows in mu vector
 index_zero_mu = find(mu_vec==0);
-% Remove the corresponding zeros from lambda
+% Remove the corresponding zeros from mu vector
 mu_vec(index_zero_mu,:) = [];
 % Remove the corresponding rows from PartOne Matrix
 PartTwo(index_zero_mu,:) = [];
@@ -135,20 +98,20 @@ rho_vec(index_zero_rho,:) = [];
 PartThree(index_zero_rho,:) = [];
 
 
-% Get the index of the zero rows in tau
+% Get the index of the zero rows in tau vector
 index_zero_tau = find(tau_vec==0);
 % Remove the corresponding zeros from tau
 tau_vec(index_zero_tau,:) = [];
 % Remove the corresponding rows from PartOne Matrix
 PartFour(index_zero_tau,:) = [];
 
-A =-[PartOne; PartTwo; PartThree; PartFour];
+A = [PartOne; PartTwo; PartThree; PartFour];
 
 
-b = -[log10(abs(lambda_vec)); log10(abs(mu_vec)); -log10(abs(rho_vec));-log10(abs(tau_vec))];
+b = [log10((lambda_vec)); log10((mu_vec)); -log10((rho_vec));-log10((tau_vec))];
 
 
-x = linprog(f,A,b);
+x = linprog(f,-A,-b);
 
 try
     theta1 = 10^x(3);

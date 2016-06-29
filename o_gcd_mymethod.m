@@ -62,10 +62,14 @@ S_Preproc = BuildSylvesterMatrix(fxy,gxy,0,0);
 % % Get the Degree of the GCD d(x,y)
 
 % Get degree using total degree method
-t_old = GetGCDDegreeTotal(fww,alpha.*gww,m,n);
-%t_new = GetGCDDegreeTotal2(fww,alpha.*gww,m,n,limits_t);
+%LineBreakMedium();
+%t_old = GetGCDDegreeTotal(fww,alpha.*gww,m,n);
 
-t = t_old;
+LineBreakMedium();
+t_new = GetGCDDegreeTotal2(fww,alpha.*gww,m,n,limits_t);
+LineBreakMedium();
+
+t = t_new;
 
 if t == 0
     uxy = fxy;
@@ -77,19 +81,16 @@ if t == 0
     return
 end
 
-fprintf('The calculated total degree is : %i',t)
-fprintf('\n')
+% Print out the total degree of the GCD
+fprintf([mfilename ' : ' sprintf('The calculated total degree is : %i \n',t)]);
 
 % Given the total degree, obtain t_{1} and t_{2}
-[t1_old,t2_old] = GetGCDDegreeRelative(fww,alpha.*gww,m,n,t);
-[t1_new,t2_new] = GetGCDDegreeRelative2(fww,alpha.*gww,m,n,t);
+LineBreakMedium();
+[t1,t2] = GetGCDDegreeRelative(fww,alpha.*gww,m,n,t);
 
-if ((t1_old ~= t1_new) || (t2_old ~= t2_new))
-    display(t1_old)
-end
-
-t1 = t1_new
-t2 = t2_new
+LineBreakMedium();
+fprintf([mfilename ' : ' sprintf('The calculated relative degree is : t_{1} = %i, t_{2} = %i \n',t1,t2)])
+LineBreakMedium();
 
 % % Get optimal column for removal from S_{t_{1},t_{2}}
 opt_col = GetOptimalColumn(fww,alpha.*gww,t1,t2);

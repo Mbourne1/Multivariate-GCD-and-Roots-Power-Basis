@@ -34,8 +34,11 @@ switch SETTINGS.PLOT_GRAPHS
         x_axis_f = (1:1:num_coeff_f);
         figure('name',strcat(mfilename(),title_label))
         hold on
-        plot(x_axis_f, log10(v_fxy), '-s','DisplayName',label1)
-        plot(x_axis_f, log10(v_fww),'-s','DisplayName',label2)
+        plot(x_axis_f, real(log10(v_fxy)), '-s','DisplayName',label1)
+        plot(x_axis_f, real(log10(v_fww)),'-s','DisplayName',label2)
+        
+        ylabel('log_{10} |a_{i}|')
+        xlabel('i')
         legend(gca,'show')
         hold off
         

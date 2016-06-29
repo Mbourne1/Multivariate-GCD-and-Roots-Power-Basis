@@ -1,4 +1,4 @@
-function [fxy_noisy, noise_matrix] = Noise2(fxy_matrix,el)
+function [fxy_noisy, noise_matrix] = Noise2(fxy_matrix,emin,emax)
 
         global SETTINGS
         rng(SETTINGS.SEED)
@@ -11,7 +11,7 @@ function [fxy_noisy, noise_matrix] = Noise2(fxy_matrix,el)
         
         % multiply by the noise:signal ratio so so that we have a range of
         % values between [-noise : + noise]
-        s = rp*el;
+        s = rp*emin;
         
         % Get the noise matrix
         noise_matrix = fxy_matrix.*s;

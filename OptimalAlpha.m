@@ -1,15 +1,27 @@
-function [theta1,theta2] = OptimalTheta(fxy_matrix, gxy_matrix)
+function [alpha,theta1,theta2] = OptimalAlpha(fxy_matrix, gxy_matrix)
+% OptimalAlphaAndTheta(fxy_matrix, gxy_matrix)
+%
+% Obtain the optimal values of alpha, theta1 and theta2 for the Sylvester 
+% matrix of the two polynomials f(x,y) and g(x,y)
+% 
+% Inputs.
+% 
+% fxy_matrix : Coefficients of the polynomial f(x,y)
+%
+% gxy_matrix : Coefficients of the polynomial g(x,y)
 
 
-% define vector f
-f = [1 -1 0 0];
+% Define vector f
+f = [1 -1 0];
 
 % get the degree of polynomial f and g
+
 [m1,m2] = GetDegree(fxy_matrix);
 [n1,n2] = GetDegree(gxy_matrix);
 
-nEntries_f = (m1+1) * (m2+1);
-nEntries_g = (n1+1) * (n2+1);
+nEntries_f = (m1 + 1) * (m2 + 1);
+nEntries_g = (n1 + 1) * (n2 + 1);
+
 
 v_i1_f = GetAsVector(diag(0:1:m1) * ones(m1+1,m2+1));
 v_i2_f = GetAsVector(ones(m1+1,m2+1) * diag(0:1:m2));
@@ -17,52 +29,43 @@ v_i2_f = GetAsVector(ones(m1+1,m2+1) * diag(0:1:m2));
 v_i1_g = GetAsVector(diag(0:1:n1) * ones(n1+1,n2+1));
 v_i2_g = GetAsVector(ones(n1+1,n2+1) * diag(0:1:n2));
 
-
-% Assemble the four submatrices of Matrix A
-
 PartOne = ...
     [
-    ones(nEntries_f,1) ,... 
-    zeros(nEntries_f,1) ,...
-    -1.* v_i1_f ,...
-    -1.* v_i2_f ...
+    ones(nEntries_f,1),...
+    zeros(nEntries_f,1),...
+    zeros(nEntries_f,1) ...
     ];
 
 PartTwo = ...
     [
     ones(nEntries_g,1) ,...
     zeros(nEntries_g,1) ,...
-    -1 .* v_i1_g ,...
-    -1 .* v_i2_g ...
+    -1.* ones(nEntries_g,1) ...
     ];
 
 PartThree = ...
     [
     zeros(nEntries_f,1) ,...
-    -1.* ones(nEntries_f,1) ,... 
-    v_i1_f ,...
-    v_i2_f ...
+    -1 .* ones(nEntries_f,1) ,...
+    zeros(nEntries_f,1) ...
     ];
 
 PartFour = ...
     [
     zeros(nEntries_g,1) ,...
     -1 .* ones(nEntries_g,1) ,...
-    v_i1_g ,...
-    v_i2_g ...
+    ones(nEntries_g,1)
     ];
 
-% Now build the vector b
+
+% Now build the vector b = [\lambda ; \mu ;  \rho ;  \tau]
 lambda_vec = GetAsVector(fxy_matrix);
 mu_vec = GetAsVector(gxy_matrix);
 rho_vec = GetAsVector(fxy_matrix);
 tau_vec = GetAsVector(gxy_matrix);
 
 
-% % 
-% % Removing any zero coefficients
-% %
-% %
+% 
 % Get the index of the zero rows in lambda
 index_zero_lambda = find(lambda_vec==0);
 % Remove the corresponding zeros from lambda
@@ -97,20 +100,16 @@ PartFour(index_zero_tau,:) = [];
 A = [PartOne; PartTwo; PartThree; PartFour];
 
 
-b = [log10(abs(lambda_vec)); log10(abs(mu_vec)); -log10(abs(rho_vec));-log10(abs(tau_vec))];
+b =  [log10(abs(lambda_vec)); log10(abs(mu_vec)); -log10(abs(rho_vec));-log10(abs(tau_vec))];
 
 
 x = linprog(f,-A,-b);
 
 try
-    theta1 = 10^x(3);
-    theta2 = 10^x(4);
-    %fprintf('Optimal theta 1 and theta 2 given by: \n  theta_{1}: %0.5e \n  theta_{2}: %0.5e',theta1,theta2)
+    alpha = 10^x(3);
 catch
-    fprintf('Failed to optimize\n')
-    theta1 = 1;
-    theta2 = 1;
-
+    fprintf([ mfilename 'Failed to optimize\n'])
+    alpha = 1; 
 
 end
 

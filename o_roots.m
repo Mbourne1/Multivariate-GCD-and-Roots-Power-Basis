@@ -1,4 +1,4 @@
-function [] = o_roots(ex_num,el,mean_method,bool_alpha_theta,low_rank_approx_method)
+function [] = o_roots(ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_approx_method)
 % o_roots(ex_num,el,mean_method,bool_alpha_theta,low_rank_approx_method)
 %
 % Given an example number and set of parameters, obtain the roots of the
@@ -8,7 +8,9 @@ function [] = o_roots(ex_num,el,mean_method,bool_alpha_theta,low_rank_approx_met
 %
 % ex_num - Example Number
 %
-% el - Lower noise level
+% emin : Lower noise level
+%
+% emax : Upper noise level
 %
 % mean_method : 
 %       'Geometric Mean Matlab Method'
@@ -23,9 +25,11 @@ function [] = o_roots(ex_num,el,mean_method,bool_alpha_theta,low_rank_approx_met
 %       'None'           : Exclude SNTLN
 %
 % % Examples
-% >> o_roots('1',1e-10,'Geometric Mean Matlab Method', 'y','None')
+% >> o_roots('1', 1e-10, 1e-12, 'Geometric Mean Matlab Method', 'y', 'None')
 
-SetGlobalVariables(mean_method,bool_alpha_theta,low_rank_approx_method)
+problem_type = 'Roots';
+
+SetGlobalVariables(problem_type,ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_approx_method)
 
 % %
 % %
@@ -36,7 +40,7 @@ SetGlobalVariables(mean_method,bool_alpha_theta,low_rank_approx_method)
 [fxy_exact, m] = Examples_Roots(ex_num);
 
 % Add noise to the coefficients of polynomial f(x,y)
-[fxy,~] = Noise2(fxy_exact,el);
+[fxy,~] = Noise2(fxy_exact,emin,emax);
 
 
 % % 

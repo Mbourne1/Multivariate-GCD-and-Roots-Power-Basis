@@ -1,4 +1,4 @@
-function [hxy_matrix] = Deconvolve_bivariate(fxy_matrix,gxy_matrix)
+function [hxy_matrix] = Deconvolve_Bivariate(fxy_matrix,gxy_matrix)
 % Return the matrix of coefficients of the polynomial h, where h = f/g
 
 %

@@ -5,7 +5,8 @@ function [fxy_exact, gxy_exact,...
     n,n1,n2,...
     t_exact,t1_exact,t2_exact]  = Examples_GCD(ex_num)
 
-EXAMPLE_TYPE = 'FromRoots';
+EXAMPLE_TYPE = 'FromCoefficients';
+
 switch EXAMPLE_TYPE
     case 'FromRoots'
         
@@ -718,47 +719,47 @@ switch ex
     case '7'
         f_roots_x = ...
             [
-            1.456   1
-            0.567   2
-            0.927   3
+            1.456   1;
+            0.567   2;
+            0.927   3;
             ];
         
         f_roots_y = ...
             [
-            1.000   1
-            1.192   2
-            1.752   2
+            1.000   1;
+            1.192   2;
+            1.752   2;
             ];
         
         f_roots_xy{1,1} = ...
             [
             0.1     1;
-            1       0
+            1       0;
             ];
         f_roots_xy{2,1} = ...
             [
             0.1     1;
-            1       0
+            1       0;
             ];
         f_roots_xy{3,1} = ...
             [
             0.1     1;
-            1       0
+            1       0;
             ];
         
         g_roots_x = ...
             [
-            1.456   1
-            0.567   2
-            0.427   3
+            1.456   1;
+            0.567   2;
+            0.427   3;
             ];
         
         g_roots_y = ...
             [
-            1.927   4
+            1.927   4;
             1.192   2
             ];
-        g_roots_y = mult_roots_y(g_roots_y);
+        
         
         
         g_roots_xy{1,1} = ...
@@ -1402,6 +1403,8 @@ switch ex
         m = 4;
         n = 4;
         t = 3;
+        
+   
     otherwise
         error('Not a valid example number')
         
@@ -1424,11 +1427,11 @@ d_roots = [d_roots_x; d_roots_y ; d_roots_xy];
 u_roots = [u_roots_x; u_roots_y ; u_roots_xy];
 v_roots = [v_roots_x; v_roots_y ; v_roots_xy];
 
-fxy_matrix_exact = BuildPoly_NonSeparable(f_roots)
-gxy_matrix_exact = BuildPoly_NonSeparable(g_roots)
-dxy_matrix_exact = BuildPoly_NonSeparable(d_roots)
-uxy_matrix_exact = BuildPoly_NonSeparable(u_roots)
-vxy_matrix_exact = BuildPoly_NonSeparable(v_roots)
+fxy_matrix_exact = BuildPoly_NonSeparable(f_roots);
+gxy_matrix_exact = BuildPoly_NonSeparable(g_roots);
+dxy_matrix_exact = BuildPoly_NonSeparable(d_roots);
+uxy_matrix_exact = BuildPoly_NonSeparable(u_roots);
+vxy_matrix_exact = BuildPoly_NonSeparable(v_roots);
 
 [r,c] = size(fxy_matrix_exact);
 m1 = r -1;
@@ -1452,6 +1455,10 @@ function [fxy_exact, gxy_exact,...
     m,m1,m2,...
     n,n1,n2,...
     t_exact,t1_exact,t2_exact] = Examples_GCD_FromCoefficients(ex_num)
+
+uxy_exact = [];
+vxy_exact = [];
+
 switch ex_num
     case '1'
         %'-45*x*y - 15*x^3*y - 20*x*y^2 + 27*x*y^3 + 9*x^3*y^3 + 12*x*y^4';
@@ -1485,5 +1492,108 @@ switch ex_num
         t_exact = 4;
         t1_exact = 1;
         t2_exact = 3;
+        
+    case '2'
+        
+        fxy_exact = ...
+            [
+                2 -1
+                -3 0
+                1 0
+            ];
+        m = 2;
+        m1 = 2;
+        m2 = 1;
+        
+        gxy_exact = ...
+            [
+                3   -1
+                -4  0
+                1   0
+            ];
+        n = 2;
+        n1 = 2;
+        n2 = 1;
+        
+        dxy_exact = ...
+            [
+            -1  
+            1
+            ];
+        t_exact = 1;
+        t1_exact = 1;
+        t2_exact = 0;
+        
+    case '3'
+        x = sym('x');
+        y = sym('y');
+
+        f = (x^2 + y^2 + 1)^2 * (x+1) * (y-1) * (y-3);
+        g = (x^2 + y^2 + 1)^2 * (x+1) * (y-2);
+        d = (x^2 + y^2 + 1)^2 * (x+1);
+        
+        m = double(feval(symengine, 'degree', f));
+        n = double(feval(symengine, 'degree', g));
+        t_exact = double(feval(symengine, 'degree', d));
+        
+        fxy_exact = double(rot90(coeffs(f,[x,y],'All'),2));
+        gxy_exact = double(rot90(coeffs(g,[x,y],'All'),2));
+        dxy_exact = double(rot90(coeffs(d,[x,y],'All'),2));
+        
+        m1= 0;
+        m2 = 0;
+        n1 = 0;
+        n2 = 0;
+        t1_exact = 0;
+        t2_exact = 0;
+        
+    case '4'
+        % Example 1 from "Computing the Greatest common divisor of ...
+        % multivariate polynomials over finite fields" Yang 
+        
+        x = sym('x');
+        y = sym('y');
+
+        f = (x +  y + 11) * (3*x + y + 1);
+        g = (x + y + 4) * (3*x + y + 1);
+        d = (3*x + y + 1);
+        
+        m = double(feval(symengine, 'degree', f));
+        n = double(feval(symengine, 'degree', g));
+        t_exact = double(feval(symengine, 'degree', d));
+        
+        fxy_exact = double(rot90(coeffs(f,[x,y],'All'),2));
+        gxy_exact = double(rot90(coeffs(g,[x,y],'All'),2));
+        dxy_exact = double(rot90(coeffs(d,[x,y],'All'),2));
+        
+        m1= 0;
+        m2 = 0;
+        n1 = 0;
+        n2 = 0;
+        t1_exact = 0;
+        t2_exact = 0;
+    case '5'
+        
+        x = sym('x');
+        y = sym('y');
+
+        f = (x + 11)^2 * (y + 1)^3 * (x + 0.6)^3 * (y- 1.6)^1;
+        g = (x + 11)^2 * (y + 1)^3 * (x + 1.9)^7 * (y-0.625)^3;
+        d = (x + 11)^2 * (y + 1)^3;
+        
+        m = double(feval(symengine, 'degree', f));
+        n = double(feval(symengine, 'degree', g));
+        t_exact = double(feval(symengine, 'degree', d));
+        
+        fxy_exact = double(rot90(coeffs(f,[x,y],'All'),2));
+        gxy_exact = double(rot90(coeffs(g,[x,y],'All'),2));
+        dxy_exact = double(rot90(coeffs(d,[x,y],'All'),2));
+        
+        m1= 0;
+        m2 = 0;
+        n1 = 0;
+        n2 = 0;
+        t1_exact = 0;
+        t2_exact = 0;
 end
 end

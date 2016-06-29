@@ -11,8 +11,6 @@ function [t] = GetGCDDegreeTotal(fxy_matrix,gxy_matrix,m,n)
 %
 % n
 
-global SETTINGS
-
 % % 
 % Calculate the Degree of the GCD
 
@@ -29,6 +27,8 @@ v_minRowNormR1 = zeros(min(m,n),1);
 Data_RowNorm    = [];
 Data_DiagNorm   = [];
 
+lower_lim = 1;
+upper_lim = min(m,n);
 
 
 %%
@@ -37,6 +37,7 @@ Data_DiagNorm   = [];
 % g is of degree (n,n)
 fxy_matrix_padd = zeros(m+1,m+1);
 gxy_matrix_padd = zeros(n+1,n+1);
+
 
 [r,c] = size(fxy_matrix);
 fxy_matrix_padd(1:r,1:c) = fxy_matrix;
@@ -68,7 +69,6 @@ for k = 1:1:min(m,n)
     
     data = [data ; ks vec_diags];
     
-    
     % Get number of rows in R1
     [R1_rows,~] = size(diag(R));
     
@@ -85,7 +85,7 @@ for k = 1:1:min(m,n)
     ks = k.*ones(size(R1_RowNorm));
     ns = 1:1:size(R1_RowNorm,1);
     
-    % Form a triple of [ks, the value of QR_RowNorm, and the index of the value of
+    % Form a triple of k, QR_RowNorm, and index of the value of
     % the row of R1 corresponding to QR_RowNorm].
     % EG.
     %  [1   0.015  1
@@ -98,16 +98,16 @@ for k = 1:1:min(m,n)
     Data_DiagNorm = [Data_DiagNorm;X2];
     
     
-    %
+    % Get the maximum diagonal of R1
     v_maxDiagR1(k) = max(diag(R1));
     
-    %
+    % Get the minimum diagonal of R1
     v_minDiagR1(k) = min(diag(R1));
     
-    %
+    % Get the maximum row norm
     v_maxRowNormR1(k) = max(R1_RowNorm);
     
-    %
+    % Get the minimal row norm
     v_minRowNormR1(k) = min(R1_RowNorm);
     
     % Get minimum singular value of S_{k}
@@ -125,115 +125,16 @@ if k == 1
    fprintf('Only one subresultant exists')
 end
 
-% first check if only one subresultant exists
-[r,~] = size(v_MinimumSingularValue);
-if (r == 1)
-    fprintf('Only one subresultant exists. Check if near rank deficient \n')
-    
-    vSingularValues = svd(Sk);
-    
-    % Plot all singular values of S_{1}(f,g)
-    figure('name','GetDegreeTotal - SVD')
-    hold on
-    plot(log10(vSingularValues),'-s')
-    hold off
-    
-    vDelta_MinSingularValues = abs(diff(log10(vSingularValues)));
-    
-    max_change = max(abs(diff(log10(vSingularValues))));
-    
-    if max_change < THRESHOLD
-        %
-        fprintf('Change in Singular values is not significant \n')
-        t = 0;
-        
-        
-    else
-        fprintf('Change in Singular values is signficant \n')
-        t = 1;
-    end
-    
-    fprintf('Degree of GCD : %i \n',t)
-    return
-end
 
-switch SETTINGS.PLOT_GRAPHS
-    case 'y'
-        figure_name = sprintf('%s - R Diagonals',mfilename);
-        figure('name',figure_name)
-        hold on
-        title('Diagonal entries of R matrix where S_{k,k} = QR')
-        xlabel('k')
-        ylabel('log_{10} diagonal r_{i,i}')
-        scatter(data(:,1),log10(data(:,2)))
-        hold off
-        
-        figure_name = sprintf('%s - Minimum Singular Values',mfilename);
-        figure('name',figure_name)
-        titleString = sprintf('Singular Values');
-        title(titleString)
-        xlabel('k: total degree')
-        ylabel('log_{10} \sigma_{i}')
-        hold on
-        plot(log10(v_MinimumSingularValue),'-s');
-        hold off
-        
-        % plot all the largest ratios for k = 1,...,min(m,n)
-        figure_name = sprintf('%s - QR max:min diagonals',mfilename);
-        figure('name',figure_name)
-        hold on
-        title('Plotting max:min diagonal entries of QR decomposition of S_{k}')
-        plot(log10(vRatio_MaxMin_Diags_R1),'-s');
-        xlabel('k')
-        ylabel('log_{10}')
-        hold off
-        
-        figure_name = sprintf('%s - QR max:min Row Sum',mfilename);
-        figure('name',figure_name)
-        hold on
-        title('Plotting max:min rowsums of QR decomposition of S_{k}')
-        plot(log10(vRatio_MaxMin_RowNorm_R1),'-s');
-        xlabel('k')
-        ylabel('log_{10}')
-        hold off
-    case 'n'
-    otherwise
-        error('plot_graphs is either y or n')
-end
-
-% Calculate the total degree
-
-fprintf('-----------------------------------------------------------------\n')
-[svd_val,svd_maxindex] = max(diff(log10(v_MinimumSingularValue)));
-fprintf('Total Degree Calculated By Minimum Singular Values: %i \n',svd_maxindex);
-
-[rowdiag_val,rowdiag_maxindex] = min(diff(log10(vRatio_MaxMin_Diags_R1)));
-fprintf('Total Degree Calculated By Max:Min Row Diags: %i \n',rowdiag_maxindex);
-
-[rowsum_val,rowsum_maxindex] = min(diff(log10(vRatio_MaxMin_RowNorm_R1)));
-fprintf('Total Degree Calculated By Max:Min Row Sums: %i \n',rowsum_maxindex);
-
-fprintf('-----------------------------------------------------------------\n')
-
-
-val = rowdiag_val;
-index = rowdiag_maxindex;
-
-% check if the maximum change is significant
-
-if abs(val) < SETTINGS.THRESHOLD
-    
-    % Not significant
-    t = min(m,n);
-    fprintf('No significant change in minimal row diagaonl between subresultants \n')
-    fprintf('All Subresultants are either full rank or rank deficient. \n')
-    fprintf('Degree of GCD either zero or min(m,n)\n')
-    
-    
+% if only one subresultant exists.
+if lower_lim == upper_lim
+    t = GetGCDDegree_OneSubresultant(Sk);
+    return;
 else
-    % Change is significant
-    t = index;
+    t = GetGCDDegree_MultipleSubresultants(v_MinimumSingularValue,[1,min(m,n)]);
 end
-
+   
+% Plot graphs
+PlotGraphs()
 
 end

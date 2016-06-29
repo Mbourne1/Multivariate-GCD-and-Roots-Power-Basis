@@ -8,9 +8,7 @@ f = ...
     6 0 0;
     ]
 
-[r,c] = size(f)
-m1 = r - 1;
-m2 = c - 1;
+[m1,m2] = GetDegree(f)
 
 m = 2;
 

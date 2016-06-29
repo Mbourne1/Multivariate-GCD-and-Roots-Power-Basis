@@ -22,9 +22,6 @@ T2 = BuildT1(gxy_matrix,m1-t1,m2-t2);
 % Concatenate the two partitions
 St = [T1 T2];
 
-% Get the condition number of this subresultant
-fprintf('Condition of the Sylvester subresultant S_{t1,t2} %0.5e \n',cond(St))
-
 % From the given subresultant find the optimal column for removal.
 [~,cols_T1] = size(St);
 
@@ -49,7 +46,7 @@ end
 % Obtain the column for which the residual is minimal.
 [~,opt_col] = min(log10(residuals_QR));
 
-
+try
 switch SETTINGS.PLOT_GRAPHS
     case 'y'       
         figure('name','Optimal Column Calculation')
@@ -63,11 +60,14 @@ switch SETTINGS.PLOT_GRAPHS
     otherwise
         error('Error: plot_graphs is either y or n')
 end
+catch err
+    fprintf(err.message)
+end
 %% Print the optimal column and minimal residual
-fprintf('\n')
-fprintf('Optimal column for removal is given by %i \n',opt_col)
-fprintf('Minimal Residual %0.5e',min(residuals_QR));
-fprintf('\n')
+% fprintf('\n')
+% fprintf('Optimal column for removal is given by %i \n',opt_col)
+% fprintf('Minimal Residual %0.5e',min(residuals_QR));
+% fprintf('\n')
 
 
 end

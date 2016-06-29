@@ -9,14 +9,14 @@ function [t] = GetGCDDegreeTotal2(fxy_matrix,gxy_matrix,m,n,limits_t)
 %
 %
 
-global SETTINGS % USED ON LINE
-
-
-
+% Set upper and lower bound for total degree t.
 lower_lim = limits_t(1);
 upper_lim = limits_t(2);
 
-if (lower_lim == upper_lim)
+% if the upper and lower bound are equal, and not equal to one, then set
+% the total degree to lower bound. If bound = 1, then it is possible for
+% the polynomials to be coprime.
+if (lower_lim == upper_lim && lower_lim ~= 1)
     t = lower_lim;
     return;
 end
@@ -40,8 +40,10 @@ fxy_matrix_padd(1:r,1:c) = fxy_matrix;
 [r,c] = size(gxy_matrix);
 gxy_matrix_padd(1:r,1:c) = gxy_matrix;
 
+% Get the number of subresultants
 n_Subresultants = upper_lim - lower_lim + 1;
 
+% Initialise some vectors
 v_maxDiagR1 = zeros(n_Subresultants,1);
 v_minDiagR1 = zeros(n_Subresultants,1);
 v_maxRowNormR1 = zeros(n_Subresultants,1);
@@ -58,7 +60,7 @@ for k = lower_lim:1:upper_lim
     % Get i, an index for any storage vectors which will always start at 1.
     i = k - lower_lim + 1;
     
-    % Build the partitions of the Sylvester matrix
+    % Build the partitions T1 and T2 of the Sylvester matrix
     T1 = BuildT1_TotalDegree(fxy_matrix_padd,m,n-k);
     T2 = BuildT1_TotalDegree(gxy_matrix_padd,n,m-k);
     
@@ -120,104 +122,24 @@ for k = lower_lim:1:upper_lim
     % Get minimum singular value of S_{k}
     vSingularValues = svd(Sk);
     v_MinimumSingularValue(i) = min(vSingularValues);
-    
+   
 end
 
-% Get ratio of max to min entry on the diagonal of R1_{i} for each
-% subresultant S_{i} = QR_{i}.
-vRatio_MaxMin_Diags_R1 = v_maxDiagR1./v_minDiagR1;
-
-% Get the ratio of max to min row norm in R1_{i} for each subresultant S_{i} = QR_{i}
-vRatio_MaxMin_RowNorm_R1 = v_maxRowNormR1./v_minRowNormR1;
 
 % if only one subresultant exists.
 if lower_lim == upper_lim
-    GetRank_One_Subresultant(vSingularValues);
+    t = GetGCDDegree_OneSubresultant(Sk);
+    return;
 else
+    t = GetGCDDegree_MultipleSubresultants(v_MinimumSingularValue,limits_t);
 end
    
-
-plotgraphs()
-
-
-% Calculate the total degree
-
-fprintf('-----------------------------------------------------------------\n')
-[svd_val,svd_maxindex] = max(diff(log10(v_MinimumSingularValue)));
-fprintf('Total Degree Calculated By Minimum Singular Values: %i \n',svd_maxindex);
-
-[rowdiag_val,rowdiag_maxindex] = min(diff(log10(vRatio_MaxMin_Diags_R1)));
-fprintf('Total Degree Calculated By Max:Min Row Diags: %i \n',rowdiag_maxindex);
-
-[rowsum_val,rowsum_maxindex] = min(diff(log10(vRatio_MaxMin_RowNorm_R1)));
-fprintf('Total Degree Calculated By Max:Min Row Sums: %i \n',rowsum_maxindex);
-
-fprintf('-----------------------------------------------------------------\n')
+% Plot graphs
+PlotGraphs()
 
 
-val = rowdiag_val;
-index = rowdiag_maxindex;
-
-% check if the maximum change is significant
-
-if abs(val) < SETTINGS.THRESHOLD
-    
-    % Not significant
-    t = min(m,n);
-    fprintf('No significant change in minimal row diagaonl between subresultants \n')
-    fprintf('All Subresultants are either full rank or rank deficient. \n')
-    fprintf('Degree of GCD either zero or min(m,n)\n')
-    
-    
-else
-    % Change is significant
-    t = index;
-end
 
 
 end
 
 
-
-function t = GetRank_One_Subresultant(vMinSingVal)
-% Given the vector
-% Get the rank, where only one subresultant exists.
-
-global SETTINGS
-
-% Only one subresultant
-fprintf('Only one subresultant exists. \n')
-switch SETTINGS.PLOT_GRAPHS
-    case 'y'
-        figure('name','GetDegree - One Subresultant - Singular Values of S1')
-        hold on
-        title('Singular values of S_{1}')
-        plot(log10(vMinSingVal))
-        hold off
-    case 'n'
-end
-
-% Get the differences between singular values of S_{1}
-vDiffSingularValues = diff(log10(vMinSingVal));
-
-% Get the index of the largest change in singular values of S_{1}
-[deltaSingularValues, ~] = max(vDiffSingularValues);
-
-% If the change is smaller than the predefined threshold value, then plot
-% is considered 'flat'.
-if deltaSingularValues < SETTINGS.THRESHOLD
-    
-    % The subresultant is of full rank, in which case t = 0
-    t = 0;
-    fprintf('The only Subresultant S_{1} appears to be of NonSingular. \n');
-    return
-    
-else % val > threshold
-    
-    % The subresultant S_{1} is rank deficient, in which case t = 1
-    t = 1;
-    fprintf('The only Subresultant S_{1} appears to be Singular \n');
-    return
-    
-end
-end

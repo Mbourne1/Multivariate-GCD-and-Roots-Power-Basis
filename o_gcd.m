@@ -1,4 +1,4 @@
-function [] = o_gcd(ex_num,emin,mean_method,bool_alpha_theta,low_rank_approx_method)
+function [] = o_gcd(ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_approx_method)
 % o_gcd(ex_num,emin,mean_method,bool_alpha_theta,low_rank_approx_method)
 %
 % Calculate the GCD d(x,y) of two polynomials f(x,y) and g(x,y) taken from
@@ -10,6 +10,8 @@ function [] = o_gcd(ex_num,emin,mean_method,bool_alpha_theta,low_rank_approx_met
 % ex_num  : Example Number (String)
 %
 % emin    : Minimum Noise level
+%
+% emax : Maximum signal to noise ratio
 %
 % mean_method :
 %       'Geometric Mean Matlab Method'
@@ -24,13 +26,15 @@ function [] = o_gcd(ex_num,emin,mean_method,bool_alpha_theta,low_rank_approx_met
 %       'None'
 %
 % % Example
-% >> o_gcd('1',1e-10, 'Geometric Mean Matlab Method', 'y','None')
+% >> o_gcd('1',1e-10,1e-12, 'Geometric Mean Matlab Method', 'y','None')
 
 
 % Set the Global Variables
 global SETTINGS
 
-SetGlobalVariables(mean_method,bool_alpha_theta,low_rank_approx_method)
+problem_type = 'GCD';
+
+SetGlobalVariables(problem_type,ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_approx_method)
 
 
 % Get example polynomials
@@ -49,8 +53,8 @@ DisplayDegreeStructure();
 % Noise
 
 % Add noise to the coefficients of f and g
-[fxy, ~] = Noise2(fxy_exact,emin);
-[gxy, ~] = Noise2(gxy_exact,emin);
+[fxy, ~] = Noise2(fxy_exact,emin,emax);
+[gxy, ~] = Noise2(gxy_exact,emin,emax);
 
 % %
 % % Get the GCD by zengs method
@@ -62,7 +66,7 @@ lower_limit = 1;
 upper_limit = min(m,n);
 t_limits = [lower_limit,upper_limit];
 
-[uxy_calc, vxy_calc, dxy_calc,t,t1,t2] = o_gcd_mymethod(fxy,gxy,m,n,t_limits);
+[fxy_calc, gxy_calc, dxy_calc, uxy_calc, vxy_calc,t,t1,t2] = o_gcd_mymethod(fxy,gxy,m,n,t_limits);
 
 %[dxy_zeng,uxy_zeng,vxy_zeng] = o_gcd_zeng(fxy,gxy,1e-10);
 
@@ -70,25 +74,28 @@ t_limits = [lower_limit,upper_limit];
 
 try
     % Compare exact u(x,y) and calculated u(x,y)
-    PrintCoefficients(uxy_calc,uxy_exact,'u(x,y)');
-    GetDistanceBetweenPolynomials(uxy_calc,uxy_exact,'u(x,y');
+    %PrintCoefficients(uxy_calc,uxy_exact,'u(x,y)');
+    %GetDistanceBetweenPolynomials(uxy_calc,uxy_exact,'u(x,y');
     
     % Compare exact v(x,y) and calculated v(x,y)
-    PrintCoefficients(vxy_calc,vxy_exact,'v(x,y)');
-    GetDistanceBetweenPolynomials(vxy_calc,vxy_exact,'v(x,y');
+    %PrintCoefficients(vxy_calc,vxy_exact,'v(x,y)');
+    %GetDistanceBetweenPolynomials(vxy_calc,vxy_exact,'v(x,y');
 catch
     fprintf('U and V are not known \n')
 end
 
 
 % Compare exact d(x,y) and calculated d(x,y)
-PrintCoefficients(dxy_calc,dxy_exact,'d(x,y)');
-
-error_dxy = GetDistanceBetweenPolynomials(dxy_calc,dxy_exact,'d(x,y');
-
+%PrintCoefficients(dxy_calc,dxy_exact,'d(x,y)');
+try
+    error_dxy = GetDistanceBetweenPolynomials(dxy_calc,dxy_exact,'d(x,y');
+catch err
+    fprintf([mfilename ' : ' err.message]);
+    error_dxy = 9999999;
+end
 % Compare exact d(x,y) and d(x,y) calculated by zengs method
 try
-    PrintCoefficients(dxy_zeng,dxy_exact,'d(x,y)');
+    %PrintCoefficients(dxy_zeng,dxy_exact,'d(x,y)');
     error_dxy_zeng = GetDistanceBetweenPolynomials(dxy_zeng,dxy_calc,'d(x,y)');
     display(dxy_zeng)
 catch
@@ -141,16 +148,22 @@ function []= PrintToFile(m,n,t,error_dx)
 
 global SETTINGS
 
-fullFileName = 'o_gcd_results.txt';
+fullFileName = 'Results_o_gcd.txt';
 
 
-if exist('o_gcd_results.txt', 'file')
-    fileID = fopen('o_gcd_results.txt','a');
-    fprintf(fileID,'%5d \t %5d \t %5d \t %s \t %s \t %s \t %s \t %s\n',...
-        m,n,t,error_dx,...
+if exist('Results_o_gcd.txt', 'file')
+    fileID = fopen('Results_o_gcd.txt','a');
+    fprintf(fileID,'%s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s\n',...
+        datetime('now'),...
+        SETTINGS.EX_NUM,...
+        int2str(m),...
+        int2str(n),...
+        int2str(t),...
+        error_dx,...
         SETTINGS.MEAN_METHOD,...
         SETTINGS.BOOL_ALPHA_THETA,...
-        SETTINGS.NOISE,...
+        SETTINGS.EMIN,...
+        SETTINGS.EMAX,...
         SETTINGS.LOW_RANK_APPROXIMATION_METHOD);
     fclose(fileID);
 else
@@ -158,6 +171,17 @@ else
     warningMessage = sprintf('Warning: file does not exist:\n%s', fullFileName);
     uiwait(msgbox(warningMessage));
 end
+
+
+
+
+
+
+
+
+
+
+
 
 
 

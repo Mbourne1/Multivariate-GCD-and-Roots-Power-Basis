@@ -1,5 +1,5 @@
-global PLOT_GRAPHS
-switch PLOT_GRAPHS
+global SETTINGS
+switch SETTINGS.PLOT_GRAPHS
     case 'y'
         x = lower_lim:1:upper_lim;
         
@@ -27,6 +27,7 @@ switch PLOT_GRAPHS
         figure('name',figure_name)
         hold on
         title('Plotting max:min diagonal entries of QR decomposition of S_{k}')
+        vRatio_MaxMin_Diags_R1 = v_maxDiagR1 ./ v_minDiagR1;
         plot(x,log10(vRatio_MaxMin_Diags_R1),'-s');
         
         xlabel('k')
@@ -37,6 +38,7 @@ switch PLOT_GRAPHS
         figure('name',figure_name)
         hold on
         title('Plotting max:min rowsums of QR decomposition of S_{k}')
+        vRatio_MaxMin_RowNorm_R1 = v_maxRowNormR1 ./ v_minRowNormR1;
         plot(x,log10(vRatio_MaxMin_RowNorm_R1),'-s');
         xlabel('k')
         ylabel('log_{10}')

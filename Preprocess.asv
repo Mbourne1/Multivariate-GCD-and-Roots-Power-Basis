@@ -60,15 +60,10 @@ switch SETTINGS.BOOL_ALPHA_THETA
                 
                 [alpha, th1,th2] = OptimalAlphaAndTheta(fxy_n,gxy_n);
                 
-                str1 = sprintf('Alpha : %2.4f', alpha);
-                str2 = sprintf('Theta_{1} : %2.4f', th1);
-                str3 = sprintf('Theta_{2} : %2.4f', th2);
-                
-                fprintf([mfilename ' : ' str1 '\n']);
-                fprintf([mfilename ' : ' str2 '\n']);
-                fprintf([mfilename ' : ' str3 '\n']);
-                
-                
+                str1 = sprintf('Alpha : ', )
+                display(alpha);
+                display(th1);
+                display(th2);
         end
         
         

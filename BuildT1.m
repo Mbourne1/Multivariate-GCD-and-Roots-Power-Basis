@@ -58,8 +58,8 @@ for tot = 0 : 1 : nDiags_v
             % Produce temporary vector from the coefficients       
             temp_vec = GetAsVector(temp_mat);
             
-            % Append the temporary vector to the matrix T1
-            %T1 = [T1 temp_vec];
+            % Set the kth column 
+            
             T1(:,count) = temp_vec;
             count = count + 1;
         end

@@ -1,4 +1,4 @@
-function lambda = GetMean(fxy,n1_k1,n2_k2)
+function lambda = GetMean(fxy)
 % Get the mean of the entries of f(x,y) in the matrix C(f), by a predefined
 % mean method.
 
@@ -12,5 +12,5 @@ switch SETTINGS.MEAN_METHOD
         lambda = 1;
         
     otherwise
-        error('err')
+        error('error')
 end
