@@ -12,41 +12,56 @@ function [] = o_roots_mymethod(fxy_matrix,M)
 
 % Get factorization with respect to x
 if m1 > 0
-    [wx,vDegt_x] = o_roots_mymethod_x(fxy_matrix,M);
+    [wx,vDegt_wx] = o_roots_mymethod_x(fxy_matrix,M);
 else
     fprintf([mfilename ' : ''No roots with respect to x \n'])
 end
 
 % Get factorization with respect to y
 if m2 > 0
-    [wy,vDegt_y] = o_roots_mymethod_y(fxy_matrix,M);
+    [wy,vDegt_wy] = o_roots_mymethod_y(fxy_matrix,M);
 else
     % No roots wrt y
     fprintf([mfilename ' : ''No roots with respect to y \n'])
 end
 
-try
-    [wx,wy,wxy] = o_roots_mymethod_xy(wx,wy,vDegt_x,vDegt_y);
+%try
+    [wx,wy,wxy] = o_roots_mymethod_xy(wx,wy,vDegt_wx,vDegt_wy);
     
+    LineBreakLarge()
     for i = 1:1:length(wx)
-        fprintf([mfilename sprintf(' : Roots of x, of degree : %i', i)])
-        wx{i}
+        fprintf([mfilename sprintf(' : Roots of x, of degree : %i', i) '\n']);
+        factor = wx{i};
+        try
+            display(factor./factor(1,1));
+        catch
+        end
     end
+    LineBreakLarge()
     for i = 1:1:length(wy)
-        fprintf([mfilename sprintf(' : Roots of y, of degree : %i', i)])
-        wy{i}
+        fprintf([mfilename sprintf(' : Roots of y, of degree : %i', i) '\n']);
+        factor = wy{i};
+        try
+            display(factor./factor(1,1));
+        catch
+        end
     end
+    LineBreakLarge()
     for i = 1:1:length(wxy)
-        fprintf([mfilename sprintf(' : Roots of x and y, of degree : %i', i)])
-        wxy{i}
+        fprintf([mfilename sprintf(' : Roots of x and y, of degree : %i', i) '\n']);
+        factor = wxy{i};
+        try
+            display(factor./factor(1,1));
+        catch
+        end
     end
-catch err
-    fprintf([mfilename err.message])
+%catch err
+%    fprintf([mfilename err.message])
     
-end
+%end
 
-% % 
-% % 
+% %
+% %
 % %
 % %
 

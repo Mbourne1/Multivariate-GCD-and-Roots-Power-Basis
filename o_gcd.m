@@ -53,7 +53,7 @@ DisplayDegreeStructure();
 
 % %
 % %
-% Noise
+% Add Noise
 
 % Add noise to the coefficients of f and g
 [fxy, ~] = Noise2(fxy_exact,emin,emax);
@@ -91,15 +91,15 @@ end
 % Compare exact d(x,y) and calculated d(x,y)
 %PrintCoefficients(dxy_calc,dxy_exact,'d(x,y)');
 try
-    error_dxy = GetDistanceBetweenPolynomials(dxy_calc,dxy_exact,'d(x,y');
+    error_dxy = GetDistanceBetweenPolynomials(dxy_exact,dxy_calc,'d(x,y');
 catch err
-    fprintf([mfilename ' : ' err.message]);
+    fprintf([mfilename ' : ' err.message '\n']);
     error_dxy = 9999999;
 end
 % Compare exact d(x,y) and d(x,y) calculated by zengs method
 try
     %PrintCoefficients(dxy_zeng,dxy_exact,'d(x,y)');
-    error_dxy_zeng = GetDistanceBetweenPolynomials(dxy_zeng,dxy_calc,'d(x,y)');
+    error_dxy_zeng = GetDistanceBetweenPolynomials(dxy_exact,dxy_zeng,'d(x,y)');
     display(dxy_zeng)
 catch
     

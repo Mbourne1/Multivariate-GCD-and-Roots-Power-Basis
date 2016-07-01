@@ -3,10 +3,10 @@ function [opt_col] = GetOptimalColumn_total(fxy_matrix,gxy_matrix,m,n,t)
 % % Build the partitions of the Sylvester matrix S_{t}
 
 % Build the first partition containing coefficients of fxy
-T1 = BuildT1_totaldegree(fxy_matrix,m,n,t);
+T1 = BuildT1_TotalDegree(fxy_matrix,m,n-t);
 
 % Build the second partition containing coefficients of gxy
-T2 = BuildT1_totaldegree(gxy_matrix,n,m,t);
+T2 = BuildT1_TotalDegree(gxy_matrix,n,m-t);
 
 % Concatenate the two partitions
 St = [T1 T2];
@@ -31,7 +31,7 @@ end
 
 
 % Obtain the column for which the residual is minimal.
-
+global SETTINGS
 switch SETTINGS.PLOT_GRAPHS
     case 'y'
         [~,opt_col] = min(log10(residuals_QR));

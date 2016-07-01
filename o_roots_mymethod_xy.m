@@ -1,4 +1,4 @@
-function [wx,wy,wxy] = o_roots_mymethod_xy(wx,wy,vDegt_x,vDegt_y)
+function [wx,wy,wxy] = o_roots_mymethod_xy(wx,wy,vDegt_wx,vDegt_wy)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -19,20 +19,32 @@ for i = 1:1:nEntries_wx
         
         fxy_matrix_n = wx{i};
         gxy_matrix_n = wy{i};
-        opt_alpha = 1;
-        opt_theta_1 = 1;
-        opt_theta_2 = 1;
+        alpha = 1;
+        th1 = 1;
+        th2 = 1;
         
-        [~,t2] = GetDegree(fxy_matrix_n);
-        [t1,~] = GetDegree(gxy_matrix_n);
+        [~,nCols] = size(fxy_matrix_n);
+        [nRows,~] = size(gxy_matrix_n);
+        t1 = nRows -1;
+        t2 = nCols -1;
+        
         
         % Get quotients
-        [uxy_matrix_clc,vxy_matrix_clc] = GetQuotients(fxy_matrix_n,gxy_matrix_n,t1,t2,opt_alpha,opt_theta_1,opt_theta_2);
+        [uxy_matrix_clc,vxy_matrix_clc] = GetQuotients(fxy_matrix_n,gxy_matrix_n,t1,t2,alpha,th1,th2);
+        
+        %[uxy_matrix_clc,vxy_matrix_clc] = GetQuotients_both(fxy_matrix_n,gxy_matrix_n,m,n,t,t1,t2,alpha,th1,th2);
         
         % Get the GCD dxy
-        dxy_matrix_clc = GetGCDCoefficients(fxy_matrix_n,gxy_matrix_n,uxy_matrix_clc,vxy_matrix_clc,opt_alpha, opt_theta_1, opt_theta_2);
-        
-        % Overwrite wx and wy with new values
+        dxy_matrix_clc = GetGCDCoefficients(fxy_matrix_n,gxy_matrix_n,uxy_matrix_clc,vxy_matrix_clc,alpha, th1, th2);
+
+%         m = vDegt_wx(i);
+%         n = vDegt_wy(i);
+%         lower_lim = 0;
+%         upper_lim = min(m,n);
+%         
+%         [~,~,dxy_matrix_clc,~,~,t,t1,t2] = o_gcd_mymethod(fxy_matrix_n,gxy_matrix_n,m,n,[lower_lim, upper_lim]);
+%         
+        %Overwrite wx and wy with new values
         wxy{i} = dxy_matrix_clc;
         wx{i} = uxy_matrix_clc;
         wy_new = Deconvolve_Bivariate(wy{i},dxy_matrix_clc);

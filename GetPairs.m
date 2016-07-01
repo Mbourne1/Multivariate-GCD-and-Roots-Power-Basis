@@ -1,8 +1,10 @@
 function t1t2_pair_mat = GetPairs(m,m1,m2,n,n1,n2,t)
 % Get the set of (k1,k2) pairs for computing S_{k_{1},k_{2}}
 
-% method is either 'All' or 'Refined'
-method = 'Refined';
+% Method is either 'All' or 'Refined'
+% All - All possible combinations of t1 = 0,...,min(m1,n1) and t2 =
+% 0,...,min(m2,n2)
+method = 'All';
 
 switch method
     case 'All'

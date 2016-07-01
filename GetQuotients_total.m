@@ -24,7 +24,7 @@ padd_matrix(1:m1+1,1:m2+1) = fxy;
 fxy = padd_matrix;
 
 % Replace gxy_matrix with the padded version
-[n1,n2] = size(gxy);
+[n1,n2] = GetDegree(gxy);
 padd_matrix = zeros(n+1,n+1);
 padd_matrix(1:n1+1,1:n2+1) = gxy;
 gxy = padd_matrix;
@@ -41,10 +41,10 @@ gww_matrix = GetWithThetas(gxy,th1,th2);
 % % Build the partitions of the Sylvester matrix S_{t}
 
 % Build the first partition containing coefficients of fxy
-T1 = BuildT1_totaldegree(fww_matrix,m,n,t);
+T1 = BuildT1_TotalDegree(fww_matrix,m,n-t);
 
 % Build the second partition containing coefficients of gxy
-T2 = BuildT1_totaldegree(gww_matrix,n,m,t);
+T2 = BuildT1_TotalDegree(gww_matrix,n,m-t);
 
 % Concatenate the two partitions
 St = [T1 alpha.*T2];
@@ -105,20 +105,13 @@ uww_calc = [...
 zeros_vww = zeros(nchoosek(n-t-1+2,2),1);
 zeros_uww = zeros(nchoosek(m-t-1+2,2),1);
 
-uww_calc_mtrx = getAsMatrix([uww_calc;zeros_uww],m-t,m-t);
-vww_calc_mtrx = getAsMatrix([vww_calc;zeros_vww],n-t,n-t);
+uww_calc_mtrx = GetAsMatrix([uww_calc;zeros_uww],m-t,m-t);
+vww_calc_mtrx = GetAsMatrix([vww_calc;zeros_vww],n-t,n-t);
 
 %% Get u(x,y) and v(x,y) from u(w,w) and v(w,w)
 
-th1 = diag(1./th1.^(0:1:m-t));
-th2 = diag(1./th2.^(0:1:m-t));
-
-uxy_calc_mtrx = th1 * uww_calc_mtrx * th2;
-
-th1 = diag(1./th1.^(0:1:n-t));
-th2 = diag(1./th2.^(0:1:n-t));
-
-vxy_calc_mtrx = th1 * vww_calc_mtrx * th2;
+uxy_calc_mtrx = GetWithoutThetas(uww_calc_mtrx,th1,th2);
+vxy_calc_mtrx = GetWithoutThetas(vww_calc_mtrx,th1,th2);
 
 
 

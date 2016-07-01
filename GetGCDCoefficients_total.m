@@ -32,10 +32,10 @@ vww_matrix = GetWithThetas(vxy,th1,th2);
 % % Build Matrix C
 
 % Build the Cauchy matrix of coefficients of u(w,w)
-C1 = BuildT1_TotalDegree(uww_matrix,m,n-t);
+C1 = BuildT1_TotalDegree(uww_matrix,m-t,t);
 
 % Build the Cauchy matrix of coefficients of v(w,w)
-C2 = BuildT1_TotalDegree(vww_matrix,n,m-t);
+C2 = BuildT1_TotalDegree(vww_matrix,n-t,t);
 
 % Build the RHS vector of coefficients of f and g
 C = [C1;C2];
@@ -84,6 +84,8 @@ rhs_vec = [fww_vec;
 % Calculate the x vector by pinv 
 x = SolveAx_b(C,rhs_vec);
     
+dww_vec = x;
+
 % Get the residual associated with the solution x. (Small residual implies good approximation)    
 residual = pinv(C)*rhs_vec - x;
 
@@ -91,7 +93,7 @@ residual = pinv(C)*rhs_vec - x;
 dww_vec = [dww_vec ; zeros(nchoosek(t+2-1,2),1)];
 
 % Arrange dw into a matrix form based on its dimensions.
-dww_calc_matrix = getAsMatrix(dww_vec,t,t);
+dww_calc_matrix = GetAsMatrix(dww_vec,t,t);
 
 % % Obtain d(x,y) from d(w,w)
 dxy_matrix = GetWithoutThetas(dww_calc_matrix,th1,th2);

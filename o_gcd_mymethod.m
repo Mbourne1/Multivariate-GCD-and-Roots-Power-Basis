@@ -44,17 +44,17 @@ global SETTINGS
 
 
 % % Preprocessing
-[lambda,mu,alpha,theta1,theta2] = Preprocess(fxy,gxy);
+[lambda,mu,alpha,th1,th2] = Preprocess(fxy,gxy);
 
 % Normalise f(x,y) by geometric means
 fxy_n = fxy./lambda;
 gxy_n = gxy./mu;
 
 % Get f(w,w) from f(x,y)
-fww = GetWithThetas(fxy_n,theta1,theta2);
+fww = GetWithThetas(fxy_n,th1,th2);
 
 % Get g(w,w) from g(x,y)
-gww = GetWithThetas(gxy_n,theta1,theta2);
+gww = GetWithThetas(gxy_n,th1,th2);
 
 % Build the 0-th Subresultant of the preprocessed polynomials.
 S_Preproc = BuildSylvesterMatrix(fxy,gxy,0,0);
@@ -86,25 +86,27 @@ fprintf([mfilename ' : ' sprintf('The calculated total degree is : %i \n',t)]);
 
 % Given the total degree, obtain t_{1} and t_{2}
 LineBreakMedium();
+
 [t1,t2] = GetGCDDegreeRelative(fww,alpha.*gww,m,n,t);
+
+[t1,t2] = GetGCDDegreeRelative_Given_t(fww,alpha*gww,m,n,t);
 
 LineBreakMedium();
 fprintf([mfilename ' : ' sprintf('The calculated relative degree is : t_{1} = %i, t_{2} = %i \n',t1,t2)])
 LineBreakMedium();
 
 % % Get optimal column for removal from S_{t_{1},t_{2}}
-opt_col = GetOptimalColumn(fww,alpha.*gww,t1,t2);
+opt_col = GetOptimalColumn_respective(fww,alpha.*gww,t1,t2);
 
 % Perform low rank approximation method
 
 % Note. Use the notation 'lr' for low rank approximation.
-
 switch SETTINGS.LOW_RANK_APPROXIMATION_METHOD
     case 'Standard STLN'
         
         % Get preprocessed polynomials
-        fww = GetWithThetas(fxy_n,theta1,theta2);
-        gww = GetWithThetas(gxy_n,theta1,theta2);
+        fww = GetWithThetas(fxy_n,th1,th2);
+        gww = GetWithThetas(gxy_n,th1,th2);
         
         % Perform STLN to obtain low rank approximation
         [fww_lr,a_gww_lr] = STLN(fww, alpha.*gww,m,n,t1,t2,opt_col);
@@ -113,10 +115,10 @@ switch SETTINGS.LOW_RANK_APPROXIMATION_METHOD
         gww_lr = a_gww_lr./ alpha;
         
         % Get f(x,y) from f(w,w)
-        fxy_lr = GetWithoutThetas(fww_lr,theta1,theta2);
+        fxy_lr = GetWithoutThetas(fww_lr,th1,th2);
         
         % Get g(x,y) from g(w,w)
-        gxy_lr = GetWithoutThetas(gww_lr,theta1,theta2);
+        gxy_lr = GetWithoutThetas(gww_lr,th1,th2);
         
         fxy_n = fxy_lr;
         gxy_n = gxy_lr;
@@ -127,7 +129,7 @@ switch SETTINGS.LOW_RANK_APPROXIMATION_METHOD
         
         % Get the SNTLN of the Sylvester matrix
         [fxy_lr,gxy_lr,alpha_lr,theta1_lr,theta2_lr,~] = ...
-            SNTLN(fxy_n,gxy_n,alpha,theta1,theta2,t1,t2,opt_col);
+            SNTLN(fxy_n,gxy_n,alpha,th1,th2,t1,t2,opt_col);
         
         
         % Update f(x,y) g(x,y) theta1 theta2 and alpha to their new values post
@@ -135,13 +137,13 @@ switch SETTINGS.LOW_RANK_APPROXIMATION_METHOD
         fxy_n = fxy_lr;
         gxy_n = gxy_lr;
         
-        theta1 = theta1_lr;
-        theta2 = theta2_lr;
+        th1 = theta1_lr;
+        th2 = theta2_lr;
         alpha = alpha_lr;
         
         % Get f(w,w) from f(x,y)
-        fww_lr = GetWithThetas(fxy_n,theta1,theta2);
-        gww_lr = GetWithThetas(gxy_n,theta1,theta2);
+        fww_lr = GetWithThetas(fxy_n,th1,th2);
+        gww_lr = GetWithThetas(gxy_n,th1,th2);
         
         S_LowRankApprox = BuildSylvesterMatrix(fww_lr,alpha_lr.*gww_lr,0,0);
         
@@ -200,30 +202,39 @@ switch SETTINGS.PLOT_GRAPHS
 end
 
 % % Get quotients u(x,y) and v(x,y)
-calc_method = 'relative';
+% Two methods
+% Relative : Compute using relative degree structure
+% Total : Compute using total degree structure
+CALC_METHOD = 'Both';
 
-switch calc_method
-    case 'total'
+switch CALC_METHOD
+    case 'Total'
         [uxy,vxy] = ...
-            GetQuotients_total(fxy_n,gxy_n,m,n,t,alpha,theta1,theta2);
-    case 'relative'
+            GetQuotients_total(fxy_n,gxy_n,m,n,t,alpha,th1,th2);
+    case 'Relative'
         [uxy,vxy] = ...
-            GetQuotients(fxy_n,gxy_n,t1,t2,alpha,theta1,theta2);
+            GetQuotients(fxy_n,gxy_n,t1,t2,alpha,th1,th2);
+    case 'Both'
+        [uxy,vxy] = ...
+            GetQuotients_both(fxy_n,gxy_n,m,n,t,t1,t2,alpha,th1,th2);
     otherwise
         error('calc method is either total or relative')
 end
 
 
 % % Get the GCD d(x,y)
-switch calc_method
-    case 'total'
+switch CALC_METHOD
+    case 'Total'
         dxy = ...
-            GetGCDCoefficients_total(fxy_n,gxy_n,uxy,vxy,alpha, theta1, theta2,m,n,t);
-    case 'relative'
+            GetGCDCoefficients_total(fxy_n,gxy_n,uxy,vxy,alpha, th1, th2,m,n,t);
+    case 'Relative'
         dxy = ...
-            GetGCDCoefficients(fxy_n,gxy_n,uxy,vxy,alpha, theta1, theta2);
+            GetGCDCoefficients(fxy_n,gxy_n,uxy,vxy,alpha, th1, th2);
+    case 'Both'
+        dxy = ...
+            GetGCDCoefficients_both(fxy_n,gxy_n,uxy,vxy,t,alpha, th1, th2);
     otherwise
-        error('calc method is either total or relative')
+        error([mfilename ' : calc method is either total or relative'])
 end
 
 

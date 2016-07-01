@@ -1,4 +1,4 @@
-function [wx,vDegt_fx] = o_roots_mymethod_x(fxy_matrix,M)
+function [wx,vDegt_wx] = o_roots_mymethod_x(fxy_matrix,M)
 % Given a bivariate polynomial compute the roots by differentiating with
 % respect to x.
 
@@ -29,16 +29,19 @@ while vDeg1_fx(ite) > 0
         
         % The GCD is a constant
         fx{ite+1} = Differentiate_wrt_x(fx{ite});
-        ux{ite+1} = Deconvolve_Bivariate(fx{ite},fx{ite+1});
+        
+        % EDIT 30/06/2016
+        % ux{ite+1} = Deconvolve_Bivariate(fx{ite},fx{ite+1});
+        ux{ite+1} = Deconvolve_Bivariate_new(fx{ite},fx{ite+1},vDegt_fx(ite), vDegt_fx(ite)-1);
         
         % Get degree of d(x,y) with respect to x
-        vDeg1_fx(ite+1) = 0;
+        vDeg1_fx(ite+1) = vDeg1_fx(ite)-1;
         
         % Get degree of d(x,y) with respect to y
         vDeg2_fx(ite+1) = vDeg2_fx(ite);
         
         % Get total degree of d(x,y)
-        vDegt_fx(ite+1) = 0;
+        vDegt_fx(ite+1) = vDegt_fx(ite)-1;
         break;
     end
     
@@ -89,13 +92,10 @@ while vDeg1_fx(ite) > 0
     
     LineBreakLarge()
     
-    % increment the iteration number
+    % Increment the iteration number
     ite = ite + 1;
     
 end
-
-
-
 
 % % Obtain the series h_{i}
 % Each h_{x}(i) is obtained by the deconvolution of q_{x}(i) and q_{x}(i+1)
@@ -106,20 +106,34 @@ end
 % %
 % %     Get h_{i}(x)
 % %
-method = 'From Deconvolutions';
+
+METHOD = 'From Deconvolutions';
+deconv_method = 'new';
+
 % For each pair of q_{x}(i) and q_{x}(i+1)
 for i = 1 : 1 : num_entries_qx - 1
     
     % Perform the deconvolution
-    switch method
+    switch METHOD
         case 'From Deconvolutions'
-            hx{i} = Deconvolve_Bivariate(fx{i},fx{i+1});
+            
+            
+            switch deconv_method
+                case 'naive'
+                    hx{i} = Deconvolve_Bivariate(fx{i},fx{i+1});
+                case 'new'
+                    % EDIT 30/06/2016
+                    hx{i} = Deconvolve_Bivariate_new(fx{i}, fx{i+1},vDegt_fx(i), vDegt_fx(i+1));
+            end
+
         case 'From ux'
             hx{i} = ux{i};
     end
+    
     % Get the degree structure of h_{x}(i)
-    deg1_hx(i) = vDeg1_fx(i) - vDeg1_fx(i+1);
-    deg2_hx(i) = vDeg2_fx(i) - vDeg2_fx(i+1);
+    vDeg1_hx(i) = vDeg1_fx(i) - vDeg1_fx(i+1);
+    vDeg2_hx(i) = vDeg2_fx(i) - vDeg2_fx(i+1);
+    vDegt_hx(i) = vDegt_fx(i) - vDegt_fx(i+1);
 end
 
 
@@ -138,12 +152,16 @@ if num_entries_hx > 1
     for i = 1:1:num_entries_hx-1
         
         % Peform deconvolutions to obtain w_{x}
-        
-        wx{i}    = Deconvolve_Bivariate(hx{i},hx{i+1});
-        
+        switch deconv_method
+            case 'naive'
+                wx{i}   = Deconvolve_Bivariate(hx{i},hx{i+1});
+            case 'new'
+                wx{i}   = Deconvolve_Bivariate_new(hx{i},hx{i+1},vDegt_hx(i),vDegt_hx(i+1));
+        end 
         % Get the degree structure of each w_{x}(i)
-        deg1_wx(i) = deg1_hx(i) - deg1_hx(i+1);
-        deg2_wx(i) = deg2_hx(i) - deg2_hx(i+1);
+        vDeg1_wx(i) = vDeg1_hx(i) - vDeg1_hx(i+1);
+        vDeg2_wx(i) = vDeg2_hx(i) - vDeg2_hx(i+1);
+        vDegt_wx(i) = vDegt_hx(i) - vDegt_hx(i+1);
         
     end
     
@@ -151,17 +169,18 @@ if num_entries_hx > 1
     wx{i+1} = hx{i+1};
     
     % Set the final degree structure
-    deg1_wx(i+1) = deg1_hx(i+1);
-    deg2_wx(i+1) = deg2_hx(i+1);
+    vDeg1_wx(i+1) = vDeg1_hx(i+1);
+    vDeg2_wx(i+1) = vDeg2_hx(i+1);
+    vDegt_wx(i+1) = vDegt_hx(i+1);
     
 else
     
     % Number of h_{i} is equal to one, so no deconvolutions to be performed
     wx{1} = hx{1};
     % Get the degree structure of h_{x,i}
-    deg1_wx(1) = deg1_hx(1);
-    deg2_wx(1) = deg2_hx(1);
-    
+    vDeg1_wx(1) = vDeg1_hx(1);
+    vDeg2_wx(1) = vDeg2_hx(1);
+    vDegt_wx(1) = vDegt_hx(1);
 end
 
 for i = 1:1:length(wx)

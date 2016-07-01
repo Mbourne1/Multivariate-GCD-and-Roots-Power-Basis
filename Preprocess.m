@@ -123,8 +123,8 @@ switch SETTINGS.BOOL_ALPHA_THETA
         PrintToFile([m1,m2],[n1,n2],max_fw,min_fw,max_gw,min_gw,alpha,th1,th2);
         
         
-        str1 = sprintf('Condition S(f(x),g(x)) : %2.4f', cond(BuildSylvesterMatrix(fxy,gxy,1,1)));
-        str2 = sprintf('Condition S(f(w),alpha*g(w)) : %2.4f', cond(BuildSylvesterMatrix(fww,alpha.*gww,1,1)));
+        str1 = sprintf('Condition S(f(x),g(x)) : %2.4e', cond(BuildSylvesterMatrix(fxy,gxy,1,1)));
+        str2 = sprintf('Condition S(f(w),alpha*g(w)) : %2.4e', cond(BuildSylvesterMatrix(fww,alpha.*gww,1,1)));
         
         fprintf([mfilename ' : ' str1 '\n']);
         fprintf([mfilename ' : ' str2 '\n']);
