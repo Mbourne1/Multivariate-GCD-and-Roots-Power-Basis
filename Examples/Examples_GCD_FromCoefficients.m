@@ -73,4 +73,9 @@ n1 = double(feval(symengine, 'degree', g,x));
 n2 = double(feval(symengine, 'degree', g,y));
 t1_exact = double(feval(symengine, 'degree', d,x));
 t2_exact = double(feval(symengine, 'degree', d,y));
+
+display(f)
+display(g)
+display(d)
+
 end

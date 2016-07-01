@@ -45,6 +45,15 @@ T1 = T1(:,1:nNonZeros_vxy);
 nNonZeros_uxy = GetNumNonZeros(m1-t1,m2-t2,m-t);
 T2 = T2(:,1:nNonZeros_uxy);
 
+% %
+% %
+% Remove the rows of T1
+nNonZeros_fv = GetNumNonZeros(m1+n1-t1,m2+n2-t2,m+n-t);
+nNonZeros_gu = GetNumNonZeros(n1+m1-t1,n2+m2-t2,n+m-t);
+
+T1 = T1(1:nNonZeros_fv,:);
+T2 = T2(1:nNonZeros_gu,:);
+
 % Concatenate the two partitions
 S_t1t2 = [T1 T2];
 

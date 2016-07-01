@@ -52,11 +52,26 @@ nNoneZeros_vxy = GetNumNonZeros(n1-t1,n2-t2,n-t);
 nZeros_uxy = (m1-t1+1) * (m2-t2+1) - nNoneZeros_uxy;
 nZeros_vxy = (n1-t1+1) * (n2-t2+1) - nNoneZeros_vxy;
 
+% %
+% %
+% Remove Columns from S
+
 % Remove the zero columns from T_{n1-t1,n2-t2}
 T1 = T1(:,1:nNoneZeros_vxy);
 
 % Remove the zero columns from T_{m1-t1,m2-t2}
 T2 = T2(:,1:nNoneZeros_uxy);
+
+% %
+% % 
+% Remove Rows from S
+
+nNoneZeros_fv = GetNumNonZeros(m1+n1-t1,m2+n2-t2,m+n-t);
+nNoneZeros_gu = GetNumNonZeros(n1+m1-t1,n2+m2-t2,n+m-t);
+
+T1 = T1(1:nNoneZeros_fv,:);
+T2 = T2(1:nNoneZeros_gu,:);
+
 
 % Form the Sylvester matrix.
 St = [T1 T2];

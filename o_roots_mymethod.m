@@ -25,7 +25,7 @@ else
     fprintf([mfilename ' : ''No roots with respect to y \n'])
 end
 
-%try
+try
     [wx,wy,wxy] = o_roots_mymethod_xy(wx,wy,vDegt_wx,vDegt_wy);
     
     LineBreakLarge()
@@ -55,10 +55,10 @@ end
         catch
         end
     end
-%catch err
-%    fprintf([mfilename err.message])
+catch err
+    fprintf([mfilename err.message '\n'])
     
-%end
+end
 
 % %
 % %

@@ -87,7 +87,7 @@ fprintf([mfilename ' : ' sprintf('The calculated total degree is : %i \n',t)]);
 % Given the total degree, obtain t_{1} and t_{2}
 LineBreakMedium();
 
-[t1,t2] = GetGCDDegreeRelative(fww,alpha.*gww,m,n,t);
+%[t1,t2] = GetGCDDegreeRelative(fww,alpha.*gww,m,n,t);
 
 [t1,t2] = GetGCDDegreeRelative_Given_t(fww,alpha*gww,m,n,t);
 
@@ -95,8 +95,21 @@ LineBreakMedium();
 fprintf([mfilename ' : ' sprintf('The calculated relative degree is : t_{1} = %i, t_{2} = %i \n',t1,t2)])
 LineBreakMedium();
 
+
+CALC_METHOD = 'Both';
+
 % % Get optimal column for removal from S_{t_{1},t_{2}}
-opt_col = GetOptimalColumn_respective(fww,alpha.*gww,t1,t2);
+switch CALC_METHOD
+    case 'Total'
+        % To do, write GetOptimalColumn() for total degree.
+         error('err')
+    case 'Relative'
+        opt_col = GetOptimalColumn_respective(fww,alpha.*gww,t1,t2);
+    case 'Both'
+        opt_col = GetOptimalColumn_both(fww,alpha.*gww,m,n,t,t1,t1);
+    otherwise
+        error('err')
+end
 
 % Perform low rank approximation method
 
@@ -108,9 +121,18 @@ switch SETTINGS.LOW_RANK_APPROXIMATION_METHOD
         fww = GetWithThetas(fxy_n,th1,th2);
         gww = GetWithThetas(gxy_n,th1,th2);
         
-        % Perform STLN to obtain low rank approximation
-        [fww_lr,a_gww_lr] = STLN(fww, alpha.*gww,m,n,t1,t2,opt_col);
-        
+        switch CALC_METHOD
+            case 'Total'
+                fprintf('No STLN Developed for total degree \n')
+            case 'Relative'
+                % Perform STLN to obtain low rank approximation
+                [fww_lr,a_gww_lr] = STLN(fww, alpha.*gww,m,n,t1,t2,opt_col);
+            case 'Both'
+                fprintf('No STLN developed for both total and relative degree \n')
+                % Perform STLN to obtain low rank approximation
+                [fww_lr,a_gww_lr] = STLN_both(fww, alpha.*gww,m,n,t,t1,t2,opt_col);
+        end
+               
         % Remove alpha from alpha.*g(w,w)
         gww_lr = a_gww_lr./ alpha;
         
@@ -127,10 +149,19 @@ switch SETTINGS.LOW_RANK_APPROXIMATION_METHOD
         
     case 'Standard SNTLN'
         
+        
+        switch CALC_METHOD
+            case 'Total'
+                fprintf('No STLN method specified in terms of total degree \n')
+            case 'Relative'
         % Get the SNTLN of the Sylvester matrix
         [fxy_lr,gxy_lr,alpha_lr,theta1_lr,theta2_lr,~] = ...
             SNTLN(fxy_n,gxy_n,alpha,th1,th2,t1,t2,opt_col);
-        
+            case 'Both'
+                % Get the SNTLN of the Sylvester matrix
+        [fxy_lr,gxy_lr,alpha_lr,theta1_lr,theta2_lr,~] = ...
+            SNTLN_both(fxy_n,gxy_n,alpha,th1,th2,t1,t2,opt_col);
+        end
         
         % Update f(x,y) g(x,y) theta1 theta2 and alpha to their new values post
         % SNTLN
@@ -205,7 +236,7 @@ end
 % Two methods
 % Relative : Compute using relative degree structure
 % Total : Compute using total degree structure
-CALC_METHOD = 'Both';
+
 
 switch CALC_METHOD
     case 'Total'
@@ -232,7 +263,7 @@ switch CALC_METHOD
             GetGCDCoefficients(fxy_n,gxy_n,uxy,vxy,alpha, th1, th2);
     case 'Both'
         dxy = ...
-            GetGCDCoefficients_both(fxy_n,gxy_n,uxy,vxy,t,alpha, th1, th2);
+            GetGCDCoefficients_both(fxy_n,gxy_n,uxy,vxy,m,n,t,alpha, th1, th2);
     otherwise
         error([mfilename ' : calc method is either total or relative'])
 end

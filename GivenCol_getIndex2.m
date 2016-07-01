@@ -26,3 +26,5 @@ j_vec = GetAsVector(j_matrix);
 
 i = i_vec(col_index);
 j = j_vec(col_index);
+
+end
