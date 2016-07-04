@@ -14,9 +14,7 @@ vDegt_fy(ite) = M(ite);
 
 % Get the degree of f(x,y) with respect to x and y
 [m1,m2] = GetDegree(fy{ite});
-
 vDeg1_fy(ite) = m1;
-
 vDeg2_fy(ite) = m2;
 
 % Whilst the most recently calculated GCD has a degree greater than
@@ -30,9 +28,8 @@ while vDeg2_fy(ite) > 0
         % The GCD is a constant
         fy{ite+1} = Differentiate_wrt_y(fy{ite});
         
-        % 
-        %uy{ite+1} = Deconvolve_Bivariate(fy{ite},fy{ite+1});
-        uy{ite+1} = Deconvolve_Bivariate_new(fy{ite},fy{ite+1},vDegt_fy(ite),vDegt_fy(ite)-1);
+        % Deconvolve 
+        uy{ite+1} = Deconvolve_Bivariate(fy{ite},fy{ite+1},vDegt_fy(ite),vDegt_fy(ite)-1);
         
         % Get degree of d(x,y) with respect to x
         vDeg1_fy(ite+1) = vDeg1_fy(ite)-1;
@@ -46,8 +43,8 @@ while vDeg2_fy(ite) > 0
     end
     
     LineBreakLarge()
-    fprintf('GCD calculation wrt y iteration : %i \n\n',ite);
-    fprintf('Compute GCD of f_{%i} and derivative f_{%i}\n\n',ite,ite);
+    fprintf([mfilename ' : ' sprintf('GCD calculation wrt y iteration : %i \n\n',ite)]);
+    fprintf([mfilename ' : ' sprintf('Compute GCD of f_{%i} and derivative f_{%i}\n\n',ite,ite)]);
     
     % Get the derivative of f(x,y) with respect to y.
     gxy = Differentiate_wrt_y(fy{ite});
@@ -105,25 +102,11 @@ end
 % %     Get h_{i}(y)
 % %
 
-METHOD = 'From Deconvolutions';
-deconv_method = 'new';
-
 % For each pair of q_{x}(i) and q_{x}(i+1)
 for i = 1 : 1 : num_entries_qy - 1
     
-    % Perform the deconvolution
-    switch METHOD
-        case 'From Deconvolutions'
-            
-            switch deconv_method
-                case 'naive'
-                    hy{i} = Deconvolve_Bivariate(fy{i},fy{i+1});
-                case 'new'
-                    hy{i} = Deconvolve_Bivariate_new(fy{i},fy{i+1},vDegt_fy(i),vDegt_fy(i+1));
-            end
-        case 'From ux'
-            hy{i} = uy{i};
-    end
+    % Perform deconvolutions
+    hy{i} = Deconvolve_Bivariate(fy{i},fy{i+1},vDegt_fy(i),vDegt_fy(i+1))
     
     % Get the degree structure of h_{x}(i)
     vDeg1_hy(i) = vDeg1_fy(i) - vDeg1_fy(i+1);
@@ -138,27 +121,28 @@ end
 if num_entries_hy > 1
     for i = 1:1:num_entries_hy-1
         
-        switch deconv_method
-            case 'naive'
-        wy{i}    =  Deconvolve_Bivariate(hy{i},hy{i+1});
-            case 'new'
-                wy{i} = Deconvolve_Bivariate_new(hy{i},hy{i+1},vDegt_hy(i),vDegt_hy(i+1));
-        end
+        % Deconvolve.
+        wy{i} = Deconvovle_Bivariate(hy{i},hy{i+1},vDegt_hy(i),vDegt_hy(i+1));
         
+        % Get degree structure.
         vDeg1_wy(i) = vDeg1_hy(i) - vDeg1_hy(i+1);
         vDeg2_wy(i) = vDeg2_hy(i) - vDeg2_hy(i+1);
         vDegt_wy(i) = vDegt_hy(i) - vDegt_hy(i+1);
         
     end
+    
     wy{i+1} = hy{i+1};
     vDeg1_wy(i+1) = vDeg1_hy(i+1);
     vDeg2_wy(i+1) = vDeg2_hy(i+1);
     vDegt_wy(i+1) = vDegt_hy(i+1);
+    
 else
+    
     wy{1} = hy{1};
     vDeg1_wy(1) = vDeg1_hy(1);
     vDeg2_wy(1) = vDeg2_hy(1);
     vDegt_wy(1) = vDegt_hy(1);
+    
 end
 
 for i = 1:1:length(wy)

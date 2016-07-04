@@ -102,7 +102,7 @@ CALC_METHOD = 'Both';
 switch CALC_METHOD
     case 'Total'
         % To do, write GetOptimalColumn() for total degree.
-         error('err')
+        opt_col = GetOptimalColumn_total(fww,alpha.*gww,m,n,t);
     case 'Relative'
         opt_col = GetOptimalColumn_respective(fww,alpha.*gww,t1,t2);
     case 'Both'
@@ -123,6 +123,9 @@ switch SETTINGS.LOW_RANK_APPROXIMATION_METHOD
         
         switch CALC_METHOD
             case 'Total'
+                fww_lr = fww;
+                a_gww_lr = alpha.*gww;
+                
                 fprintf('No STLN Developed for total degree \n')
             case 'Relative'
                 % Perform STLN to obtain low rank approximation

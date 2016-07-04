@@ -47,33 +47,6 @@ nCoeff_v = (n1-t1+1) * (n2-t2+1);
 % Get the number of coefficients in u(x,y)
 nCoeff_u = (m1-t1+1) * (m2-t2+1);
 
-% Since we know m,m1,m2,n,n1,n2 we can remove columns corresponding to the
-% coefficients which will definitely be zeros.
-SETTINGS.BOOL_REMOVECOLS = 'n';
-
-switch SETTINGS.BOOL_REMOVECOLS
-    case 'y'
-        % % Get number of zeros in f(x,y)
-        diff_f = m1 + m2 - m;
-        diff_g = n1 + n2 - n;
-        
-        if diff_f ~=0
-            nZeros_f = nchoosek(diff_f + 1,2);
-        else
-            nZeros_f = 0;
-        end
-        
-        if diff_g ~=0
-            nZeros_g = nchoosek(diff_g + 1,2);
-        else
-            nZeros_g = 0;
-        end
-    case 'n'
-        
-        nZeros_f = 0 ;
-        nZeros_g = 0;
-end
-
 % Get the number of coefficients in the unknown vector x, where A_{t}x =
 % c_{t}.
 %num_coeff_x = num_coeff_u + num_coeff_v - 1;
@@ -93,21 +66,21 @@ Et = zeros(size(At));
 ht = zeros(size(ct));
 
 % EDIT 10/03/2016
-z = zeros(nCoeff_f + nCoeff_g - nZeros_f - nZeros_g,1);
+z = zeros(nCoeff_f + nCoeff_g,1);
 
 % Get the vector of coefficients zf
-vZ_fxy = z(1:nCoeff_f - nZeros_f);
+vZ_fxy = z(1:nCoeff_f );
 
 % Get the vector of coefficeints zg
-vZ_gxy = z(nCoeff_f-nZeros_f+1:end);
+vZ_gxy = z(nCoeff_f+1:end);
 
 % Get zf as a matrix
 % EDIT 10/03/2016 - vZ_fxy has zeros removed, so include the zeros to form
 % a matrix m1+1 * m2+1
-matZ_fxy = GetAsMatrix([vZ_fxy; zeros(nZeros_f,1)],m1,m2);
+matZ_fxy = GetAsMatrix(vZ_fxy, m1, m2);
 
 % Get zg as a matrix
-matZ_gxy = GetAsMatrix([vZ_gxy; zeros(nZeros_g,1)],n1,n2);
+matZ_gxy = GetAsMatrix(vZ_gxy, n1, n2);
 
 % Get the vector x
 % A_{t} x = c_{t}
@@ -124,11 +97,11 @@ x = ...
 % Build the matrix Y_{t}
 % Where Y(x) * z = E(z) * x
 Yt = BuildYt(x,m,m1,m2,n,n1,n2,t1,t2);
+
 v_fxy = GetAsVector(fxy_matrix);
-v_fxy(end-(nZeros_f-1):end) = [];
 
 v_gxy = GetAsVector(gxy_matrix);
-v_gxy(end-(nZeros_g-1):end) = [];
+
 
 test1 = Yt * [v_fxy;v_gxy];
 test2 = At * x_ls;
@@ -158,12 +131,12 @@ H_x = At + Et;
 C = [H_z H_x];
 
 % Build the matrix E
-nEntries = (nCoeff_f-nZeros_f) + (nCoeff_g-nZeros_g) + nCoeff_u + nCoeff_v - 1;
+nEntries = nCoeff_f + nCoeff_g + nCoeff_u + nCoeff_v - 1;
 
 E = blkdiag( eye(nCoeff_f -  + nCoeff_g) , zeros(nCoeff_u + nCoeff_v - 1));
 %E = eye(nEntries);
 
-yy = zeros((nCoeff_f-nZeros_f) + (nCoeff_g-nZeros_g) + nCoeff_u + nCoeff_v - 1,1);
+yy = zeros(nCoeff_f + nCoeff_g + nCoeff_u + nCoeff_v - 1,1);
 
 % Get initial residual (A_{t}+E_{t})x = (c_{t} + h_{t})
 g = (ct + ht) - At*x_ls;
@@ -204,14 +177,14 @@ while condition(ite) >  SETTINGS.MAX_ERROR_SNTLN &&  ite < SETTINGS.MAX_ITERATIO
     x_ls    = x_ls + delta_xk;
     
     % Split vector z into vectors z_f and z_g
-    vZ_fxy = z(1:nCoeff_f-nZeros_f);
-    vZ_gxy = z(nCoeff_f-nZeros_f + 1:end);
+    vZ_fxy = z(1 : nCoeff_f);
+    vZ_gxy = z(nCoeff_f + 1 : end);
     
     % Get zf as a matrix
-    matZ_fxy = GetAsMatrix([vZ_fxy; zeros(nZeros_f,1)],m1,m2);
+    matZ_fxy = GetAsMatrix(vZ_fxy, m1, m2);
     
     % Get zg as a matrix
-    matZ_gxy = GetAsMatrix([vZ_gxy; zeros(nZeros_g,1)],n1,n2);
+    matZ_gxy = GetAsMatrix(vZ_gxy, n1, n2);
     
     % Build the matrix B_{t} = [E1(zf) E2(zg)]
     E1 = BuildT1(matZ_fxy,n1-t1,n2-t2);
@@ -307,31 +280,6 @@ C2 = BuildT1(mat_xu,n1,n2);
 diff_f = m1 + m2 - m;
 diff_g = n1 + n2 - n;
 
-global SETTINGS
-switch SETTINGS.BOOL_REMOVECOLS
-    case 'y'
-        
-        if diff_f ~=0
-            num_zeros_f = nchoosek(diff_f + 1,2);
-        else
-            num_zeros_f = 0;
-        end
-        
-        if diff_g ~=0
-            num_zeros_g = nchoosek(diff_g + 1,2);
-        else
-            num_zeros_g = 0;
-        end
-        
-    case 'n'
-        num_zeros_f = 0;
-        num_zeros_g = 0;
-    otherwise
-        error('err')
-end
-C1(:,end-(num_zeros_f-1) : end) = [];
-C2(:,end-(num_zeros_g-1) : end) = [];
-
 Yt = [C1 C2];
 
 
@@ -408,28 +356,6 @@ else
 end
 diff_f = m1 + m2 - m;
 diff_g = n1 + n2 - n;
-
-global SETTINGS
-switch SETTINGS.BOOL_REMOVECOLS
-    case 'y'
-        if diff_f ~=0
-            num_zeros_f = nchoosek(diff_f + 1,2);
-        else
-            num_zeros_f = 0;
-        end
-        
-        if diff_g ~=0
-            num_zeros_g = nchoosek(diff_g + 1,2);
-        else
-            num_zeros_g = 0;
-        end
-    case 'n'
-        num_zeros_f = 0;
-        num_zeros_g = 0;
-end
-
-P1(:,end-(num_zeros_f-1) : end) = [];
-P2(:,end-(num_zeros_g-1) : end) = [];
 
 Pt = [P1 P2];
 

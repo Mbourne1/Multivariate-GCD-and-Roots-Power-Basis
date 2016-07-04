@@ -14,9 +14,7 @@ vDegt_fx(ite) = M(ite);
 
 % Get the degree of f(x,y) with respect to x and y
 [m1,m2] = GetDegree(fx{ite});
-
 vDeg1_fx(ite) = m1;
-
 vDeg2_fx(ite) = m2;
 
 % Whilst the most recently calculated GCD has a degree greater than
@@ -30,9 +28,8 @@ while vDeg1_fx(ite) > 0
         % The GCD is a constant
         fx{ite+1} = Differentiate_wrt_x(fx{ite});
         
-        % EDIT 30/06/2016
-        % ux{ite+1} = Deconvolve_Bivariate(fx{ite},fx{ite+1});
-        ux{ite+1} = Deconvolve_Bivariate_new(fx{ite},fx{ite+1},vDegt_fx(ite), vDegt_fx(ite)-1);
+        % Deconvolve
+        ux{ite+1} = Deconvolve_Bivariate(fx{ite},fx{ite+1},vDegt_fx(ite), vDegt_fx(ite)-1);
         
         % Get degree of d(x,y) with respect to x
         vDeg1_fx(ite+1) = vDeg1_fx(ite)-1;
@@ -108,7 +105,6 @@ end
 % %
 
 METHOD = 'From Deconvolutions';
-deconv_method = 'new';
 
 % For each pair of q_{x}(i) and q_{x}(i+1)
 for i = 1 : 1 : num_entries_qx - 1
@@ -117,14 +113,8 @@ for i = 1 : 1 : num_entries_qx - 1
     switch METHOD
         case 'From Deconvolutions'
             
-            
-            switch deconv_method
-                case 'naive'
-                    hx{i} = Deconvolve_Bivariate(fx{i},fx{i+1});
-                case 'new'
-                    % EDIT 30/06/2016
-                    hx{i} = Deconvolve_Bivariate_new(fx{i}, fx{i+1},vDegt_fx(i), vDegt_fx(i+1));
-            end
+            % Deconvolve
+            hx{i} = Deconvolve_Bivariate(fx{i}, fx{i+1},vDegt_fx(i), vDegt_fx(i+1));
 
         case 'From ux'
             hx{i} = ux{i};
@@ -151,13 +141,9 @@ if num_entries_hx > 1
     % For each pair of h_{x}(i) and h_{x}(i+1) perform deconvolution
     for i = 1:1:num_entries_hx-1
         
-        % Peform deconvolutions to obtain w_{x}
-        switch deconv_method
-            case 'naive'
-                wx{i}   = Deconvolve_Bivariate(hx{i},hx{i+1});
-            case 'new'
-                wx{i}   = Deconvolve_Bivariate_new(hx{i},hx{i+1},vDegt_hx(i),vDegt_hx(i+1));
-        end 
+        % Deconvolve
+        wx{i} = Deconvolve_Bivariate(hx{i},hx{i+1},vDegt_hx(i),vDegt_hx(i+1));
+        
         % Get the degree structure of each w_{x}(i)
         vDeg1_wx(i) = vDeg1_hx(i) - vDeg1_hx(i+1);
         vDeg2_wx(i) = vDeg2_hx(i) - vDeg2_hx(i+1);
