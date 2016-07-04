@@ -27,6 +27,9 @@ function [] = o_roots(ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_app
 % % Examples
 % >> o_roots('1', 1e-10, 1e-12, 'Geometric Mean Matlab Method', 'y', 'None')
 
+
+addpath('Deconvolution','Examples','GetCofactors','GetGCDCoefficients','GetGCDDegree','GetOptimalColumn','Low Rank Approx')
+
 % Set the problem type, used in logging to the outputs file.
 problem_type = 'Roots';
 

@@ -1,4 +1,4 @@
-function [hxy_matrix] = Deconvolve_Bivariate_both(fxy_matrix,gxy_matrix,m,n)
+function [hxy_matrix] = Deconvolve_Bivariate_Single_Both(fxy_matrix,gxy_matrix,m,n)
 % Perform polynomial deconvolution of the bivariate polynomials f(x,y) and 
 % g(x,y) where the total degrees m and n of f and g respectively are known.
 % This method is referred to as 'both' since BOTH the total degree and

@@ -1,4 +1,4 @@
-function [opt_col] = GetOptimalColumn_both(fxy_matrix,gxy_matrix,m,n,t,t1,t2)
+function [opt_col] = GetOptimalColumn_Both(fxy_matrix,gxy_matrix,m,n,t,t1,t2)
 % Given two polynomials f(x,y) and g(x,y), and the degree structure of
 % their GCD t (t1,t2), pick the optimal column for removal from the 
 % Sylvester matrix S_{t_{1},t_{2}}(f,g), where some columns are removed

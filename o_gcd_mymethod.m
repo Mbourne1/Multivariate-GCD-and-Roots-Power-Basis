@@ -96,17 +96,17 @@ fprintf([mfilename ' : ' sprintf('The calculated relative degree is : t_{1} = %i
 LineBreakMedium();
 
 
-CALC_METHOD = 'Both';
+SETTINGS.CALC_METHOD = 'Both';
 
 % % Get optimal column for removal from S_{t_{1},t_{2}}
-switch CALC_METHOD
+switch SETTINGS.CALC_METHOD
     case 'Total'
         % To do, write GetOptimalColumn() for total degree.
-        opt_col = GetOptimalColumn_total(fww,alpha.*gww,m,n,t);
+        opt_col = GetOptimalColumn_Total(fww,alpha.*gww,m,n,t);
     case 'Relative'
-        opt_col = GetOptimalColumn_respective(fww,alpha.*gww,t1,t2);
+        opt_col = GetOptimalColumn_Respective(fww,alpha.*gww,t1,t2);
     case 'Both'
-        opt_col = GetOptimalColumn_both(fww,alpha.*gww,m,n,t,t1,t1);
+        opt_col = GetOptimalColumn_Both(fww,alpha.*gww,m,n,t,t1,t1);
     otherwise
         error('err')
 end
@@ -121,7 +121,7 @@ switch SETTINGS.LOW_RANK_APPROXIMATION_METHOD
         fww = GetWithThetas(fxy_n,th1,th2);
         gww = GetWithThetas(gxy_n,th1,th2);
         
-        switch CALC_METHOD
+        switch SETTINGS.CALC_METHOD
             case 'Total'
                 fww_lr = fww;
                 a_gww_lr = alpha.*gww;
@@ -135,7 +135,7 @@ switch SETTINGS.LOW_RANK_APPROXIMATION_METHOD
                 % Perform STLN to obtain low rank approximation
                 [fww_lr,a_gww_lr] = STLN_both(fww, alpha.*gww,m,n,t,t1,t2,opt_col);
         end
-               
+        
         % Remove alpha from alpha.*g(w,w)
         gww_lr = a_gww_lr./ alpha;
         
@@ -153,17 +153,17 @@ switch SETTINGS.LOW_RANK_APPROXIMATION_METHOD
     case 'Standard SNTLN'
         
         
-        switch CALC_METHOD
+        switch SETTINGS.CALC_METHOD
             case 'Total'
                 fprintf('No STLN method specified in terms of total degree \n')
             case 'Relative'
-        % Get the SNTLN of the Sylvester matrix
-        [fxy_lr,gxy_lr,alpha_lr,theta1_lr,theta2_lr,~] = ...
-            SNTLN(fxy_n,gxy_n,alpha,th1,th2,t1,t2,opt_col);
+                % Get the SNTLN of the Sylvester matrix
+                [fxy_lr,gxy_lr,alpha_lr,theta1_lr,theta2_lr,~] = ...
+                    SNTLN(fxy_n,gxy_n,alpha,th1,th2,t1,t2,opt_col);
             case 'Both'
                 % Get the SNTLN of the Sylvester matrix
-        [fxy_lr,gxy_lr,alpha_lr,theta1_lr,theta2_lr,~] = ...
-            SNTLN_both(fxy_n,gxy_n,alpha,th1,th2,t1,t2,opt_col);
+                [fxy_lr,gxy_lr,alpha_lr,theta1_lr,theta2_lr,~] = ...
+                    SNTLN_both(fxy_n,gxy_n,alpha,th1,th2,t1,t2,opt_col);
         end
         
         % Update f(x,y) g(x,y) theta1 theta2 and alpha to their new values post
@@ -235,29 +235,26 @@ switch SETTINGS.PLOT_GRAPHS
         error('err')
 end
 
-% % Get quotients u(x,y) and v(x,y)
-% Two methods
-% Relative : Compute using relative degree structure
-% Total : Compute using total degree structure
-
-
-switch CALC_METHOD
+% % Get coefficients of the quotients u(x,y) and v(x,y)
+switch SETTINGS.CALC_METHOD
     case 'Total'
         [uxy,vxy] = ...
-            GetQuotients_total(fxy_n,gxy_n,m,n,t,alpha,th1,th2);
+            GetQuotients_Total(fxy_n,gxy_n,m,n,t,alpha,th1,th2);
     case 'Relative'
         [uxy,vxy] = ...
-            GetQuotients(fxy_n,gxy_n,t1,t2,alpha,th1,th2);
+            GetQuotients_Relative(fxy_n,gxy_n,t1,t2,alpha,th1,th2);
     case 'Both'
         [uxy,vxy] = ...
-            GetQuotients_both(fxy_n,gxy_n,m,n,t,t1,t2,alpha,th1,th2);
+            GetQuotients_Both(fxy_n,gxy_n,m,n,t,t1,t2,alpha,th1,th2);
     otherwise
         error('calc method is either total or relative')
 end
 
 
-% % Get the GCD d(x,y)
-switch CALC_METHOD
+% %
+% %
+% Get the coefficients of the GCD d(x,y)
+switch SETTINGS.CALC_METHOD
     case 'Total'
         dxy = ...
             GetGCDCoefficients_total(fxy_n,gxy_n,uxy,vxy,alpha, th1, th2,m,n,t);

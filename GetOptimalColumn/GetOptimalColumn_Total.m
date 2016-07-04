@@ -1,4 +1,4 @@
-function [opt_col] = GetOptimalColumn_total(fxy_matrix,gxy_matrix,m,n,t)
+function [opt_col] = GetOptimalColumn_Total(fxy_matrix,gxy_matrix,m,n,t)
 
 % % Build the partitions of the Sylvester matrix S_{t}
 

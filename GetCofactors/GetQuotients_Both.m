@@ -1,5 +1,5 @@
 function [uxy_calc_matrix,vxy_calc_matrix] = ...
-    GetQuotients(fxy_matrix,gxy_matrix,t1,t2,opt_alpha,th1,th2)
+    GetQuotients_both(fxy_matrix,gxy_matrix,m,n,t,t1,t2,opt_alpha,th1,th2)
 % GetQuotients(fxy_matrix,gxy_matrix,t1,t2,opt_alpha,th1,th2)
 %
 % Given two polynomials and the knowledge of the degree of the GCD. Obtain
@@ -30,10 +30,10 @@ function [uxy_calc_matrix,vxy_calc_matrix] = ...
 
 % % Preprocess
 
-% Get f(w,w)
+% Get f(w,w) from f(x,y)
 fww_matrix = GetWithThetas(fxy_matrix,th1,th2);
 
-% Get g(w,w) 
+% Get g(w,w) from g(x,y)
 gww_matrix = GetWithThetas(gxy_matrix,th1,th2);
 
 % % Build the partitions of the Sylvester matrix S_{t}
@@ -42,20 +42,45 @@ gww_matrix = GetWithThetas(gxy_matrix,th1,th2);
 T1 = BuildT1(fww_matrix,n1-t1,n2-t2);
 
 % Build the second partition containing coefficients of gxy
-T2 = BuildT1(gww_matrix,m1-t1,m2-t2);
+T2 = BuildT1(opt_alpha.*gww_matrix,m1-t1,m2-t2);
 
-% Concatenate the two partitions
-St = [T1 opt_alpha.*T2];
+% Get number of non-zero entries in u(x,y) and v(x,y)
+nNoneZeros_uxy = GetNumNonZeros(m1-t1,m2-t2,m-t);
+nNoneZeros_vxy = GetNumNonZeros(n1-t1,n2-t2,n-t);
 
-num_zeros_remove_T1 = 0;
-num_zeros_remove_T2 = 0;
+% Get number of zero entries in u(x,y) and v(x,y)
+nZeros_uxy = (m1-t1+1) * (m2-t2+1) - nNoneZeros_uxy;
+nZeros_vxy = (n1-t1+1) * (n2-t2+1) - nNoneZeros_vxy;
+
+% %
+% %
+% Remove Columns from S
+
+% Remove the zero columns from T_{n1-t1,n2-t2}
+T1 = T1(:,1:nNoneZeros_vxy);
+
+% Remove the zero columns from T_{m1-t1,m2-t2}
+T2 = T2(:,1:nNoneZeros_uxy);
+
+% %
+% % 
+% Remove Rows from S
+
+nNoneZeros_fv = GetNumNonZeros(m1+n1-t1,m2+n2-t2,m+n-t);
+nNoneZeros_gu = GetNumNonZeros(n1+m1-t1,n2+m2-t2,n+m-t);
+
+T1 = T1(1:nNoneZeros_fv,:);
+T2 = T2(1:nNoneZeros_gu,:);
 
 
-% % Get the optimal column for removal
-opt_col = GetOptimalColumn_respective(fww_matrix,opt_alpha.*gww_matrix,t1,t2);
+% Form the Sylvester matrix.
+St = [T1 T2];
+
+% % Get the optimal column for removal.
+opt_col = GetOptimalColumn_Both(fww_matrix,opt_alpha.*gww_matrix,m,n,t,t1,t2);
 
 
-%% Having found the optimal column, obtain u and v the quotient polynomials.
+% Having found the optimal column, obtain u and v the quotient polynomials.
 Atj = St;
 cki = St(:,opt_col);
 Atj(:,opt_col) = [];
@@ -72,32 +97,29 @@ vecx =[
 
 vecx = vecx./vecx(1);
 
-% Get number of coefficients in u(x,y) and v(x,y)
-num_coeff_v = (n1-t1+1) * (n2-t2+1);
-num_coeff_u = (m1-t1+1) * (m2-t2+1);
-
-% get the vector of coefficients of v
+% Get the vector of coefficients of v
 vww_calc = [...
-            vecx(1:(num_coeff_v - num_zeros_remove_T1));
-            zeros(num_zeros_remove_T1,1)
+            vecx(1:(nNoneZeros_vxy));
+            zeros(nZeros_vxy,1)
           ];
       
-% get the vector of coefficients of u
+% Get the vector of coefficients of u
 uww_calc = [...
-            (-1).*vecx((num_coeff_v - num_zeros_remove_T1)+1:end);
-            zeros(num_zeros_remove_T2,1);
+            (-1).*vecx( nNoneZeros_vxy + 1 :end);
+            zeros(nZeros_uxy,1);
             ];
         
 
-% % Get u and v in matrix form
-% Arrange uw into a matrix form based on their dimensions.
 
+
+% Arrange u(w,w) as a matrix.
 uww_calc_matrix = GetAsMatrix(uww_calc,m1-t1,m2-t2);
+
+% Arrange v(w,w) as a matrix.
 vww_calc_matrix = GetAsMatrix(vww_calc,n1-t1,n2-t2);
 
 % % Get u(x,y) and v(x,y) from u(w,w) and v(w,w)
 uxy_calc_matrix = GetWithoutThetas(uww_calc_matrix,th1,th2);
-
 vxy_calc_matrix = GetWithoutThetas(vww_calc_matrix,th1,th2);
 
 

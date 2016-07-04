@@ -26,8 +26,30 @@ SETTINGS.MAX_ITERATIONS_SNTLN = 100;
 
 SETTINGS.MAX_ERROR_SNTLN = 1e-14;
 
-SETTINGS.DECONVOLUTION_METHOD = 'Both';
+% Total
+% Respective
+% Both
+
+SETTINGS.CALC_METHOD = 'Both';
 
 
+%
+% Total - Use total degree
+% Respective - Use degree with respect to x and y
+% Both - Use total and respective combined
+%
+SETTINGS.DECONVOLUTION_STYLE = 'Both';
+
+% 
+% Batch - Perform batch of deconvolutions together
+% Separate - Each deconvolution is separate
+%
+SETTINGS.DECONVOLUTION_METHOD = 'Batch';
+
+%
+% 'From Deconvolutions'
+% 'From uxy'
+%
+SETTINGS.HXY_METHOD = 'From uxy';
 end
 
