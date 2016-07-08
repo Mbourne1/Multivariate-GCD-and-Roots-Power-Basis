@@ -1,4 +1,4 @@
-function [fxy_matrix_out,gxy_matrix_out] = STLN(fxy_matrix,gxy_matrix,m,n,t1,t2,opt_col)
+function [fxy_matrix_out,gxy_matrix_out] = STLN_Relative(fxy_matrix,gxy_matrix,t1,t2,opt_col)
 % Given coefficients f(x,y) and g(x,y) find the low rank approximation of
 % the Syvlester subresultant S_{t_{1},t_{2}}.
 %
@@ -38,18 +38,11 @@ nCoeff_f = (m1+1) * (m2+1);
 % Get the number of coefficients in the polynomial g(x,y)
 nCoeff_g = (n1+1) * (n2+1);
 
-% Get the number of coefficients in both f(x,y) and g(x,y)
-%num_coeff = num_coeff_f + num_coeff_g;
-
 % Get the number of coefficients in v(x,y)
 nCoeff_v = (n1-t1+1) * (n2-t2+1);
 
 % Get the number of coefficients in u(x,y)
 nCoeff_u = (m1-t1+1) * (m2-t2+1);
-
-% Get the number of coefficients in the unknown vector x, where A_{t}x =
-% c_{t}.
-%num_coeff_x = num_coeff_u + num_coeff_v - 1;
 
 % Build the Sylvester Matrix S(f,g)
 T1 = BuildT1(fxy_matrix,n1-t1,n2-t2);
@@ -96,7 +89,7 @@ x = ...
 
 % Build the matrix Y_{t}
 % Where Y(x) * z = E(z) * x
-Yt = BuildYt(x,m,m1,m2,n,n1,n2,t1,t2);
+Yt = BuildYt(x,m1,m2,n1,n2,t1,t2);
 
 v_fxy = GetAsVector(fxy_matrix);
 
@@ -110,7 +103,7 @@ norm(test1-test2)
 
 % Build the matrix P_{t}
 % Where P * [f;g] = c_{t}
-Pt = BuildPt(m,m1,m2,n,n1,n2,opt_col,t1,t2);
+Pt = BuildPt(m1,m2,n1,n2,opt_col,t1,t2);
 
 test1 = Pt * [v_fxy;v_gxy];
 test2 = ct;
@@ -210,8 +203,8 @@ while condition(ite) >  SETTINGS.MAX_ERROR_SNTLN &&  ite < SETTINGS.MAX_ITERATIO
         x_ls(opt_col:end)];
     
     % Build the matrix Y_{t} where Y_{t}(x)*z = E_{t}(z) * x
-    Yt = BuildYt(x,m,m1,m2,n,n1,n2,t1,t2);
-    
+    Yt = BuildYt(x,m1,m2,n1,n2,t1,t2);
+       
     % Get the residual vector
     g = (ct+ht) - ((At+Et)*x_ls);
     
@@ -257,7 +250,7 @@ display([GetAsVector(gxy_matrix) GetAsVector(matZ_gxy)]);
 
 end
 
-function Yt = BuildYt(x,m,m1,m2,n,n1,n2,t1,t2)
+function Yt = BuildYt(x,m1,m2,n1,n2,t1,t2)
 % Build the matrix Y_{t}
 % Where Y(x) * z = E(z) * x
 
@@ -271,14 +264,11 @@ xu = x(nCoefficients_xv+1:end);
 mat_xu = GetAsMatrix(xu,m1-t1,m2-t2);
 mat_xv = GetAsMatrix(xv,n1-t1,n2-t2);
 
+% Build the matrices C(v) and C(u)
 C1 = BuildT1(mat_xv,m1,m2);
 C2 = BuildT1(mat_xu,n1,n2);
 
-% Remove the columns of C1 which correspond to zero values in the vector
-% of coefficients of f
-
-diff_f = m1 + m2 - m;
-diff_g = n1 + n2 - n;
+% Build the Matrix Y = (C(v) C(u)
 
 Yt = [C1 C2];
 
@@ -286,7 +276,7 @@ Yt = [C1 C2];
 
 end
 
-function Pt = BuildPt(m,m1,m2,n,n1,n2,opt_col_index,t1,t2)
+function Pt = BuildPt(m1,m2,n1,n2,opt_col_index,t1,t2)
 % BuildPt(m,m1,m2,n,n1,n2,opt_col,t1,t2)
 %
 % Build the matrix P_{t}, such that the matrix vector product P*[f;g] gives
@@ -296,13 +286,9 @@ function Pt = BuildPt(m,m1,m2,n,n1,n2,opt_col_index,t1,t2)
 %
 % Inputs
 %
-% m  :
-%
 % m1 :
 %
 % m2 :
-%
-% n  :
 %
 % n1 :
 %
@@ -354,8 +340,6 @@ else
     
     
 end
-diff_f = m1 + m2 - m;
-diff_g = n1 + n2 - n;
 
 Pt = [P1 P2];
 

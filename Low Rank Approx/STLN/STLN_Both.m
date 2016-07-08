@@ -1,4 +1,4 @@
-function [fxy_matrix_out,gxy_matrix_out] = STLN_both(fxy_matrix,gxy_matrix,m,n,t,t1,t2,opt_col)
+function [fxy_matrix_out,gxy_matrix_out] = STLN_Both(fxy_matrix,gxy_matrix,m,n,t,t1,t2,opt_col)
 % Given coefficients f(x,y) and g(x,y) find the low rank approximation of
 % the Syvlester subresultant S_{t_{1},t_{2}}.
 %
@@ -85,11 +85,15 @@ nZeros_gu = nCoeff_gu - nNonZeros_gu;
 T1 = BuildT1(fxy_matrix,n1-t1,n2-t2);
 T2 = BuildT1(gxy_matrix,m1-t1,m2-t2);
 
+% %
+% %
 % Remove the columns of T1 and T2 which correspond to the zeros in u(x,y)
 % and v(x,y) which are removed from the solution vector x.
 T1 = T1(:,1:nNonZeros_vxy);
 T2 = T2(:,1:nNonZeros_uxy);
 
+% % 
+% %
 % Remove the extra rows of T1 and T2 associated with zeros of f*v and g*u
 T1 = T1(1:nNonZeros_fv,:);
 T2 = T2(1:nNonZeros_gu,:);
@@ -186,8 +190,8 @@ C = [H_z H_x];
 % Build the matrix E
 nEntries = nNonZeros_fxy + nNonZeros_gxy + (nNonZeros_uxy + nNonZeros_vxy - 1);
 
-E = blkdiag( eye(nNonZeros_fxy + nNonZeros_gxy) , zeros(nNonZeros_uxy + nNonZeros_vxy - 1));
-%E = eye(nEntries);
+%E = blkdiag( eye(nNonZeros_fxy + nNonZeros_gxy) , zeros(nNonZeros_uxy + nNonZeros_vxy - 1));
+E = eye(nEntries);
 
 yy = zeros( nNonZeros_fxy + nNonZeros_gxy + nNonZeros_uxy + nNonZeros_vxy - 1,1);
 

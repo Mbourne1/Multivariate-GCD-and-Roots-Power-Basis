@@ -50,9 +50,7 @@ vMinimumSingularValues_all = zeros(nPairs,1);
 
 % For each of the pairs [k1,k2]
 for i = 1:1:nPairs
-    
-    
-    
+
     % Get the ith pair of (k1,k2)
     k1 = k1k2Pairs(i,1);
     k2 = k1k2Pairs(i,2);
@@ -97,6 +95,11 @@ for i = 1:1:nPairs
     vSingularValues = svd(Sk1k2);
     
     % Get the minimal singular value
+    
+    k1
+    k2
+    
+    vSingularValues
     vMinimumSingularValues_all(i) = min(vSingularValues);
 
 end

@@ -9,4 +9,15 @@ for i = 0:1:m1
     end
 end
 
+% try
+%     count2 = (m1+1) * (m2+1) - nchoosek(m1+m2-m+1,2);
+% catch
+%     count2 = (m1+1) * (m2+1);
+% end
+% 
+% if count ~= count2
+%    error('err'); 
+% end
+
+
 end
