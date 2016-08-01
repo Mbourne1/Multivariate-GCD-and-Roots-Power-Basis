@@ -384,3 +384,7 @@ now,EX_NUM,m,n,t,error_dx,MEAN_METHOD,BOOL_ALPHA_THETA,EMIN,EMAX,LOW_RANK_APPROX
 27-Jul-2016 16:20:54, 	 2, 	 7, 	 8, 	 5, 	 6.273792e-13, 	 None, 	 n, 	 1.000000e-12, 	 1.000000e-10, 	 None
 27-Jul-2016 17:06:19, 	 2, 	 7, 	 8, 	 5, 	 6.273792e-13, 	 None, 	 n, 	 1.000000e-12, 	 1.000000e-10, 	 None
 27-Jul-2016 17:28:30, 	 3, 	 2, 	 2, 	 1, 	 7.194342e-13, 	 None, 	 n, 	 1.000000e-12, 	 1.000000e-10, 	 None
+01-Aug-2016 17:09:54, 	 1, 	 6, 	 7, 	 4, 	 9.258289e+01, 	 Geometric Mean Matlab Method, 	 y, 	 1.000000e-10, 	 1.000000e-12, 	 None
+01-Aug-2016 17:10:34, 	 1, 	 6, 	 7, 	 4, 	 9.258289e+01, 	 Geometric Mean Matlab Method, 	 y, 	 1.000000e-10, 	 1.000000e-12, 	 None
+01-Aug-2016 17:15:12, 	 2, 	 7, 	 8, 	 5, 	 6.664099e-11, 	 Geometric Mean Matlab Method, 	 y, 	 1.000000e-10, 	 1.000000e-12, 	 None
+01-Aug-2016 17:16:18, 	 3, 	 2, 	 2, 	 1, 	 6.651463e-11, 	 Geometric Mean Matlab Method, 	 y, 	 1.000000e-10, 	 1.000000e-12, 	 None

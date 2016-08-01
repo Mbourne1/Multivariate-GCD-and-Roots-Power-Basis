@@ -16,7 +16,7 @@ SETTINGS.LOW_RANK_APPROXIMATION_METHOD = low_rank_approx_method;
 SETTINGS.BOOL_DEGREE_METHOD = '2';
 
 %str = input('Print Graphs? (y) or (n)','s');
-SETTINGS.PLOT_GRAPHS = 'n';
+SETTINGS.PLOT_GRAPHS = 'y';
 
 SETTINGS.SEED = 1024;
 

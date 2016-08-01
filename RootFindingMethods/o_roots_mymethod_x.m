@@ -13,23 +13,29 @@ fx{1} = fxy_matrix;
 % Get the total degree of f(x,y)
 vDegt_fx(ite) = M(ite);
 
+% Get the degree of f(x,y) with respect to x and y
+[m1,m2] = GetDegree(fx{ite});
+vDeg1_fx(ite) = m1;
+vDeg2_fx(ite) = m2;
+
 % Whilst the most recently calculated GCD has a degree greater than
 % zero. ie is not a constant, perform a gcd calculation on it and its
 % derivative.
-
-while vDegt_fx(ite) > 0
+while vDeg1_fx(ite) > 0
     
-    if (vDegt_fx(ite) == 1)
+    if (vDeg1_fx(ite) == 1)
         % The derivative is a constant
         
         % The GCD is a constant
-        fx{ite+1} = Differentiate_wrt_x(fx{ite},vDegt_fx(ite));
+        fx{ite+1} = Differentiate_wrt_x(fx{ite});
         
         % Deconvolve
         ux{ite+1} = Deconvolve_Bivariate_Single(fx{ite},fx{ite+1},vDegt_fx(ite), vDegt_fx(ite)-1);
         
         % Get total degree of d(x,y) and degree with respect to x and y
         vDegt_fx(ite+1) = vDegt_fx(ite)-1;
+        vDeg1_fx(ite+1) = vDeg1_fx(ite)-1;
+        vDeg2_fx(ite+1) = vDeg2_fx(ite);
         
         break;
     end
@@ -38,13 +44,11 @@ while vDegt_fx(ite) > 0
     fprintf([mfilename ' : ' sprintf('GCD Calculation Loop iteration = %i \n', ite)]);
     fprintf([mfilename ' : ' sprintf('Compute GCD of f_{%i} and derivative f_{%i}\n\n',ite,ite)]);
     
-    
+    % Get the derivative of f(x,y) with respect to x.
+    gxy = Differentiate_wrt_x(fx{ite});
     
     % Get the total degree of f(x,y)
     m =  vDegt_fx(ite);
-    
-    % Get the derivative of f(x,y) with respect to x.
-    gxy = Differentiate_wrt_x(fx{ite},m);
     
     % Get the total degree of g(x,y)
     n =  m - 1;
@@ -62,9 +66,11 @@ while vDegt_fx(ite) > 0
     fprintf([mfilename ' : ' sprintf('Maximum degree of f_{%i}: %i \n', ite+1, upper_lim)]);
     
     % GCD is only a scalar with respect to x so set equal to g(x,y).
-    [fx{ite},~,fx{ite+1},ux{ite},vx{ite},t] = o_gcd_mymethod(fx{ite},gxy,m,n,[lower_lim, upper_lim]);
+    [fx{ite},~,fx{ite+1},ux{ite},vx{ite},t,t1,t2] = o_gcd_mymethod(fx{ite},gxy,m,n,[lower_lim, upper_lim]);
     
     % Get total degree of d(x,y) and degree with respect to x and y
+    vDeg1_fx(ite+1) = t1;
+    vDeg2_fx(ite+1) = t2;
     vDegt_fx(ite+1) = t;
     
     % Get number of distinct roots of f(ite)
@@ -85,7 +91,7 @@ end
 % Each h_{x}(i) is obtained by the deconvolution of q_{x}(i) and q_{x}(i+1)
 
 % Get number of polynomials in the series of polynomials q_{i}
-[~,nEntries_fx] = size(fx);
+[~,num_entries_fx] = size(fx);
 
 % %
 % %     Get h_{i}(x)
@@ -104,7 +110,7 @@ switch SETTINGS.HXY_METHOD
             
             case 'Separate' % Separate deconvolution
                 
-                for i = 1 : 1 : nEntries_fx - 1 % For each pair of q_{x}(i) and q_{x}(i+1)
+                for i = 1 : 1 : num_entries_fx - 1 % For each pair of q_{x}(i) and q_{x}(i+1)
                     
                     % Deconvolve
                     hx{i} = Deconvolve_Bivariate_Single(fx{i}, fx{i+1},vDegt_fx(i), vDegt_fx(i+1));
@@ -130,6 +136,8 @@ switch SETTINGS.HXY_METHOD
         
 end
 
+vDeg1_hx = vDeg1_fx(1:end-1) - vDeg1_fx(2:end);
+vDeg2_hx = vDeg2_fx(1:end-1) - vDeg2_fx(2:end);
 vDegt_hx = vDegt_fx(1:end-1) - vDegt_fx(2:end);
 
 
@@ -140,15 +148,15 @@ vDegt_hx = vDegt_fx(1:end-1) - vDegt_fx(2:end);
 % Each w_{x}(i) is obtained by the deconvolution of h_{x}(i) and h_{x}(i+1)
 
 % Get number of polynomials in the array of h_{x}
-[~,nEntries_hx] = size(hx);
+[~,num_entries_hx] = size(hx);
 
-if nEntries_hx > 1
+if num_entries_hx > 1
     
     switch SETTINGS.DECONVOLUTION_METHOD
         
         case 'Separate' % Separate deconvolution
             
-            for i = 1 : 1 : nEntries_hx - 1 % For each pair of q_{x}(i) and q_{x}(i+1)
+            for i = 1 : 1 : num_entries_hx - 1 % For each pair of q_{x}(i) and q_{x}(i+1)
                 
                 % Deconvolve
                 wx{i} = Deconvolve_Bivariate_Single(hx{i},hx{i+1},vDegt_hx(i),vDegt_hx(i+1));
@@ -162,7 +170,8 @@ if nEntries_hx > 1
             
     end
     
-    
+    vDeg1_wx = vDeg1_hx(1:end-1) - vDeg1_hx(2:end);
+    vDeg2_wx = vDeg2_hx(1:end-1) - vDeg2_hx(2:end);
     vDegt_wx = vDegt_hx(1:end-1) - vDegt_hx(2:end);
     
     
@@ -170,6 +179,8 @@ if nEntries_hx > 1
     wx{end+1} = hx{end};
     
     % Set the final degree structure
+    vDeg1_wx(end) = vDeg1_hx(end);
+    vDeg2_wx(end) = vDeg2_hx(end);
     vDegt_wx(end) = vDegt_hx(end);
     
 else
@@ -177,6 +188,8 @@ else
     % Number of h_{i} is equal to one, so no deconvolutions to be performed
     wx{1} = hx{1};
     % Get the degree structure of h_{x,i}
+    vDeg1_wx(1) = vDeg1_hx(1);
+    vDeg2_wx(1) = vDeg2_hx(1);
     vDegt_wx(1) = vDegt_hx(1);
 end
 

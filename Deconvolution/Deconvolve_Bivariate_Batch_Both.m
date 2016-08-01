@@ -1,5 +1,6 @@
 function arr_hxy = Deconvolve_Bivariate_Batch_Both(arr_fxy,vDeg_fxy)
-% Perform the batch deconvolution
+% Perform the batch deconvolution with the constraints on the total degree
+% and relative degree
 %
 % Inputs.
 %
