@@ -1,6 +1,6 @@
 function [fxy_noisy,noise_matrix]=Noise(fxy_matrix,el,eu)
 %
-% Add noise to the coefficients of polynomial f
+% Add noise to the coefficients of polynomial f(x,y)
 %
 %
 %

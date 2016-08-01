@@ -29,9 +29,9 @@ function [fxy_lr,gxy_lr,alpha, th1,th2] = LowRankApprox(fxy,gxy,alpha,th1,th2,m,
 %
 % % Outputs.
 %
-% fxy : Coefficients of polynomial f(x,y) with added perturbations
+% fxy_lr : Coefficients of polynomial f(x,y) with added perturbations
 % 
-% gxy : Coefficients of polynomial g(x,y) with added perturbations
+% gxy_lr : Coefficients of polynomial g(x,y) with added perturbations
 %
 % alpha : Refined alpha
 % 
@@ -69,8 +69,8 @@ switch SETTINGS.LOW_RANK_APPROXIMATION_METHOD
     case 'Standard SNTLN'
         
         % Get low rank approximation by SNTLN
-        [fxy_lr,gxy_lr,alpha_lr,theta1_lr,theta2_lr,~] = ...
-                    SNTLN(fxy,gxy,alpha,th1,th2,t1,t2,opt_col);
+        [fxy_lr,gxy_lr,alpha_lr,th1_lr,th2_lr,x_lr] = ...
+                    SNTLN(fxy,gxy,alpha,th1,th2,m,n,t,t1,t2,opt_col);
         
         
         
@@ -79,8 +79,8 @@ switch SETTINGS.LOW_RANK_APPROXIMATION_METHOD
         fxy = fxy_lr;
         gxy = gxy_lr;
         
-        th1 = theta1_lr;
-        th2 = theta2_lr;
+        th1 = th1_lr;
+        th2 = th2_lr;
         alpha = alpha_lr;
         
         % Get f(w,w) from f(x,y)

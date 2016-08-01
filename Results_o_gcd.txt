@@ -318,3 +318,69 @@ now,EX_NUM,m,n,t,error_dx,MEAN_METHOD,BOOL_ALPHA_THETA,EMIN,EMAX,LOW_RANK_APPROX
 07-Jul-2016 11:56:46, 	 2, 	 7, 	 8, 	 5, 	 , 	 Geometric Mean Matlab Method, 	 y, 	 1.000000e-10, 	 1.000000e-12, 	 None
 07-Jul-2016 11:57:17, 	 2, 	 7, 	 8, 	 5, 	 5.036908e-11, 	 Geometric Mean Matlab Method, 	 y, 	 1.000000e-10, 	 1.000000e-12, 	 None
 07-Jul-2016 11:59:30, 	 2, 	 7, 	 8, 	 5, 	 5.233969e-11, 	 Geometric Mean Matlab Method, 	 y, 	 1.000000e-10, 	 1.000000e-12, 	 None
+11-Jul-2016 10:59:22, 	 1, 	 6, 	 7, 	 4, 	 2.797431e+15, 	 Geometric Mean Matlab Method, 	 y, 	 1.000000e-10, 	 1.000000e-12, 	 None
+11-Jul-2016 11:02:56, 	 8, 	 16, 	 27, 	 13, 	 7.718261e-07, 	 Geometric Mean Matlab Method, 	 y, 	 1.000000e-10, 	 1.000000e-12, 	 None
+11-Jul-2016 11:21:45, 	 8, 	 16, 	 27, 	 13, 	 6.853673e-01, 	 Geometric Mean Matlab Method, 	 y, 	 1.000000e-12, 	 1.000000e-12, 	 Standard STLN
+11-Jul-2016 11:22:37, 	 8, 	 16, 	 27, 	 13, 	 7.359125e-09, 	 Geometric Mean Matlab Method, 	 y, 	 1.000000e-12, 	 1.000000e-12, 	 None
+11-Jul-2016 11:22:52, 	 8, 	 16, 	 27, 	 13, 	 6.853673e-01, 	 Geometric Mean Matlab Method, 	 y, 	 1.000000e-12, 	 1.000000e-12, 	 Standard STLN
+11-Jul-2016 11:23:32, 	 8, 	 16, 	 27, 	 13, 	 6.853673e-01, 	 Geometric Mean Matlab Method, 	 y, 	 1.000000e-12, 	 1.000000e-12, 	 Standard STLN
+11-Jul-2016 11:26:58, 	 8, 	 16, 	 27, 	 13, 	 6.853673e-01, 	 Geometric Mean Matlab Method, 	 y, 	 1.000000e-12, 	 1.000000e-12, 	 Standard STLN
+11-Jul-2016 11:28:14, 	 8, 	 16, 	 27, 	 13, 	 6.853673e-01, 	 Geometric Mean Matlab Method, 	 y, 	 1.000000e-12, 	 1.000000e-12, 	 Standard STLN
+11-Jul-2016 11:31:09, 	 1, 	 6, 	 7, 	 4, 	 1.716124e+16, 	 Geometric Mean Matlab Method, 	 y, 	 1.000000e-12, 	 1.000000e-12, 	 Standard STLN
+11-Jul-2016 11:31:17, 	 2, 	 7, 	 8, 	 5, 	 3.220388e-02, 	 Geometric Mean Matlab Method, 	 y, 	 1.000000e-12, 	 1.000000e-12, 	 Standard STLN
+11-Jul-2016 11:31:27, 	 2, 	 7, 	 8, 	 5, 	 5.236214e-13, 	 Geometric Mean Matlab Method, 	 y, 	 1.000000e-12, 	 1.000000e-12, 	 None
+11-Jul-2016 11:32:01, 	 2, 	 7, 	 8, 	 5, 	 5.039713e-13, 	 Geometric Mean Matlab Method, 	 y, 	 1.000000e-12, 	 1.000000e-12, 	 None
+11-Jul-2016 11:32:16, 	 2, 	 7, 	 8, 	 5, 	 1.251790e-02, 	 Geometric Mean Matlab Method, 	 y, 	 1.000000e-12, 	 1.000000e-12, 	 Standard STLN
+11-Jul-2016 11:33:55, 	 2, 	 7, 	 8, 	 5, 	 3.220388e-02, 	 Geometric Mean Matlab Method, 	 y, 	 1.000000e-12, 	 1.000000e-12, 	 Standard STLN
+11-Jul-2016 11:40:28, 	 2, 	 7, 	 8, 	 5, 	 4.310840e-13, 	 Geometric Mean Matlab Method, 	 y, 	 1.000000e-12, 	 1.000000e-12, 	 Standard SNTLN
+11-Jul-2016 11:41:03, 	 2, 	 7, 	 8, 	 5, 	 3.220388e-02, 	 Geometric Mean Matlab Method, 	 y, 	 1.000000e-12, 	 1.000000e-12, 	 Standard STLN
+11-Jul-2016 11:51:14, 	 2, 	 7, 	 8, 	 5, 	 4.936541e-13, 	 Geometric Mean Matlab Method, 	 y, 	 1.000000e-12, 	 1.000000e-12, 	 Standard STLN
+11-Jul-2016 11:55:14, 	 2, 	 7, 	 8, 	 5, 	 5.236214e-13, 	 Geometric Mean Matlab Method, 	 y, 	 1.000000e-12, 	 1.000000e-12, 	 None
+11-Jul-2016 11:58:47, 	 2, 	 7, 	 8, 	 5, 	 5.039713e-13, 	 Geometric Mean Matlab Method, 	 y, 	 1.000000e-12, 	 1.000000e-12, 	 None
+11-Jul-2016 11:59:20, 	 2, 	 7, 	 8, 	 5, 	 1.253893e-02, 	 Geometric Mean Matlab Method, 	 y, 	 1.000000e-12, 	 1.000000e-12, 	 Standard STLN
+11-Jul-2016 11:59:54, 	 2, 	 7, 	 8, 	 5, 	 4.196184e-13, 	 Geometric Mean Matlab Method, 	 y, 	 1.000000e-12, 	 1.000000e-12, 	 Standard SNTLN
+11-Jul-2016 12:00:34, 	 2, 	 7, 	 8, 	 5, 	 1.253893e-02, 	 Geometric Mean Matlab Method, 	 y, 	 1.000000e-12, 	 1.000000e-12, 	 Standard STLN
+11-Jul-2016 12:03:40, 	 2, 	 7, 	 8, 	 5, 	 1.253893e-02, 	 Geometric Mean Matlab Method, 	 y, 	 1.000000e-12, 	 1.000000e-12, 	 Standard STLN
+11-Jul-2016 12:07:37, 	 2, 	 7, 	 8, 	 5, 	 1.253893e-02, 	 Geometric Mean Matlab Method, 	 y, 	 1.000000e-12, 	 1.000000e-12, 	 Standard STLN
+11-Jul-2016 12:16:43, 	 2, 	 7, 	 8, 	 5, 	 1.050356e-02, 	 None, 	 n, 	 1.000000e-12, 	 1.000000e-12, 	 Standard STLN
+11-Jul-2016 12:17:10, 	 2, 	 7, 	 8, 	 5, 	 4.782069e-13, 	 None, 	 n, 	 1.000000e-12, 	 1.000000e-12, 	 Standard STLN
+11-Jul-2016 12:18:01, 	 2, 	 7, 	 8, 	 5, 	 4.782069e-13, 	 None, 	 n, 	 1.000000e-12, 	 1.000000e-12, 	 Standard STLN
+11-Jul-2016 12:34:38, 	 2, 	 7, 	 8, 	 5, 	 5.304754e-13, 	 None, 	 n, 	 1.000000e-12, 	 1.000000e-12, 	 Standard STLN
+11-Jul-2016 12:35:21, 	 2, 	 7, 	 8, 	 5, 	 4.758237e-02, 	 None, 	 n, 	 1.000000e-12, 	 1.000000e-12, 	 Standard STLN
+11-Jul-2016 12:41:54, 	 3, 	 2, 	 2, 	 1, 	 4.799845e-03, 	 None, 	 n, 	 1.000000e-12, 	 1.000000e-12, 	 Standard STLN
+11-Jul-2016 12:43:43, 	 3, 	 2, 	 2, 	 1, 	 7.201828e-13, 	 None, 	 n, 	 1.000000e-12, 	 1.000000e-12, 	 Standard STLN
+11-Jul-2016 12:44:36, 	 3, 	 2, 	 2, 	 1, 	 4.799845e-03, 	 None, 	 n, 	 1.000000e-12, 	 1.000000e-12, 	 Standard STLN
+11-Jul-2016 12:47:28, 	 3, 	 2, 	 2, 	 1, 	 4.799845e-03, 	 None, 	 n, 	 1.000000e-12, 	 1.000000e-12, 	 Standard STLN
+11-Jul-2016 12:47:42, 	 3, 	 2, 	 2, 	 1, 	 7.201828e-13, 	 None, 	 n, 	 1.000000e-12, 	 1.000000e-12, 	 Standard STLN
+11-Jul-2016 12:48:37, 	 3, 	 2, 	 2, 	 1, 	 4.799845e-03, 	 None, 	 n, 	 1.000000e-12, 	 1.000000e-12, 	 Standard STLN
+11-Jul-2016 12:50:36, 	 3, 	 2, 	 2, 	 1, 	 4.799845e-03, 	 None, 	 n, 	 1.000000e-12, 	 1.000000e-12, 	 Standard STLN
+11-Jul-2016 12:51:14, 	 3, 	 2, 	 2, 	 1, 	 7.201828e-13, 	 None, 	 n, 	 1.000000e-12, 	 1.000000e-12, 	 Standard STLN
+11-Jul-2016 12:53:30, 	 3, 	 2, 	 2, 	 1, 	 7.201828e-13, 	 None, 	 n, 	 1.000000e-12, 	 1.000000e-12, 	 Standard STLN
+11-Jul-2016 12:53:45, 	 3, 	 2, 	 2, 	 1, 	 4.799845e-03, 	 None, 	 n, 	 1.000000e-12, 	 1.000000e-12, 	 Standard STLN
+11-Jul-2016 12:54:28, 	 3, 	 2, 	 2, 	 1, 	 2.913757e-08, 	 None, 	 n, 	 1.000000e-12, 	 1.000000e-12, 	 Standard STLN
+11-Jul-2016 12:55:20, 	 3, 	 2, 	 2, 	 1, 	 2.913757e-08, 	 None, 	 n, 	 1.000000e-12, 	 1.000000e-12, 	 Standard STLN
+11-Jul-2016 12:56:48, 	 3, 	 2, 	 2, 	 1, 	 2.913757e-08, 	 None, 	 n, 	 1.000000e-12, 	 1.000000e-12, 	 Standard STLN
+11-Jul-2016 13:43:33, 	 3, 	 2, 	 2, 	 1, 	 6.655220e-13, 	 Geometric Mean Matlab Method, 	 y, 	 1.000000e-12, 	 1.000000e-12, 	 Standard STLN
+11-Jul-2016 13:43:51, 	 3, 	 2, 	 2, 	 1, 	 2.138798e-08, 	 Geometric Mean Matlab Method, 	 y, 	 1.000000e-10, 	 1.000000e-12, 	 Standard STLN
+11-Jul-2016 13:44:12, 	 3, 	 2, 	 2, 	 1, 	 6.817011e-11, 	 Geometric Mean Matlab Method, 	 y, 	 1.000000e-10, 	 1.000000e-12, 	 Standard STLN
+11-Jul-2016 13:46:44, 	 3, 	 2, 	 2, 	 1, 	 2.138798e-08, 	 Geometric Mean Matlab Method, 	 y, 	 1.000000e-10, 	 1.000000e-12, 	 Standard STLN
+11-Jul-2016 13:47:28, 	 7, 	 11, 	 12, 	 8, 	 3.941256e-09, 	 Geometric Mean Matlab Method, 	 y, 	 1.000000e-10, 	 1.000000e-12, 	 Standard STLN
+11-Jul-2016 13:49:32, 	 7, 	 11, 	 12, 	 8, 	 1.209125e-08, 	 Geometric Mean Matlab Method, 	 y, 	 1.000000e-10, 	 1.000000e-12, 	 Standard STLN
+11-Jul-2016 13:50:11, 	 7, 	 11, 	 12, 	 8, 	 1.209125e-08, 	 Geometric Mean Matlab Method, 	 y, 	 1.000000e-10, 	 1.000000e-12, 	 Standard STLN
+13-Jul-2016 09:12:16, 	 1, 	 6, 	 7, 	 4, 	 2.797431e+15, 	 Geometric Mean Matlab Method, 	 y, 	 1.000000e-10, 	 1.000000e-12, 	 None
+13-Jul-2016 09:12:30, 	 2, 	 7, 	 8, 	 5, 	 6.992254e-11, 	 Geometric Mean Matlab Method, 	 y, 	 1.000000e-10, 	 1.000000e-12, 	 None
+13-Jul-2016 09:13:35, 	 3, 	 2, 	 2, 	 1, 	 5.739656e-11, 	 Geometric Mean Matlab Method, 	 y, 	 1.000000e-10, 	 1.000000e-12, 	 None
+13-Jul-2016 09:15:35, 	 3, 	 2, 	 2, 	 1, 	 5.739656e-11, 	 Geometric Mean Matlab Method, 	 y, 	 1.000000e-10, 	 1.000000e-12, 	 None
+13-Jul-2016 09:15:55, 	 4, 	 9, 	 15, 	 5, 	 1.929899e-09, 	 Geometric Mean Matlab Method, 	 y, 	 1.000000e-10, 	 1.000000e-12, 	 None
+13-Jul-2016 09:16:30, 	 4, 	 9, 	 15, 	 5, 	 2.893452e-09, 	 Geometric Mean Matlab Method, 	 y, 	 1.000000e-10, 	 1.000000e-12, 	 None
+13-Jul-2016 09:16:55, 	 4, 	 9, 	 15, 	 5, 	 2.893452e-09, 	 Geometric Mean Matlab Method, 	 y, 	 1.000000e-10, 	 1.000000e-12, 	 None
+13-Jul-2016 09:17:27, 	 4, 	 9, 	 15, 	 5, 	 1.929899e-09, 	 Geometric Mean Matlab Method, 	 y, 	 1.000000e-10, 	 1.000000e-12, 	 None
+13-Jul-2016 09:19:08, 	 4, 	 9, 	 15, 	 5, 	 9.061427e-11, 	 None, 	 n, 	 1.000000e-10, 	 1.000000e-12, 	 None
+13-Jul-2016 09:19:38, 	 4, 	 9, 	 15, 	 5, 	 8.984129e-11, 	 None, 	 n, 	 1.000000e-10, 	 1.000000e-12, 	 None
+13-Jul-2016 09:23:30, 	 4, 	 9, 	 15, 	 5, 	 9.061427e-11, 	 None, 	 n, 	 1.000000e-10, 	 1.000000e-12, 	 None
+13-Jul-2016 09:24:31, 	 4, 	 9, 	 15, 	 5, 	 8.984129e-11, 	 None, 	 n, 	 1.000000e-10, 	 1.000000e-12, 	 None
+13-Jul-2016 09:26:08, 	 4, 	 9, 	 15, 	 5, 	 9.061427e-11, 	 None, 	 n, 	 1.000000e-10, 	 1.000000e-12, 	 None
+27-Jul-2016 16:20:02, 	 1, 	 6, 	 7, 	 4, 	 2.222991e+06, 	 None, 	 n, 	 1.000000e-12, 	 1.000000e-10, 	 None
+27-Jul-2016 16:20:54, 	 2, 	 7, 	 8, 	 5, 	 6.273792e-13, 	 None, 	 n, 	 1.000000e-12, 	 1.000000e-10, 	 None
+27-Jul-2016 17:06:19, 	 2, 	 7, 	 8, 	 5, 	 6.273792e-13, 	 None, 	 n, 	 1.000000e-12, 	 1.000000e-10, 	 None
+27-Jul-2016 17:28:30, 	 3, 	 2, 	 2, 	 1, 	 7.194342e-13, 	 None, 	 n, 	 1.000000e-12, 	 1.000000e-10, 	 None

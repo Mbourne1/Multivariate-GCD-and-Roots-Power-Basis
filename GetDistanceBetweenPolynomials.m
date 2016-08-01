@@ -6,10 +6,10 @@ LineBreakLarge()
 display(fxy_exact)
 display(fxy_computed)
 
-% Normalise f(x,y) exact.
+% Normalise f(x,y) exact
 fxy_exact = NormaliseMatrix(fxy_exact);
 
-% Normalise f(x,y) computed.
+% Normalise f(x,y) computed
 fxy_computed = NormaliseMatrix(fxy_computed);
 
 DISTANCE_METRIC = 'Distance';

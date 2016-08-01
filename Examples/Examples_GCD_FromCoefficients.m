@@ -21,7 +21,7 @@ switch ex_num
     case '2'
         
         f = (x^2 + y^2 + 1)^2 * (x+1) * (y-1) * (y-3);
-        g = (x^2 + y^2 + 1)^2 * (x+1) * (y-2) * (y+1.234)^2;
+        g = (x^2 + y^2 + 1)^2 * (x+1) * (y-2) * (y+1)^2;
         d = (x^2 + y^2 + 1)^2 * (x+1);
         
     case '3'
@@ -55,6 +55,12 @@ switch ex_num
         g = (x^2 + y^2 + 0.1575)^4 * (x + y + 0.521) * (y+0.753)^3;
         d = (x^2 + y^2 + 0.1575)^4 ;
         
+        
+    case '8'
+        f = (x+0.5161)^5 * (x + 7.1052)^5 * (x + 0.1132)^3 * (y - 0.7725)^3;
+        g = (x+0.5161)^5 * (x + 7.1052)^5 * (x + 2.0476)^7 * (x + 8.8614)^7 * (y-0.7725)^3;
+        d = (x+0.5161)^5 * (x + 7.1052)^5 * (y-0.7725)^3;
+        
     otherwise
         error([mfilename ' : Not a valid example number' ])
 end
@@ -77,5 +83,9 @@ t2_exact = double(feval(symengine, 'degree', d,y));
 display(f)
 display(g)
 display(d)
+u = f/d;
+v = g/d;
+display(u)
+display(v)
 
 end

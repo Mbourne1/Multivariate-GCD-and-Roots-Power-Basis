@@ -22,7 +22,8 @@ y = sym(var_y);
 % Get the degree of the polynomial f(x,y)
 [m1,m2] = GetDegree(fxy_matrix);
 
-
+% % 
+% 
 
 mat_x = diag(x.^(0:1:m1));
 mat_y = diag(y.^(0:1:m2));

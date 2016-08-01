@@ -1,10 +1,10 @@
-function [fxy_matrix_out,gxy_matrix_out] = STLN_Both(fxy_matrix,gxy_matrix,m,n,t,t1,t2,opt_col)
+function [fxy_lr,gxy_lr] = STLN_Both(fxy_matrix,gxy_matrix,m,n,t,t1,t2,opt_col)
 % Given coefficients f(x,y) and g(x,y) find the low rank approximation of
 % the Syvlester subresultant S_{t_{1},t_{2}}.
 %
 % STLN(fxy,gxy,m,n,t1,t2,opt_col)
 %
-% Inputs.
+% % Inputs.
 %
 % fxy_matrix : Coefficients of polynomial f(x,y)
 %
@@ -20,7 +20,7 @@ function [fxy_matrix_out,gxy_matrix_out] = STLN_Both(fxy_matrix,gxy_matrix,m,n,t
 %
 % opt_col : index of optimal column for removal from S_{t_{1},t_{2}}(f,g)
 %
-% Outputs 
+% % Outputs 
 %
 % fxy_matrix : Coefficients of f(x,y) with added perturbations
 
@@ -140,6 +140,9 @@ matZ_gxy = GetAsMatrix(...
 % A_{t} x = c_{t}
 x_ls = SolveAx_b(At,ct);
 
+display(x_ls);
+
+
 x = ...
     [
     x_ls(1:opt_col-1);
@@ -161,42 +164,33 @@ v_gxy = v_gxy(1:nNonZeros_gxy,:);
 display(Yt)
 test1 = Yt * [v_fxy;v_gxy];
 test2 = At * x_ls;
-test1 - test2
-display([test1 test2 ct])
 norm(test1-test2)
 
 % Build the matrix P_{t}
 % Where P * [f;g] = c_{t}
 Pt = BuildPt(m,m1,m2,n,n1,n2,t,t1,t2,opt_col);
-
 test1 = Pt * [v_fxy;v_gxy];
 test2 = ct;
-
 norm(test1-test2)
 
 
 % Get initial residual (A_{t}+E_{t})x = (c_{t} + h_{t})
 x_ls = SolveAx_b(At+Et,ct+ht);
 
-% Get the residual vector
-g = (ct + ht) - (At+Et)*x_ls;
-
 H_z = Yt - Pt;
+display(H_z)
 
 H_x = At + Et;
 
 C = [H_z H_x];
 
-% Build the matrix E
-nEntries = nNonZeros_fxy + nNonZeros_gxy + (nNonZeros_uxy + nNonZeros_vxy - 1);
+E = blkdiag( eye(nNonZeros_fxy + nNonZeros_gxy) , zeros(nNonZeros_uxy + nNonZeros_vxy - 1));
 
-%E = blkdiag( eye(nNonZeros_fxy + nNonZeros_gxy) , zeros(nNonZeros_uxy + nNonZeros_vxy - 1));
-E = eye(nEntries);
 
-yy = zeros( nNonZeros_fxy + nNonZeros_gxy + nNonZeros_uxy + nNonZeros_vxy - 1,1);
+
 
 % Get initial residual (A_{t}+E_{t})x = (c_{t} + h_{t})
-g = (ct + ht) - (At*x_ls);
+res_vec = (ct + ht) - (At*x_ls);
 
 start_point     =   ...
     [...
@@ -204,14 +198,15 @@ start_point     =   ...
     x_ls;
     ];
 
-f = -(yy-start_point);
+yy = start_point;
 
+f = -(yy-start_point);
 
 % Initialise the iteration counter
 ite = 1;
 
 % Set the termination criterion
-condition(ite) = norm(g)./ norm(ct);
+condition(ite) = norm(res_vec)./ norm(ct);
 
 while condition(ite) >  SETTINGS.MAX_ERROR_SNTLN &&  ite < SETTINGS.MAX_ITERATIONS_SNTLN
     
@@ -219,7 +214,7 @@ while condition(ite) >  SETTINGS.MAX_ERROR_SNTLN &&  ite < SETTINGS.MAX_ITERATIO
     ite = ite + 1;
     
     % Get small petrubations by LSE problem ||Ey-f||  subject to  Cy=g
-    y_lse = LSE(E,f,C,g);
+    y_lse = LSE(E,f,C,res_vec);
     
     % Increment cummulative peturbations
     yy = yy + y_lse;
@@ -277,7 +272,7 @@ while condition(ite) >  SETTINGS.MAX_ERROR_SNTLN &&  ite < SETTINGS.MAX_ITERATIO
     ht = Bt(:,opt_col);
     
     % Get the updated vector x
-    %x_ls = SolveAx_b(At+Et,ct+ht);
+    x_ls = SolveAx_b(At + Et,ct + ht);
     
     x = [...
         x_ls(1:opt_col-1);...
@@ -288,8 +283,8 @@ while condition(ite) >  SETTINGS.MAX_ERROR_SNTLN &&  ite < SETTINGS.MAX_ITERATIO
     Yt = BuildYt(x,m,m1,m2,n,n1,n2,t,t1,t2);
     
     % Get the residual vector
-    g = (ct+ht) - ((At+Et)*x_ls);
-    
+    res_vec = (ct+ht) - ((At+Et)*x_ls);
+  
     % Update the matrix C
     H_z = Yt - Pt;
     H_x = At + Et;
@@ -299,7 +294,7 @@ while condition(ite) >  SETTINGS.MAX_ERROR_SNTLN &&  ite < SETTINGS.MAX_ITERATIO
     f = -(yy-start_point);
     
     % Update the termination criterion
-    condition(ite) = norm(g)./norm(ct+ht) ;
+    condition(ite) = norm(res_vec)./norm(ct+ht) ;
     
     
 end
@@ -320,11 +315,11 @@ end
 
 if condition(ite) < condition(1)
     
-    fxy_matrix_out = fxy_matrix + matZ_fxy;
-    gxy_matrix_out = gxy_matrix + matZ_gxy;
+    fxy_lr = fxy_matrix + matZ_fxy;
+    gxy_lr = gxy_matrix + matZ_gxy;
 else
-    fxy_matrix_out = fxy_matrix;
-    gxy_matrix_out = gxy_matrix;
+    fxy_lr = fxy_matrix;
+    gxy_lr = gxy_matrix;
 end
 
 display([GetAsVector(fxy_matrix) GetAsVector(matZ_fxy)]);

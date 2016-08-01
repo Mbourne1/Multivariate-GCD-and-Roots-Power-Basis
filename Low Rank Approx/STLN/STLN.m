@@ -1,19 +1,21 @@
-function [fww_lr,a_gww_lr] = STLN(fww, alpha.*gww,m,n,t,t1,t2,opt_col)
+function [fxy_lr,gxy_lr] = STLN(fxy,gxy,m,n,t,t1,t2,opt_col)
 
+global SETTINGS
 
 switch SETTINGS.CALC_METHOD
     case 'Total'
-        fww_lr = fww;
-        a_gww_lr = alpha.*gww;
+        fxy_lr = fxy;
+        gxy_lr = alpha.*gxy;
         
         fprintf('No STLN Developed for total degree \n')
+        
     case 'Relative'
         % Perform STLN to obtain low rank approximation
-        [fww_lr,a_gww_lr] = STLN_Relative(fww, alpha.*gww,t1,t2,opt_col);
+        [fxy_lr,gxy_lr] = STLN_Relative(fxy,gxy,t1,t2,opt_col);
+        
     case 'Both'
-        fprintf('No STLN developed for both total and relative degree \n')
         % Perform STLN to obtain low rank approximation
-        [fww_lr,a_gww_lr] = STLN_Both(fww, alpha.*gww,m,n,t,t1,t2,opt_col);
+        [fxy_lr,gxy_lr] = STLN_Both(fxy,gxy,m,n,t,t1,t2,opt_col);
         
 end
 

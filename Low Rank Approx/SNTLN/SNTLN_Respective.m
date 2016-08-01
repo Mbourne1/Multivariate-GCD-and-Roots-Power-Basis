@@ -1,4 +1,4 @@
-function [ o_fxy, o_gxy, o_alpha,o_th1,o_th2,o_X] = ...
+function [ fxy_lr, gxy_lr, alpha_lr,th1_lr,th2_lr,X_lr] = ...
     SNTLN_Respective( fxy_matrix,gxy_matrix, i_alpha, i_th1, i_th2,t1,t2,opt_col)
 % Obtain the low rank approximation of the Sylvester matrix D*T_{t}(f,g)*Q =
 % S_{t}(f,g)
@@ -29,26 +29,24 @@ function [ o_fxy, o_gxy, o_alpha,o_th1,o_th2,o_X] = ...
 % Outputs:
 %
 %
-% o_fxy : Coefficients of f(x,y) on output, in standard bernstein basis,
+% fxy_lr : Coefficients of f(x,y) on output, in standard bernstein basis,
 % including added structured perturbations.
 %
-% o_gxy : Coefficients of fx on output, in standard bernstein basis,
+% gxy_lr : Coefficients of fx on output, in standard bernstein basis,
 % including added structured perturbations.
 %
-% o_alpha :
+% alpha_lr :
 %
-% o_th1 :
+% th1_lr :
 %
-% o_th2 :
+% th2_lr :
 %
-% o_X :
+% X_lr :
 %
 
 % Global Inputs
 
-global MAX_ERROR_SNTLN
-global MAX_ITERATIONS_SNTLN
-global PLOT_GRAPHS
+global SETTINGS
 
 % Set the initial iterations number
 ite = 1;
@@ -314,7 +312,7 @@ start_point     =   ...
     th2(ite)
     ];
 
-yy              =   start_point;
+yy =  start_point;
 
 % Set the termination criterion to a large value. It will be
 % over written later.
@@ -323,7 +321,7 @@ condition(ite) = norm(res_vec) ./ norm(ck);
 xk = x_ls;
 
 
-while condition(ite) >(MAX_ERROR_SNTLN) &&  ite < MAX_ITERATIONS_SNTLN
+while condition(ite) >(SETTINGS.MAX_ERROR_SNTLN) &&  ite < SETTINGS.MAX_ITERATIONS_SNTLN
     %while   ite < max_iterations
     
     
@@ -341,7 +339,7 @@ while condition(ite) >(MAX_ERROR_SNTLN) &&  ite < MAX_ITERATIONS_SNTLN
     
     %% Break down y into its sections
     
-    % get the coefficients corresponding to f and g
+    % Get the coefficients corresponding to f and g
     delta_zk        = y(1:num_coeff_f + num_coeff_g ,1);
     
     % Remove the zk coefficients from the list of coefficients
@@ -590,7 +588,7 @@ while condition(ite) >(MAX_ERROR_SNTLN) &&  ite < MAX_ITERATIONS_SNTLN
 end
 
 %% Plot Graphs
-switch PLOT_GRAPHS
+switch SETTINGS.PLOT_GRAPHS
     case 'y'
         figure('name','Residuals in SNTLN')
         hold on
@@ -635,46 +633,46 @@ zPert_g_mat = GetAsMatrix(zPert_g_vec,n1,n2);
 
 % Set outputs of low rank approximation
 
-o_fxy = fxy_matrix + zPert_f_mat;
+fxy_lr = fxy_matrix + zPert_f_mat;
 
-o_gxy = gxy_matrix + zPert_g_mat;
+gxy_lr = gxy_matrix + zPert_g_mat;
 
-o_X  = xk;
+X_lr  = xk;
 
-o_alpha = alpha(ite);
+alpha_lr = alpha(ite);
 
-o_th1 = th1(ite);
+th1_lr = th1(ite);
 
-o_th2 = th2(ite);
+th2_lr = th2(ite);
 
 
-if ite == MAX_ITERATIONS_SNTLN
+if ite == SETTINGS.MAX_ITERATIONS_SNTLN
     
     
     if condition(ite) < condition(1)
-        val = 'Keep Final'
+        val = 'Keep Final';
     else
-        val = 'Revert'
+        val = 'Revert';
     end
     switch val
         case 'Revert'
-            fprintf('SNTLN Failed to converge, default to input values\n')
+            fprintf([mfilename ' : ' sprintf('SNTLN Failed to converge, default to input values\n')])
             % SNTLN Failed so revert to previous values
-            o_fxy = fxy_matrix;
-            o_gxy = gxy_matrix;
-            o_alpha = i_alpha;
-            o_th1 = i_th1;
-            o_th2 = i_th2;
-            o_X = initial_xls;
+            fxy_lr = fxy_matrix;
+            gxy_lr = gxy_matrix;
+            alpha_lr = i_alpha;
+            th1_lr = i_th1;
+            th2_lr = i_th2;
+            X_lr = initial_xls;
             return;
         case 'Keep Final'
-            fprintf('SNTLN Failed to converge, keep termination values\n')
-            o_fxy = fxy_matrix + zPert_f_mat;
-            o_gxy = gxy_matrix + zPert_g_mat;
-            o_X  = xk;
-            o_alpha = alpha(ite);
-            o_th1 = th1(ite);
-            o_th2 = th2(ite);
+            fprintf([mfilename ' : ' sprintf('SNTLN Failed to converge, keep termination values\n')])
+            fxy_lr = fxy_matrix + zPert_f_mat;
+            gxy_lr = gxy_matrix + zPert_g_mat;
+            X_lr  = xk;
+            alpha_lr = alpha(ite);
+            th1_lr = th1(ite);
+            th2_lr = th2(ite);
             
             return;
     end
@@ -683,9 +681,9 @@ end
 
 
 % Print the number of iterations
-fprintf('--------------------------------------------------------------------------- \n')
-fprintf('SNTLN converged within %i iterations \n', ite);
-fprintf('--------------------------------------------------------------------------- \n')
+LineBreakLarge();
+fprintf([mfilename ' : ' sprintf('SNTLN converged within %i iterations \n', ite)]);
+LineBreakLarge()
 
 end
 

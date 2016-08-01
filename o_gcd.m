@@ -34,13 +34,18 @@ global SETTINGS
 
 % add path
 addpath('Examples',...
-    'Low Rank Approx',...
-    'Low Rank Approx/SNTLN',...
-    'Low Rank Approx/STLN',...
+    'Formatting',...
+    'GCD_Methods',...
     'GetCofactors',...
     'GetGCDDegree',...
     'GetOptimalColumn',...
-    'GetGCDCoefficients');
+    'GetGCDCoefficients',...
+    'Low Rank Approx',...
+    'Low Rank Approx/SNTLN',...
+    'Low Rank Approx/STLN',...
+    'Plotting',...
+    'Preprocess'...
+        );
 
 problem_type = 'GCD';
 
@@ -63,8 +68,8 @@ DisplayDegreeStructure();
 % Add Noise
 
 % Add noise to the coefficients of f and g
-[fxy, ~] = Noise2(fxy_exact,emin,emax);
-[gxy, ~] = Noise2(gxy_exact,emin,emax);
+[fxy, ~] = Noise2(fxy_exact,emin);
+[gxy, ~] = Noise2(gxy_exact,emin);
 
 % %
 % % Get the GCD by zengs method
@@ -134,22 +139,6 @@ end
 
 end
 
-function [] = PrintCoefficients(fxy_exact,fxy_computed,name)
-fprintf('\n')
-fprintf('----------------------------------------------------------------\n')
-fprintf('\n')
-fprintf('Comparison of %s exact and %s computed: \n',name,name)
-
-% Normalise f(x,y) exact.
-fxy_exact = NormaliseMatrix(fxy_exact);
-
-% Normalise f(x,y) computed.
-fxy_computed = NormaliseMatrix(fxy_computed);
-
-display([GetAsVector(fxy_exact) GetAsVector(fxy_computed)]);
-
-
-end
 
 
 

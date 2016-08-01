@@ -1,4 +1,7 @@
 function t1t2_pair_mat = GetPairs(m,m1,m2,n,n1,n2,t)
+% Used in GetGCDDegree
+% Given that the total degree has been computed, get the set of pairs of
+% (k_{1},k_{2}) from which the relative degree is computed.
 % Get the set of (k1,k2) pairs for computing S_{k_{1},k_{2}}
 
 % Method is either 'All' or 'Refined'

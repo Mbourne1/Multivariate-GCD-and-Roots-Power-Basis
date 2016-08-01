@@ -6,8 +6,8 @@ global SETTINGS
 switch SETTINGS.DECONVOLUTION_STYLE
     case 'Total'
         
-        error('err')
-        
+        arr_hxy = Deconvolve_Bivariate_Batch_Total(arr_fxy,vDeg_fxy);
+                
     case 'Respective'
         
         arr_hxy = Deconvolve_Bivariate_Batch_Respective(arr_fxy);

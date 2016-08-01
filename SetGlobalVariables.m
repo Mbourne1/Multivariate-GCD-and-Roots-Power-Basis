@@ -15,7 +15,8 @@ SETTINGS.LOW_RANK_APPROXIMATION_METHOD = low_rank_approx_method;
 
 SETTINGS.BOOL_DEGREE_METHOD = '2';
 
-SETTINGS.PLOT_GRAPHS = 'y';
+%str = input('Print Graphs? (y) or (n)','s');
+SETTINGS.PLOT_GRAPHS = 'n';
 
 SETTINGS.SEED = 1024;
 
@@ -26,12 +27,13 @@ SETTINGS.MAX_ITERATIONS_SNTLN = 100;
 
 SETTINGS.MAX_ERROR_SNTLN = 1e-14;
 
+
+%
 % Total
-% Respective
+% Relative
 % Both
-
+%
 SETTINGS.CALC_METHOD = 'Both';
-
 
 %
 % Total - Use total degree

@@ -56,7 +56,7 @@ fww = GetWithThetas(fxy_n,th1,th2);
 gww = GetWithThetas(gxy_n,th1,th2);
 
 % Build the 0-th Subresultant of the preprocessed polynomials.
-S_Preproc = BuildSylvesterMatrix(fxy,gxy,0,0);
+S_Preproc = BuildSylvesterMatrix(fww,alpha.*gww,0,0);
 
 % %
 % %
@@ -96,43 +96,50 @@ LineBreakMedium();
 % %
 % Given the total degree, compute relative degrees t_{1} and t_{2}
 
-%[t1,t2] = GetGCDDegreeRelative(fww,alpha.*gww,m,n,t);
+switch SETTINGS.CALC_METHOD
+    case 'Total'
+        % Must compute t1 and t2 so do so with relative method
+        [t1,t2] = GetGCDDegreeRelative(fww,alpha*gww,m,n,t);
+    case 'Relative'
+        [t1,t2] = GetGCDDegreeRelative(fww,alpha.*gww,m,n,t);
+    case 'Both'
+        [t1,t2] = GetGCDDegreeRelative_Given_t(fww,alpha*gww,m,n,t);
+    otherwise
+        error('err')
+end
 
-[t1,t2] = GetGCDDegreeRelative_Given_t(fww,alpha*gww,m,n,t);
+
+
 LineBreakMedium();
 fprintf([mfilename ' : ' sprintf('The calculated relative degree is : t_{1} = %i, t_{2} = %i \n',t1,t2)])
 LineBreakMedium();
 
-% 
-% Total
-% Respective
-% Both
-% 
-SETTINGS.CALC_METHOD = 'Relative';
+
 
 % %
 % %
 % %
 % Get optimal column for removal from S_{t_{1},t_{2}}
-
 opt_col = GetOptimalColumn(fww,alpha.*gww,m,n,t,t1,t2);
-
 
 
 % % 
 % %
 % %
 % Perform low rank approximation method
+[fxy_n,gxy_n,alpha,th1,th2] = LowRankApprox(fxy_n,gxy_n,alpha,th1,th2,m,n,t,t1,t2,opt_col);
 
-[fxy_n,gxy_n,alpha,th1,th2] = LowRankApprox(fxy_n,gxy_n,alpha,th1,th2,t1,t2,opt_col);
+% Get f(w,w) from f(x,y) and g(w,w) from g(x,y)
 fww = GetWithThetas(fxy_n,th1,th2);
 gww = GetWithThetas(gxy_n,th1,th2);
 
+% Build the low rank approximation
+S_LowRankApprox = BuildSylvesterMatrix(fxy_n,gxy_n,0,0);
 
 % %
 % %
 % %
-% Plot some graphs
+% Plot graphs
 
 % Build Subresultant of noisy unprocessed polynomials
 S_Unproc = BuildSylvesterMatrix(fxy,gxy,0,0);
@@ -190,9 +197,12 @@ end
 % %
 % %
 % Get the coefficients of the GCD d(x,y)
-
 [dww_matrix] = GetGCDCoefficients(fww,alpha.*gww,uww_matrix,vww_matrix,m,n,t);
 
+
+% % 
+% Remove thetas from u(w,w), v(w,w) and d(w,w) to obtain u(x,y) v(x,y) and
+% d(x,y)
 dxy = GetWithoutThetas(dww_matrix,th1,th2);
 uxy = GetWithoutThetas(uww_matrix,th1,th2);
 vxy = GetWithoutThetas(vww_matrix,th1,th2);

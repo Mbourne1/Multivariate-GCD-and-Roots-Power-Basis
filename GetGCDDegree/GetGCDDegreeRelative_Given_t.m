@@ -95,11 +95,6 @@ for i = 1:1:nPairs
     vSingularValues = svd(Sk1k2);
     
     % Get the minimal singular value
-    
-    k1
-    k2
-    
-    vSingularValues
     vMinimumSingularValues_all(i) = min(vSingularValues);
 
 end

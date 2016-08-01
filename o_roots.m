@@ -27,8 +27,18 @@ function [] = o_roots(ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_app
 % % Examples
 % >> o_roots('1', 1e-10, 1e-12, 'Geometric Mean Matlab Method', 'y', 'None')
 
-
-addpath('Deconvolution','Examples','GetCofactors','GetGCDCoefficients','GetGCDDegree','GetOptimalColumn','Low Rank Approx')
+% %
+% Add subfolders
+addpath('Deconvolution',...
+    'Examples',...
+    'Formatting',...
+    'GCD_Methods',...
+    'GetCofactors',...
+    'GetGCDCoefficients',...
+    'GetGCDDegree',...
+    'GetOptimalColumn',...
+    'Low Rank Approx',...
+    'RootFindingMethods');
 
 % Set the problem type, used in logging to the outputs file.
 problem_type = 'Roots';
@@ -40,11 +50,11 @@ SetGlobalVariables(problem_type,ex_num,emin,emax,mean_method,bool_alpha_theta,lo
 % Get Example
 
 % Given the example number get the polynomial coefficients of f(x,y) and
-% the total degree of f.
+% the total degree 'm' of f(x,y).
 [fxy_exact, m] = Examples_Roots(ex_num);
 
 % Add noise to the coefficients of polynomial f(x,y)
-[fxy,~] = Noise2(fxy_exact,emin,emax);
+[fxy,~] = Noise2(fxy_exact,emin);
 
 
 % % 

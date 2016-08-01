@@ -1,6 +1,6 @@
 global SETTINGS
 
-% Get the name of the function which called this function
+% Get the name of the function which called this function.
 [Stack,~] = dbstack();
 calling_function = Stack(2).name;
 

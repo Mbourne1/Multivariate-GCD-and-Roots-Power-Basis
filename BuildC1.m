@@ -1,4 +1,4 @@
-function C1 = BuildC1(uxy_matrix,t1,t2,m1,m2)
+function C1 = BuildC1(uxy_matrix,t1,t2)
 % BuildC1(uxy_matrix,t1,t2,m1,m2)
 %
 % Build the Matrix C_{1} consisting of coefficients of u(x,y). Used in the
@@ -16,31 +16,35 @@ function C1 = BuildC1(uxy_matrix,t1,t2,m1,m2)
 % t1 :  Degree of GCD with respect to x
 %
 % t2 :  Degree of GCD with respect to y
-%
-% m1 :  Degree of polynomial f with respect to x
-%
-% m2 :  Degree of polynomial f with respect to y
-%
 
 
-% get size of uxy_matrix
+
+% Get the degree of u(x,y)
 [m1_t1,m2_t2] = GetDegree(uxy_matrix);
 
+% Get m1 and m2
+m1 = m1_t1 + t1;
+m2 = m2_t2 + t2;
 
 % initialise a zero matrix to pad uxy
 zero_matrix = zeros(m1+1,m2+1);
 
-nRowsC1 = (m1+1) * (m2+1);
-nColsC1 = (t1+1) * (t2+1);
+nCoefficients_fxy = (m1+1) * (m2+1);
+nCoefficients_dxy = (t1+1) * (t2+1);
+
+
+nRowsC1 = nCoefficients_fxy;
+nColsC1 = nCoefficients_dxy;
 
 C1 = zeros(nRowsC1,nColsC1);
 
-num_diags = (t1 + 1) + (t2 + 1) + 1;
+% Get number of diagonals in the matrix of coefficients of d(x,y)
+nDiags_dxy = (t1 + 1) + (t2 + 1) + 1;
 
 count = 1;
 
-% for every diagonal of the matrix dxy_mtrx.
-for tot = 0:1:num_diags
+% For every diagonal of the matrix of coefficients of d(x,y).
+for tot = 0:1:nDiags_dxy
     
     for i = tot:-1:0
         j = tot-i;
