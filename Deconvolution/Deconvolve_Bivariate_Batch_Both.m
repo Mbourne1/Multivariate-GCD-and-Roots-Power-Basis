@@ -87,6 +87,8 @@ nPolys_hxy = nPolys_fxy -1 ;
 
 for i = 1:nPolys_hxy
     
+    % Get coefficients as a matrix
+    error('To do')
     arr_hxy{i} = x_ls(1:nNonZeros_h{i});
     x_ls(1:nNonZeros_h{i}) = [];
     
