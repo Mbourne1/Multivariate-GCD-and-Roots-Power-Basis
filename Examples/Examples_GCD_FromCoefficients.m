@@ -61,6 +61,12 @@ switch ex_num
         g = (x+0.5161)^5 * (x + 7.1052)^5 * (x + 2.0476)^7 * (x + 8.8614)^7 * (y-0.7725)^3;
         d = (x+0.5161)^5 * (x + 7.1052)^5 * (y-0.7725)^3;
         
+    case '9' 
+        
+        f = (x^2 + y^2 + 2*x + y + 1)^2;
+        g = diff(f,x);
+        d = (x^2 + y^2 + 2*x + y + 1);
+        
     otherwise
         error([mfilename ' : Not a valid example number' ])
 end

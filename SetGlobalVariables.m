@@ -1,11 +1,24 @@
 function [] =  SetGlobalVariables(problem_type,ex_num,emin,emax,mean_method,bool_alpha_theta, low_rank_approx_method)
 
 global SETTINGS
+
+
 SETTINGS.PROBLEM_TYPE = problem_type;
 SETTINGS.EX_NUM = ex_num;
 
 SETTINGS.EMIN = emin;
 SETTINGS.EMAX = emax;
+
+SETTINGS.PLOT_GRAPHS = 'y';
+
+SETTINGS.SEED = 1024;
+
+%--------------------------------------------------------------------------
+%
+%       SETTINGS : PREPROCESSING
+%
+%
+
 
 SETTINGS.MEAN_METHOD = mean_method;
 
@@ -15,17 +28,33 @@ SETTINGS.LOW_RANK_APPROXIMATION_METHOD = low_rank_approx_method;
 
 SETTINGS.BOOL_DEGREE_METHOD = '2';
 
-%str = input('Print Graphs? (y) or (n)','s');
-SETTINGS.PLOT_GRAPHS = 'y';
 
-SETTINGS.SEED = 1024;
 
+%-------------------------------------------------------------------------
+%
+%       SETTINGS : DEGREE COMPUTATION
+%
+%
 SETTINGS.THRESHOLD = 2;
 SETTINGS.THRESHOLD_RANK = -2;
+
+%--------------------------------------------------------------------------
+%
+%       SETTINGS : LOW RANK APPROXIMATION
+%
+%
 
 SETTINGS.MAX_ITERATIONS_SNTLN = 100;
 
 SETTINGS.MAX_ERROR_SNTLN = 1e-14;
+
+
+%--------------------------------------------------------------------------
+%
+%       SETTINGS : 
+%
+%
+%
 
 
 %
@@ -34,6 +63,14 @@ SETTINGS.MAX_ERROR_SNTLN = 1e-14;
 % Both
 %
 SETTINGS.CALC_METHOD = 'Both';
+
+
+%--------------------------------------------------------------------------
+%
+%       SETTINGS : DECONVOLUTION
+%
+%
+
 
 %
 % Total - Use total degree
@@ -53,5 +90,7 @@ SETTINGS.DECONVOLUTION_METHOD = 'Batch';
 % 'From uxy'
 %
 SETTINGS.HXY_METHOD = 'From uxy';
+
+
 end
 

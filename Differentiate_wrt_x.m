@@ -1,4 +1,4 @@
-function [partial_fxy] = Differentiate_wrt_x(fxy_matrix)
+function [partial_fxy] = Differentiate_wrt_x(fxy_matrix,m)
 % Given the polynomial fxy in matrix form
 %
 %           1   y   y^{2}
@@ -22,5 +22,9 @@ mult_vec = (0:1:m1);
 partial_fxy = diag(mult_vec) * fxy_matrix ;
 
 partial_fxy(1,:) = [];
+
+if (m2 == m)
+   partial_fxy(:,end) = [] ;
+end
 
 end

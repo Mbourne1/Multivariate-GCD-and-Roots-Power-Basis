@@ -29,7 +29,7 @@ switch SETTINGS.CALC_METHOD
         opt_col = GetOptimalColumn_Respective(fxy,gxy,t1,t2);
         
     case 'Both'
-        opt_col = GetOptimalColumn_Both(fxy,gxy,m,n,t,t1,t1);
+        opt_col = GetOptimalColumn_Both(fxy,gxy,m,n,t,t1,t2);
         
     otherwise
         error('err')

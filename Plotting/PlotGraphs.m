@@ -1,7 +1,7 @@
 global SETTINGS
 switch SETTINGS.PLOT_GRAPHS
     case 'y'
-        x = lower_lim:1:upper_lim;
+        x = lower_lim_comp:1:upper_lim_comp;
         
         figure_name = sprintf('%s - R Diagonals',mfilename);
         figure('name',figure_name)
@@ -10,6 +10,8 @@ switch SETTINGS.PLOT_GRAPHS
         xlabel('k')
         ylabel('log_{10} diagonal r_{i,i}')
         scatter(data(:,1),log10(data(:,2)))
+        vline(lower_lim,'b','');
+        vline(upper_lim,'b','');
         hold off
         
         figure_name = sprintf('%s - Minimum Singular Values',mfilename);
@@ -20,6 +22,8 @@ switch SETTINGS.PLOT_GRAPHS
         ylabel('log_{10} \sigma_{i}')
         hold on
         plot(x,log10(v_MinimumSingularValue),'-s');
+        vline(lower_lim,'b','');
+        vline(upper_lim,'b','');
         hold off
         
         % plot all the largest ratios for k = 1,...,min(m,n)
@@ -29,9 +33,10 @@ switch SETTINGS.PLOT_GRAPHS
         title('Plotting max:min diagonal entries of QR decomposition of S_{k}')
         vRatio_MaxMin_Diags_R1 = v_maxDiagR1 ./ v_minDiagR1;
         plot(x,log10(vRatio_MaxMin_Diags_R1),'-s');
-        
         xlabel('k')
         ylabel('log_{10} max r_{k} / min r_{k}')
+        vline(lower_lim,'b','');
+        vline(upper_lim,'b','');
         hold off
         
         figure_name = sprintf('%s - QR max:min Row Sum',mfilename);
@@ -42,6 +47,8 @@ switch SETTINGS.PLOT_GRAPHS
         plot(x,log10(vRatio_MaxMin_RowNorm_R1),'-s');
         xlabel('k')
         ylabel('log_{10} max r_{k} / min r_{k}')
+        vline(lower_lim,'b','');
+        vline(upper_lim,'b','');
         hold off
     case 'n'
     otherwise

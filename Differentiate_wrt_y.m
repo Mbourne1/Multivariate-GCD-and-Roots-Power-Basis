@@ -1,4 +1,4 @@
-function [partial_fxy] = Differentiate_wrt_y(fxy_matrix)
+function [partial_fxy] = Differentiate_wrt_y(fxy_matrix,m)
 % Given the polynomial fxy in matrix form
 %
 %           1   y   y^{2}
@@ -11,7 +11,7 @@ function [partial_fxy] = Differentiate_wrt_y(fxy_matrix)
 %
 
 % Get the degree of fxy with respect to x and y
-[~,m2] = GetDegree(fxy_matrix);
+[m1,m2] = GetDegree(fxy_matrix);
 
 % create a vector to multiply coefficients by
 
@@ -22,4 +22,9 @@ partial_fxy =  fxy_matrix * diag(mult_vec);
 
 partial_fxy(:,1) = [];
 
+
+if (m1 == m)
+    % Remove bottom row
+    partial_fxy(end,:) = [];
+end
 end

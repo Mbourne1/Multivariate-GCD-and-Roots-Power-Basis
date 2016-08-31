@@ -64,9 +64,6 @@ S_Preproc = BuildSylvesterMatrix(fww,alpha.*gww,0,0);
 % Get the total degree of the GCD d(x,y)
 
 % Get degree using total degree method
-%LineBreakMedium();
-%t_old = GetGCDDegreeTotal(fww,alpha.*gww,m,n);
-
 LineBreakMedium();
 t_new = GetGCDDegreeTotal2(fww,alpha.*gww,m,n,limits_t);
 LineBreakMedium();
@@ -156,7 +153,7 @@ switch SETTINGS.PLOT_GRAPHS
             case {'Standard SNTLN', 'Standard STLN'}
                 vSingularValues_S_LowRank = svd(S_LowRankApprox);
                 vSingularValues_S_LowRank = Normalise(vSingularValues_S_LowRank);
-                label = 'S(f(x,y),g(x,y)) SNTLN';
+                label = 'S(f(x,y),g(x,y)) Low Rank';
                 plot(log10(vSingularValues_S_LowRank),'-s','DisplayName',label)
             case {'None'}
             otherwise

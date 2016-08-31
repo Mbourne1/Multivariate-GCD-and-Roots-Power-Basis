@@ -17,7 +17,8 @@ switch ex_num
         f = (x+0.5)^3 * (y-0.27535)^2 * (x-1.5276543);
         
     case '4'
-        f = (x-0.123456)^4 * (x-0.6789)^3 * (x + y - 0.2468)^2 * (y-5.2479)^3;
+        f = (x-0.1)^7 * (x-0.6)^3 * (x + y - 0.25)^5 * (y-5.2)^3;
+        
     otherwise
         error([mfilename 'Not a valid example number'])
 end

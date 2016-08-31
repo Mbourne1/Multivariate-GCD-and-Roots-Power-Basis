@@ -13,13 +13,20 @@ function [t] = GetGCDDegreeTotal2(fxy_matrix,gxy_matrix,m,n,limits_t)
 lower_lim = limits_t(1);
 upper_lim = limits_t(2);
 
+% Set upper and lower limit of the degree of the gcd.
+lower_lim_comp = 1;
+upper_lim_comp = min(m,n);
+
+limits_t_comp = [lower_lim_comp upper_lim_comp];
+
 % if the upper and lower bound are equal, and not equal to one, then set
 % the total degree to lower bound. If bound = 1, then it is possible for
 % the polynomials to be coprime.
-if (lower_lim == upper_lim && lower_lim ~= 1)
-    t = lower_lim;
+if (lower_lim_comp == upper_lim_comp && lower_lim_comp ~= 1)
+    t = lower_lim_comp;
     return;
 end
+
 
 
 % initialise some useful vectors
@@ -41,7 +48,7 @@ fxy_matrix_padd(1:r,1:c) = fxy_matrix;
 gxy_matrix_padd(1:r,1:c) = gxy_matrix;
 
 % Get the number of subresultants
-n_Subresultants = upper_lim - lower_lim + 1;
+n_Subresultants = upper_lim_comp - lower_lim_comp + 1;
 
 % Initialise some vectors
 v_maxDiagR1 = zeros(n_Subresultants,1);
@@ -55,10 +62,10 @@ data = [];
 
 
 % let k represent the total degree of the common divisor
-for k = lower_lim:1:upper_lim
+for k = lower_lim_comp:1:upper_lim_comp
     
     % Get i, an index for any storage vectors which will always start at 1.
-    i = k - lower_lim + 1;
+    i = k - lower_lim_comp + 1;
     
     % Build the partitions T1 and T2 of the Sylvester matrix
     T1 = BuildT1_TotalDegree(fxy_matrix_padd,m,n-k);
@@ -127,11 +134,11 @@ end
 
 
 % if only one subresultant exists.
-if lower_lim == upper_lim
+if lower_lim_comp == upper_lim_comp
     t = GetGCDDegree_OneSubresultant(Sk);
     return;
 else
-    t = GetGCDDegree_MultipleSubresultants(v_MinimumSingularValue,limits_t);
+    t = GetGCDDegree_MultipleSubresultants(v_MinimumSingularValue,limits_t_comp);
 end
    
 % Plot graphs

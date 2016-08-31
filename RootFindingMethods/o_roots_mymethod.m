@@ -28,7 +28,7 @@ else
 end
 
 
-    [wx,wy,wxy] = o_roots_mymethod_xy(wx,wy,vDegt_wx,vDegt_wy);
+    %[wx,wy,wxy] = o_roots_mymethod_xy(wx,wy,vDegt_wx,vDegt_wy);
     
     LineBreakLarge()
     for i = 1:1:length(wx)
@@ -48,15 +48,15 @@ end
         catch
         end
     end
-    LineBreakLarge()
-    for i = 1:1:length(wxy)
-        fprintf([mfilename sprintf(' : Roots of x and y, of degree : %i', i) '\n']);
-        factor = wxy{i};
-        try
-            display(factor./factor(1,1));
-        catch
-        end
-    end
+    %LineBreakLarge()
+    %for i = 1:1:length(wxy)
+    %    fprintf([mfilename sprintf(' : Roots of x and y, of degree : %i', i) '\n']);
+    %    factor = wxy{i};
+    %    try
+    %        display(factor./factor(1,1));
+    %    catch
+    %    end
+    %end
 
 
 % %

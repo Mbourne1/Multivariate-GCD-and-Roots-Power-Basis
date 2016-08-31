@@ -48,7 +48,9 @@ switch SETTINGS.BOOL_ALPHA_THETA
         
         
         optimization_method = 'Together';
+        
         %optimization_method = 'Independent';
+        
         switch optimization_method
             case 'Independent'
                 

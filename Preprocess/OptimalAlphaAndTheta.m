@@ -76,32 +76,40 @@ tau_vec = GetAsVector(abs(gxy_matrix));
 % 
 % Get the index of the zero rows in lambda
 index_zero_lambda = find(lambda_vec==0);
+
 % Remove the corresponding zeros from lambda
 lambda_vec(index_zero_lambda,:) = [];
+
 % Remove the corresponding rows from PartOne Matrix
 PartOne(index_zero_lambda,:) = [];
 
 
 % Get the index of the zero rows in mu vector
 index_zero_mu = find(mu_vec==0);
+
 % Remove the corresponding zeros from mu vector
 mu_vec(index_zero_mu,:) = [];
+
 % Remove the corresponding rows from PartOne Matrix
 PartTwo(index_zero_mu,:) = [];
 
 
 % Get the index of the zero rows in rho
 index_zero_rho = find(rho_vec==0);
+
 % Remove the corresponding zeros from rho
 rho_vec(index_zero_rho,:) = [];
+
 % Remove the corresponding rows from PartOne Matrix
 PartThree(index_zero_rho,:) = [];
 
 
 % Get the index of the zero rows in tau vector
 index_zero_tau = find(tau_vec==0);
+
 % Remove the corresponding zeros from tau
 tau_vec(index_zero_tau,:) = [];
+
 % Remove the corresponding rows from PartOne Matrix
 PartFour(index_zero_tau,:) = [];
 

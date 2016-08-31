@@ -178,15 +178,12 @@ norm(test1-test2)
 x_ls = SolveAx_b(At+Et,ct+ht);
 
 H_z = Yt - Pt;
-display(H_z)
 
 H_x = At + Et;
 
 C = [H_z H_x];
 
 E = blkdiag( eye(nNonZeros_fxy + nNonZeros_gxy) , zeros(nNonZeros_uxy + nNonZeros_vxy - 1));
-
-
 
 
 % Get initial residual (A_{t}+E_{t})x = (c_{t} + h_{t})
@@ -322,8 +319,6 @@ else
     gxy_lr = gxy_matrix;
 end
 
-display([GetAsVector(fxy_matrix) GetAsVector(matZ_fxy)]);
-display([GetAsVector(gxy_matrix) GetAsVector(matZ_gxy)]);
 
 end
 
