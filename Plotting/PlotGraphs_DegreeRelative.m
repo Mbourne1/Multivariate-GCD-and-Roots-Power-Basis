@@ -17,7 +17,11 @@ switch SETTINGS.PLOT_GRAPHS
         xlabel('k1')
         ylabel('k2')
         zlabel('log_{10} \sigma')
+        az = -45;
+        el = 45;
+        view(az, el);
         hold off
+        MySave('DegreeRelative_MinimumSingularValues');
         
         
         
@@ -28,6 +32,7 @@ switch SETTINGS.PLOT_GRAPHS
         hold on
         plot(log10(vMinimumSingularValues),'-s')
         hold off
+        MySave('DegreeRelative_SingularValues');
         
     case 'n'
     otherwise

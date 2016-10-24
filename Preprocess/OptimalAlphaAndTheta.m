@@ -113,13 +113,13 @@ tau_vec(index_zero_tau,:) = [];
 % Remove the corresponding rows from PartOne Matrix
 PartFour(index_zero_tau,:) = [];
 
-A = [PartOne; PartTwo; PartThree; PartFour];
+A = -[PartOne; PartTwo; PartThree; PartFour];
 
 
-b = [log10((lambda_vec)); log10((mu_vec)); -log10((rho_vec));-log10((tau_vec))];
+b = -[log10((lambda_vec)); log10((mu_vec)); -log10((rho_vec));-log10((tau_vec))];
 
 
-x = linprog(f,-A,-b);
+x = linprog(f,A,b);
 
 try
     theta1 = 10^x(3);

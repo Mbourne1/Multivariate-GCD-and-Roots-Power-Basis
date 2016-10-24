@@ -142,7 +142,7 @@ else
 end
    
 % Plot graphs
-PlotGraphs()
+PlotGraphs_DegreeTotal()
 
 
 

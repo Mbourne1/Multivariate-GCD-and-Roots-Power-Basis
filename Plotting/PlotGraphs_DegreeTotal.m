@@ -13,6 +13,8 @@ switch SETTINGS.PLOT_GRAPHS
         vline(lower_lim,'b','');
         vline(upper_lim,'b','');
         hold off
+        MySave('TotalDegree_RDiagonals');
+        
         
         figure_name = sprintf('%s - Minimum Singular Values',mfilename);
         figure('name',figure_name)
@@ -25,6 +27,7 @@ switch SETTINGS.PLOT_GRAPHS
         vline(lower_lim,'b','');
         vline(upper_lim,'b','');
         hold off
+        MySave('TotalDegree_MinimumSingularValues');
         
         % plot all the largest ratios for k = 1,...,min(m,n)
         figure_name = sprintf('%s - QR max:min diagonals',mfilename);
@@ -38,6 +41,7 @@ switch SETTINGS.PLOT_GRAPHS
         vline(lower_lim,'b','');
         vline(upper_lim,'b','');
         hold off
+        MySave('TotalDegree_RatioMaxMinDiagonals');
         
         figure_name = sprintf('%s - QR max:min Row Sum',mfilename);
         figure('name',figure_name)
@@ -50,6 +54,7 @@ switch SETTINGS.PLOT_GRAPHS
         vline(lower_lim,'b','');
         vline(upper_lim,'b','');
         hold off
+        MySave('TotalDegree_RatioMaxMinRowSum');
     case 'n'
     otherwise
         error('plot_graphs is either y or n')

@@ -19,6 +19,9 @@ switch ex_num
     case '4'
         f = (x-0.1)^7 * (x-0.6)^3 * (x + y - 0.25)^5 * (y-5.2)^3;
         
+            
+    
+        
     otherwise
         error([mfilename 'Not a valid example number'])
 end

@@ -86,6 +86,6 @@ if isempty(t1t2_pair_mat)
         display('')
 end
     
-display(t1t2_pair_mat);
+
 
 end

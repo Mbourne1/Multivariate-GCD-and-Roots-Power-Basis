@@ -36,7 +36,7 @@ SETTINGS.BOOL_DEGREE_METHOD = '2';
 %
 %
 SETTINGS.THRESHOLD = 2;
-SETTINGS.THRESHOLD_RANK = -2;
+SETTINGS.THRESHOLD_RANK = 2;
 
 %--------------------------------------------------------------------------
 %

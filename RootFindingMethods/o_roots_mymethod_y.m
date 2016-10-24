@@ -44,7 +44,7 @@ while vDeg2_arr_fxy(ite) > 0
     fprintf([mfilename ' : ' sprintf('Compute GCD of f_{%i} and derivative f_{%i}\n\n',ite,ite)]);
     
     % Get the derivative of f(x,y) with respect to y.
-    gxy = Differentiate_wrt_y(arr_fxy{ite},vDegt_arr_fxy(ite))
+    gxy = Differentiate_wrt_y(arr_fxy{ite},vDegt_arr_fxy(ite));
     
     % Get the total degree of f(x,y)
     m = vDegt_arr_fxy(ite);
