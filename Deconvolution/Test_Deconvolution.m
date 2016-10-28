@@ -1,4 +1,4 @@
-function [] = Test_Deconvolution()
+function [] = Test_Deconvolution(ex_num)
 
 
 % Set settings pertaining to this test
@@ -13,33 +13,8 @@ SETTINGS.MAX_ITERATIONS_DECONVOLUTIONS = 50;
 x = sym('x');
 y = sym('y');
 
-% Set example number 
-ex_num = '2';
 
-switch ex_num
-    case '1'
-        
-        % Create set of factors
-        factor(1) = (x-2);
-        factor(2) = (x-3);
-        
-        % Set multiplicity of each factor
-        vMult = [7 , 12];
-        
-    case '2'
-                                
-        % Create Set of factors
-        factor(1) = (x - 2);
-        factor(2) = (x - 3.2789);
-        factor(3) = (x - 1.589);
-        factor(4) = (y - 0.7213);
-        factor(5) = (x + y - 0.54786);
-        factor(6) = (x + y - 1.24567);
-        factor(7) = (x + y - 3.24567);
-        
-        % Set multiplicitiy of each factor
-        vMult = [ 1 3 5 7 9 11 15];
-end
+[factor,vMult] = Bivariate_Deconvolution_Examples(ex_num);
 
 % Get highest power of any factor
 highest_pwr = max(vMult);

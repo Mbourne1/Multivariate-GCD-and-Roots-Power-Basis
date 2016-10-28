@@ -9,6 +9,9 @@ function [f] = GetSymbolicPoly(factors_f)
 syms x y
 
 f = factors_f{1};
+
+
+
 for i = 2:1:length(factors_f)
    f = f * factors_f{i}; 
 end
