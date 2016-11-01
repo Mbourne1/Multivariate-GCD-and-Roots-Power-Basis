@@ -6,7 +6,6 @@ function [] = o_gcd(ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_appro
 %
 % % Inputs.
 %
-%
 % ex_num  : Example Number (String)
 %
 % emin    : Minimum Noise level
@@ -70,8 +69,8 @@ DisplayDegreeStructure();
 % Add Noise
 
 % Add noise to the coefficients of f and g
-[fxy, ~] = Noise2(fxy_exact,emin);
-[gxy, ~] = Noise2(gxy_exact,emin);
+[fxy, ~] = AddNoiseToPoly2(fxy_exact,emin);
+[gxy, ~] = AddNoiseToPoly2(gxy_exact,emin);
 
 % %
 % % Get the GCD by zengs method
