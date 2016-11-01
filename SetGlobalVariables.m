@@ -9,7 +9,7 @@ SETTINGS.EX_NUM = ex_num;
 SETTINGS.EMIN = emin;
 SETTINGS.EMAX = emax;
 
-SETTINGS.PLOT_GRAPHS = 'n';
+SETTINGS.PLOT_GRAPHS = 'y';
 
 SETTINGS.SEED = 1024;
 
@@ -62,7 +62,7 @@ SETTINGS.MAX_ERROR_SNTLN = 1e-14;
 % Relative
 % Both
 %
-SETTINGS.CALC_METHOD = 'Both';
+SETTINGS.CALC_METHOD = 'Relative';
 
 
 %--------------------------------------------------------------------------

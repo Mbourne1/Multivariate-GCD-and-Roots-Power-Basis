@@ -10,9 +10,9 @@ function [fxy_lr,gxy_lr] = STLN_Both(fxy_matrix,gxy_matrix,m,n,t,t1,t2,idx_opt_c
 %
 % gxy_matrix : Coefficients of polynomial g(x,y)
 %
-% m : total degree of f
+% m : total degree of f(x,y)
 %
-% n : total degree of g
+% n : total degree of g(x,y)
 %
 % t1 : degree of d(x,y) with respect to x
 %
@@ -140,9 +140,6 @@ matZ_gxy = GetAsMatrix(...
 % A_{t} x = c_{t}
 x_ls = SolveAx_b(At,ct);
 
-display(x_ls);
-
-
 x = ...
     [
     x_ls(1:idx_opt_col-1);
@@ -162,7 +159,7 @@ v_fxy = v_fxy(1:nNonZeros_fxy,:);
 v_gxy = GetAsVector(gxy_matrix);
 v_gxy = v_gxy(1:nNonZeros_gxy,:);
 
-display(Yt)
+
 test1 = Yt * [v_fxy;v_gxy];
 test2 = At * x_ls;
 norm(test1-test2)
@@ -270,7 +267,7 @@ while condition(ite) >  SETTINGS.MAX_ERROR_SNTLN &&  ite < SETTINGS.MAX_ITERATIO
     ht = Bt(:,idx_opt_col);
     
     % Get the updated vector x
-    x_ls = SolveAx_b(At + Et,ct + ht);
+    %x_ls = SolveAx_b(At + Et,ct + ht);
     
     x = [...
         x_ls(1:idx_opt_col-1);...
@@ -299,26 +296,17 @@ end
 
 fprintf('\nRequired number of iterations: %i\n',ite)
 
-switch SETTINGS.PLOT_GRAPHS
-    case 'y'
-        
-        title = sprintf('%s - Residuals',mfilename());
-        figure('name',title)
-        hold on
-        plot(log10(condition),'-s')
-        hold off
-    case 'n'
-end
 
-
-if condition(ite) < condition(1)
+%if condition(ite) < condition(1)
     
     fxy_lr = fxy_matrix + matZ_fxy;
     gxy_lr = gxy_matrix + matZ_gxy;
-else
-    fxy_lr = fxy_matrix;
-    gxy_lr = gxy_matrix;
-end
+%else
+%    fxy_lr = fxy_matrix;
+%    gxy_lr = gxy_matrix;
+%end
+
+PlotGraphs_STLN
 
 
 end

@@ -1,4 +1,4 @@
-function Yt = BuildY_BothDegree_STLN(x,m,m1,m2,n,n1,n2,k,k1,k2)
+function Y = BuildY_BothDegree_STLN(x,m,m1,m2,n,n1,n2,k,k1,k2)
 % Build the matrix Y_{t}
 % Where Y(x) * z = E(z) * x
 % The vector x only contains the non-zero entries of v(x,y) and u(x,y)
@@ -88,7 +88,7 @@ nNonZeros_gu = GetNumNonZeros(n1+m1-k1,n2+m2-k2,n+m-k);
 Tv = Tv(1:nNonZeros_fv,:);
 Tu = Tu(1:nNonZeros_gu,:);
 
-Yt = [Tv Tu];
+Y = [Tv Tu];
 
 
 

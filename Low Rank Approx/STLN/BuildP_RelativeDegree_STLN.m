@@ -40,10 +40,9 @@ if idx_opt_col <= nColumnsT1
     % % Build the matrix P
     
     % Build the matrix P1
-    P1 = BuildP1_RelativeDegree(m1,m2,n1,n2,idx_opt_col,k1,k2);
+    P1 = BuildP1_RelativeDegree_STLN(m1,m2,n1,n2,idx_opt_col,k1,k2);
     
     % Build the matrix P2
-    
     P2 = zeros(nRows,nCoeff_g);
     
     
@@ -57,9 +56,7 @@ else
     % Build the matrix P2
     % Get the position of the optimal column with respect to T(g)
     opt_col_rel = idx_opt_col - nColumnsT1;
-    P2 = BuildP1_RelativeDegree(n1,n2,m1,m2,opt_col_rel,k1,k2);
-    
-    % Build the matrix P.
+    P2 = BuildP1_RelativeDegree_STLN(n1,n2,m1,m2,opt_col_rel,k1,k2);
     
     
 end

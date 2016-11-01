@@ -1,5 +1,5 @@
 
-function Yt = BuildY_RelativeDegree_STLN(x,m1,m2,n1,n2,t1,t2)
+function Y = BuildY_RelativeDegree_STLN(x,m1,m2,n1,n2,t1,t2)
 % Build the matrix Y_{t}
 % Where Y(x) * z = E(z) * x
 
@@ -21,7 +21,7 @@ C2 = BuildT1(mat_xu,n1,n2);
 
 % Build the Matrix Y = (C(v) C(u)
 
-Yt = [C1 C2];
+Y = [C1 C2];
 
 
 
