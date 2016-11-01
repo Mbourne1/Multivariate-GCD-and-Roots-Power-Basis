@@ -1,4 +1,4 @@
-function [fxy_lr,gxy_lr] = STLN_Both(fxy_matrix,gxy_matrix,m,n,t,t1,t2,opt_col)
+function [fxy_lr,gxy_lr] = STLN_Both(fxy_matrix,gxy_matrix,m,n,t,t1,t2,idx_opt_col)
 % Given coefficients f(x,y) and g(x,y) find the low rank approximation of
 % the Syvlester subresultant S_{t_{1},t_{2}}.
 %
@@ -82,29 +82,29 @@ nZeros_gu = nCoeff_gu - nNonZeros_gu;
 
 
 % Build the Sylvester Matrix S(f,g)
-T1 = BuildT1(fxy_matrix,n1-t1,n2-t2);
-T2 = BuildT1(gxy_matrix,m1-t1,m2-t2);
+Tf = BuildT1(fxy_matrix,n1-t1,n2-t2);
+Tg = BuildT1(gxy_matrix,m1-t1,m2-t2);
 
 % %
 % %
-% Remove the columns of T1 and T2 which correspond to the zeros in u(x,y)
+% Remove the columns of T(f) and T(g) which correspond to the zeros in u(x,y)
 % and v(x,y) which are removed from the solution vector x.
-T1 = T1(:,1:nNonZeros_vxy);
-T2 = T2(:,1:nNonZeros_uxy);
+Tf = Tf(:,1:nNonZeros_vxy);
+Tg = Tg(:,1:nNonZeros_uxy);
 
 % % 
 % %
 % Remove the extra rows of T1 and T2 associated with zeros of f*v and g*u
-T1 = T1(1:nNonZeros_fv,:);
-T2 = T2(1:nNonZeros_gu,:);
+Tf = Tf(1:nNonZeros_fv,:);
+Tg = Tg(1:nNonZeros_gu,:);
 
 % Build the matrix S_{t_{1},t_{2}} with reduced columns
-St = [T1 T2];
+St = [Tf Tg];
 
 % Remove optimal column
 At = St;
-At(:,opt_col) = [];
-ct = St(:,opt_col);
+At(:,idx_opt_col) = [];
+ct = St(:,idx_opt_col);
 
 % Build the matrix Et
 Et = zeros(size(At));
@@ -145,15 +145,16 @@ display(x_ls);
 
 x = ...
     [
-    x_ls(1:opt_col-1);
+    x_ls(1:idx_opt_col-1);
     0;
-    x_ls(opt_col:end);
+    x_ls(idx_opt_col:end);
     ];
 
 
 % Build the matrix Y_{t}
 % Where Y(x) * z = E(z) * x
-Yt = BuildYt(x,m,m1,m2,n,n1,n2,t,t1,t2);
+Yt = BuildY_BothDegree_STLN(x,m,m1,m2,n,n1,n2,t,t1,t2);
+
 
 v_fxy = GetAsVector(fxy_matrix);
 v_fxy = v_fxy(1:nNonZeros_fxy,:);
@@ -168,7 +169,7 @@ norm(test1-test2)
 
 % Build the matrix P_{t}
 % Where P * [f;g] = c_{t}
-Pt = BuildPt(m,m1,m2,n,n1,n2,t,t1,t2,opt_col);
+Pt = BuildP_BothDegree_STLN(m,m1,m2,n,n1,n2,t,t1,t2,idx_opt_col);
 test1 = Pt * [v_fxy;v_gxy];
 test2 = ct;
 norm(test1-test2)
@@ -262,22 +263,22 @@ while condition(ite) >  SETTINGS.MAX_ERROR_SNTLN &&  ite < SETTINGS.MAX_ITERATIO
     
     % Get the matrix E_{t} with optimal column removed
     Et = Bt;
-    Et(:,opt_col) = [];
+    Et(:,idx_opt_col) = [];
     
     % Get the column vector h_{t}, the optimal column removed from B_{t},
     % and equivalent to c_{t} removed from S_{t}
-    ht = Bt(:,opt_col);
+    ht = Bt(:,idx_opt_col);
     
     % Get the updated vector x
     x_ls = SolveAx_b(At + Et,ct + ht);
     
     x = [...
-        x_ls(1:opt_col-1);...
+        x_ls(1:idx_opt_col-1);...
         0;...
-        x_ls(opt_col:end)];
+        x_ls(idx_opt_col:end)];
     
     % Build the matrix Y_{t} where Y_{t}(x)*z = E_{t}(z) * x
-    Yt = BuildYt(x,m,m1,m2,n,n1,n2,t,t1,t2);
+    Yt = BuildY_BothDegree_STLN(x,m,m1,m2,n,n1,n2,t,t1,t2);
     
     % Get the residual vector
     res_vec = (ct+ht) - ((At+Et)*x_ls);
@@ -322,234 +323,3 @@ end
 
 end
 
-function Yt = BuildYt(x,m,m1,m2,n,n1,n2,t,t1,t2)
-% Build the matrix Y_{t}
-% Where Y(x) * z = E(z) * x
-% The vector x only contains the non-zero entries of v(x,y) and u(x,y)
-
-nCoefficients_uxy = (m1-t1+1) * (m2-t2+1);
-nCoefficients_vxy = (n1-t1+1) * (n2-t2+1);
-
-nNonZeros_uxy = GetNumNonZeros(m1-t1,m2-t2,m-t);
-nNonZeros_vxy = GetNumNonZeros(n1-t1,n2-t2,n-t);
-
-nZeros_uxy = nCoefficients_uxy - nNonZeros_uxy;
-nZeros_vxy = nCoefficients_vxy - nNonZeros_vxy;
-
-nNonZeros_fxy = GetNumNonZeros(m1,m2,m);
-nNonZeros_gxy = GetNumNonZeros(n1,n2,n);
-
-xv = x(1:nNonZeros_vxy);
-xu = 1.* x(nNonZeros_vxy + 1 : end);
-
-% get x_u as a matrix
-mat_xu = GetAsMatrix(...
-    [
-        xu;
-        zeros(nZeros_uxy,1)
-    ]...
-    ,m1-t1,m2-t2);
-
-% Get x_v as a matrix
-mat_xv = GetAsMatrix(...
-    [
-        xv;
-        zeros(nZeros_vxy,1);
-    ]...
-    ,n1-t1,n2-t2);
-
-% Build the matrix C1 and C2
-C1 = BuildT1(mat_xv,m1,m2);
-C2 = BuildT1(mat_xu,n1,n2);
-
-% Remove the columns of C1(v) and C2(u) corresponding to zeros in f(x,y) and
-% g(x,y)
-C1 = C1(:,1:nNonZeros_fxy);
-C2 = C2(:,1:nNonZeros_gxy);
-
-% Remove the rows of C1(v) and C2(u) corresponding to zeros in the product
-% f(x,y)*v(x,y) and g(x,y)*u(x,y)
-
-nNonZeros_fv = GetNumNonZeros(m1+n1-t1,m2+n2-t2,m+n-t);
-nNonZeros_gu = GetNumNonZeros(n1+m1-t1,n2+m2-t2,n+m-t);
-
-C1 = C1(1:nNonZeros_fv,:);
-C2 = C2(1:nNonZeros_gu,:);
-
-Yt = [C1 C2];
-
-
-
-end
-
-function Pt = BuildPt(m,m1,m2,n,n1,n2,t,t1,t2,opt_col_index)
-% BuildPt(m,m1,m2,n,n1,n2,opt_col,t1,t2)
-%
-% Build the matrix P_{t}, such that the matrix vector product P*[f;g] gives
-% the column c_{t}.
-%
-% P_{t} * [f;g] = c_{t}
-%
-% Inputs
-%
-% m  :
-%
-% m1 :
-%
-% m2 :
-%
-% n  :
-%
-% n1 :
-%
-% n2 :
-%
-% opt_col :
-%
-% t
-%
-% t1 :
-%
-% t2 :
-
-
-% Get the number of coefficients in polynomial f(x,y)
-nCoeff_f = (m1+1).*(m2+1);
-
-% Get the number of coefficients in polynomial g(x,y)
-nCoeff_g = (n1+1).*(n2+1);
-
-% Get the number of nonZero coefficients in f(x,y)
-nNonZeros_fxy = GetNumNonZeros(m1,m2,m);
-
-% Get the number of nonZeros coefficients in g(x,y)
-nNonZeros_gxy = GetNumNonZeros(n1,n2,n);
-
-% Number of columns in T1 of the sylvester matrix
-nColumnsT1 = nNonZeros_fxy;
-
-
-
-if opt_col_index <= nColumnsT1
-    % Optimal column in first partition
-    
-    % % Build the matrix P
-    
-    % Build the matrix P1
-    P1 = BuildPt_sub(m,m1,m2,n,n1,n2,t,t1,t2,opt_col_index);
-    
-    % Build the matrix P2
-    nRows = (m1+n1-t1+1)*(m2+n2-t2+1);
-    nNonZeros_fv = GetNumNonZeros(m1+n1-t1,m2+n2-t2,m+n-t);
-    P2 = zeros(nNonZeros_fv,nNonZeros_gxy);
-    
-    
-    
-    
-else
-    % Optimal column in second partition
-    
-    % Build the matrix P1
-    nRows = (m1+n1-t1+1)*(m2+n2-t2+1);
-    nNonZeros_fv = GetNumNonZeros(m1+n1-t1,m2+n2-t2,m+n-t);
-    
-    P1 = zeros(nNonZeros_fv,nNonZeros_fxy);
-    
-    
-    
-    % Get the position of the optimal column with respect to T(g), so
-    % remove the number of columns in T(f).
-    opt_col_rel = opt_col_index - nColumnsT1;
-    
-    % Build the matrix P2
-    P2 = BuildPt_sub(n,n1,n2,m,m1,m2,t,t1,t2,opt_col_rel);
-    
-    
-    
-    % Build the matrix P.
-    
-    
-end
-
-Pt = [P1 P2];
-
-end
-
-function P = BuildPt_sub(m,m1,m2,n,n1,n2,t,t1,t2,opt_col)
-% BuildPt_sub(m1,m2,n1,n2,opt_col,t1,t2)
-%
-% Build the matrix P, used in STLN function. P is a matrix which is
-% obtained from the decomposition of a column vector c_{t} into a matrix
-% vector product P_{t} [f;g]
-% c_{t} is the column of the Sylvester matrix S_{t}(f,g).
-%
-%   %   Inputs
-%
-%   m1 :    Degree of polynomial f(x,y) with respect to x
-%
-%   m2 :    Degree of polynomial f(x,y) with respect to y
-%
-%   n1 :    Degree of polynomial g(x,y) with respect to x
-%
-%   n2 :    Degree of polynomial g(x,y) with respect to y
-%
-%
-%   opt_col : Optimal column for removal from S(f,g)
-%
-%   t1 : Degree of GCD d(x,y) with respect to x
-%
-%   t2 : Degree of GCD d(x,y) with respect to y
-
-
-% Get number of nonzeros of f(x,y)
-nNonZeros_fxy = GetNumNonZeros(m1,m2,m);
-
-% Build the coefficient matrix of thetas
-mat = ones(m1+1,m2+1);
-
-
-
-% pad with zeros
-%num_mult_wrt_x = n1-t1;
-%num_mult_wrt_y = n2-t2;
-
-% Produce a zero matrix to fill the space
-padd_mat = zeros(m1+n1-t1+1, m2+n2-t2+1);
-
-% % from the index of the optimal column, Get the number of multiplications
-% with respec to x and number with respect to y.
-[i,j] = GivenCol_getIndex2(n1-t1,n2-t2,opt_col);
-
-%
-ihat = i+1;
-jhat = j+1;
-
-%
-nRows_f = m1+1;
-nCols_f = m2+1;
-
-% insert the theta matrix into the zero matrix
-padd_mat(ihat:i+nRows_f, jhat:j+nCols_f) = mat;
-
-% Get the padded matrix as a vector
-vec_padd_mat = GetAsVector(padd_mat);
-
-% Diagonalise the vector.
-diag_mat_vec_padd_mat = diag(vec_padd_mat);
-
-% Remove the zero columns
-diag_mat_vec_padd_mat( :, ~any(diag_mat_vec_padd_mat,1) ) = [];  %columns
-
-
-P = diag_mat_vec_padd_mat;
-
-% Remove the columns corresponding to zeros in f
-P = P(:,1:nNonZeros_fxy);
-
-% Remove the rows corresponding to zeros of f*v
-nNonZeros_fv = GetNumNonZeros(m1+n1-t1,m2+n2-t2,m+n-t);
-
-P = P(1:nNonZeros_fv,:);
-
-
-end

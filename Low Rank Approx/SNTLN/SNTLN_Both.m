@@ -64,23 +64,23 @@ alpha(ite) = i_alpha;
 [n1,n2] = GetDegree(gxy_matrix);
 
 % Get the number of coefficients in the polynomial f(x,y)
-num_coeff_f = (m1+1) * (m2+1);
+nCoeff_f = (m1+1) * (m2+1);
 
 % Get the number of coefficients in the polynomial g(x,y)
-num_coeff_g = (n1+1) * (n2+1);
+nCoeff_g = (n1+1) * (n2+1);
 
 % Get the number of coefficients in both f(x,y) and g(x,y)
-num_coeff = num_coeff_f + num_coeff_g;
+nCoeff = nCoeff_f + nCoeff_g;
 
 % Get the number of coefficients in v(x,y)
-num_coeff_v = (n1-t1+1) * (n2-t2+1);
+nCoeff_v = (n1-t1+1) * (n2-t2+1);
 
 % Get the number of coefficients in u(x,y)
-num_coeff_u = (m1-t1+1) * (m2-t2+1);
+nCoeff_u = (m1-t1+1) * (m2-t2+1);
 
 % Get the number of coefficients in the unknown vector x, where A_{t}x =
 % c_{t}.
-num_coeff_x = num_coeff_u + num_coeff_v - 1;
+nCoeff_x = nCoeff_u + nCoeff_v - 1;
 
 % Create the identity matrix I, the matrix M formed from I by removing the
 % column equivalent to the optimal column for removal from the Sylvester
@@ -111,7 +111,7 @@ M(:,opt_col) = [];
 % removed from the Sylvester subresultant.
 e = I(:,opt_col);
 
-%% Preprocessing
+% % Preprocessing
 
 % Obtain polynomials in Modified Bernstein Basis, using initial values of
 % alpha and theta.
@@ -154,25 +154,25 @@ Partial_fw_wrt_theta2 = fww_matrix * theta_mat;
 theta_mat = diag((0:1:n2)./ th2(ite));
 Partial_gw_wrt_theta2 = gww_matrix * theta_mat;
 
-%%
+% %
 % Build the derivative of T(f,g) with respect to alpha
 T1_wrt_alpha = BuildT1(Partial_fw_wrt_alpha,n1-t1,n2-t2);
 T2_wrt_alpha = BuildT1(Partial_alpha_gw_wrt_alpha,m1-t1,m2-t2);
 T_alpha = [T1_wrt_alpha T2_wrt_alpha];
 
-%%
+% %
 % Calculate the derivative of T(f,g) with respect to theta_{1}
 T1_wrt_theta1 = BuildT1(Partial_fw_wrt_theta1,n1-t1,n2-t2);
 T2_wrt_theta1 = BuildT1(Partial_gw_wrt_theta1,m1-t1,m2-t2);
 Partial_T_wrt_theta1 = [T1_wrt_theta1 alpha(ite)* T2_wrt_theta1];
 
-%%
+% %
 % Calcualte the derivative of T(f,g) with respect to theta_2
 T1_wrt_theta2 = BuildT1(Partial_fw_wrt_theta2,n1-t1,n2-t2);
 T2_wrt_theta2 = BuildT1(Partial_gw_wrt_theta2,m1-t1,m2-t2);
 Partial_T_wrt_theta2 = [T1_wrt_theta2 alpha(ite)*T2_wrt_theta2];
 
-%%
+% %
 % Initialise the vector z of structured perturbations
 % if we are working with strictly the roots problem, the number of entries
 % in z can be reduced.
@@ -181,7 +181,7 @@ num_rows_Sylv_mat = (m1 + n1 - t1 + 1) * (m2 + n2 - t2 + 1);
 num_cols_T1 = (n1 - t1 + 1) * (n2 - t2 + 1);
 num_cols_T2 = (m1 - t1 + 1) * (m2 - t2 + 1);
 
-zk = zeros(num_coeff , 1);
+zk = zeros(nCoeff , 1);
 
 %%
 % Initilaise the derivative of N wrt alpha.
@@ -236,7 +236,7 @@ second_part = x_ls(opt_col:end);
 x = [first_part ; 0 ; second_part];
 
 % Build Matrix Y, where Y(v,u)*[f;g] = S(f,g)*[u;v]
-Y = BuildY(m1,m2,n1,n2,t1,t2,opt_col,x_ls,alpha(ite),th1(ite),th2(ite));
+Y = BuildY_RelativeDegree(m1,m2,n1,n2,t1,t2,opt_col,x_ls,alpha(ite),th1(ite),th2(ite));
 % Test Y
 %test1 = Y * [fxy_vec;gxy_vec];
 %test2 = T * x;
@@ -246,16 +246,16 @@ Y = BuildY(m1,m2,n1,n2,t1,t2,opt_col,x_ls,alpha(ite),th1(ite),th2(ite));
 res_vec = ck - (T*M*x_ls);
 
 % Get the matrix p, which will store all the perturbations returned from LSE file
-num_entries = num_coeff_f...
-    + num_coeff_g ...
-    + num_coeff_x ...
+num_entries = nCoeff_f...
+    + nCoeff_g ...
+    + nCoeff_x ...
     + 3;
 
 
 % Set the initial value of vector p to be zero
-f = zeros(num_coeff_f...
-    + num_coeff_g ...
-    + num_coeff_x ...
+f = zeros(nCoeff_f...
+    + nCoeff_g ...
+    + nCoeff_x ...
     + 3,1);
 
 %
@@ -342,16 +342,16 @@ while condition(ite) >(SETTINGS.MAX_ERROR_SNTLN) &&  ite < SETTINGS.MAX_ITERATIO
     %% Break down y into its sections
     
     % get the coefficients corresponding to f and g
-    delta_zk        = y(1:num_coeff_f + num_coeff_g ,1);
+    delta_zk        = y(1:nCoeff_f + nCoeff_g ,1);
     
     % Remove the zk coefficients from the list of coefficients
-    y(1:num_coeff_f + num_coeff_g) = [];
+    y(1:nCoeff_f + nCoeff_g) = [];
     
     % Get the coefficients corresponding to x
-    delta_xk        = y(1:num_coeff_x,1);
+    delta_xk        = y(1:nCoeff_x,1);
     
     % Remove them from the list of coefficients
-    y(1:num_coeff_x) = [];
+    y(1:nCoeff_x) = [];
     
     % Get the coefficient corresponding to alpha
     delta_alpha     = y(1:1);
@@ -449,8 +449,8 @@ while condition(ite) >(SETTINGS.MAX_ERROR_SNTLN) &&  ite < SETTINGS.MAX_ITERATIO
     
     % Create the vector of structured perturbations zf and zg applied
     % to F and G.
-    z_fx      = zk(1:num_coeff_f);
-    z_gx      = zk(num_coeff_f + 1 :end);
+    z_fx      = zk(1:nCoeff_f);
+    z_gx      = zk(nCoeff_f + 1 :end);
     
     % Calculate the entries of z_fw and z_gw
     z_fx_mat = GetAsMatrix(z_fx,m1,m2);
@@ -544,7 +544,7 @@ while condition(ite) >(SETTINGS.MAX_ERROR_SNTLN) &&  ite < SETTINGS.MAX_ITERATIO
     xk = SolveAx_b(TN*M,ck+h);
     
     % Calculate the matrix DY where Y is the Matrix such that E_{k}x = Y_{k}z.
-    Y = BuildY(m1,m2,n1,n2,t1,t2,opt_col,xk,alpha(ite),th1(ite),th2(ite));
+    Y = BuildY_RelativeDegree(m1,m2,n1,n2,t1,t2,opt_col,xk,alpha(ite),th1(ite),th2(ite));
     
     % Calculate the matrix P where ck = P * [f,g]
     P = BuildP(m1,m2,n1,n2,alpha(ite),th1(ite),th2(ite),opt_col,t1,t2,num_cols_T1);
@@ -589,36 +589,7 @@ while condition(ite) >(SETTINGS.MAX_ERROR_SNTLN) &&  ite < SETTINGS.MAX_ITERATIO
     
 end
 
-%% Plot Graphs
-switch SETTINGS.PLOT_GRAPHS
-    case 'y'
-        figure('name','Residuals in SNTLN')
-        hold on
-        title('Residuals in SNTLN')
-        xlabel('Iterations')
-        ylabel('log_{10} Residuals')
-        plot((1:1:ite),log10(condition),'-s','DisplayName','Residual')
-        legend(gca,'show');
-        hold off
-        
-        figure('name','Theta Variation over Newton Raphson Iterations')
-        hold on
-        title('Variation of \theta over Newton Raphson Iteration')
-        plot((1:1:ite),log10(th1),'-s','DisplayName','\theta_{1}')
-        plot((1:1:ite),log10(th2),'-s','DisplayName','\theta_{2}')
-        legend(gca,'show');
-        hold off
-        
-        figure('name','Alpha variation over Newton Raphson Iterations')
-        hold on
-        title('Alpha variation over Newton Raphson Iterations')
-        plot((1:1:ite),log10(alpha),'-s','DisplayName','\alpha')
-        legend(gca,'show');
-        hold off
-    case 'n'
-    otherwise
-        error('plot_graphs is either y or n')
-end
+PlotGraphs_SNTLN();
 
 
 %%
@@ -627,10 +598,10 @@ end
 % output, alpha output and theta output.
 
 % get the vector zk
-zPert_f_vec = zk(1:num_coeff_f);
+zPert_f_vec = zk(1:nCoeff_f);
 zPert_f_mat = GetAsMatrix(zPert_f_vec,m1,m2);
 
-zPert_g_vec = zk(num_coeff_f+1:end);
+zPert_g_vec = zk(nCoeff_f+1:end);
 zPert_g_mat = GetAsMatrix(zPert_g_vec,n1,n2);
 
 % Set outputs of low rank approximation

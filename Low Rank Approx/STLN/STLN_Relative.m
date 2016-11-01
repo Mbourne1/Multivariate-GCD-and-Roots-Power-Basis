@@ -92,7 +92,7 @@ x = ...
 
 % Build the matrix Y_{t}
 % Where Y(x) * z = E(z) * x
-Yt = BuildYt(x,m1,m2,n1,n2,t1,t2);
+Yt = BuildY_RelativeDegree_STLN(x,m1,m2,n1,n2,t1,t2);
 
 v_fxy = GetAsVector(fxy_matrix);
 
@@ -105,7 +105,7 @@ norm(test1-test2)
 
 % Build the matrix P_{t}
 % Where P * [f;g] = c_{t}
-Pt = BuildPt(m1,m2,n1,n2,opt_col,t1,t2);
+Pt = BuildP_RelativeDegree(m1,m2,n1,n2,opt_col,t1,t2);
 test1 = Pt * [v_fxy;v_gxy];
 test2 = ct;
 norm(test1-test2)
@@ -196,7 +196,7 @@ while condition(ite) >  SETTINGS.MAX_ERROR_SNTLN &&  ite < SETTINGS.MAX_ITERATIO
         x_ls(opt_col:end)];
     
     % Build the matrix Y_{t} where Y_{t}(x)*z = E_{t}(z) * x
-    Yt = BuildYt(x,m1,m2,n1,n2,t1,t2);
+    Yt = BuildY_RelativeDegree_STLN(x,m1,m2,n1,n2,t1,t2);
        
     % Get the residual vector
     res_vec = (ct+ht) - ((At+Et)*x_ls);
@@ -243,102 +243,9 @@ display([GetAsVector(gxy_matrix) GetAsVector(matZ_gxy)]);
 
 end
 
-function Yt = BuildYt(x,m1,m2,n1,n2,t1,t2)
-% Build the matrix Y_{t}
-% Where Y(x) * z = E(z) * x
-
-%nCoefficients_xu = (m1-t1+1) * (m2-t2+1);
-nCoefficients_xv = (n1-t1+1) * (n2-t2+1);
-
-xv = x(1:nCoefficients_xv);
-xu = x(nCoefficients_xv+1:end);
-
-% get x_u as a matrix
-mat_xu = GetAsMatrix(xu,m1-t1,m2-t2);
-mat_xv = GetAsMatrix(xv,n1-t1,n2-t2);
-
-% Build the matrices C(v) and C(u)
-C1 = BuildT1(mat_xv,m1,m2);
-C2 = BuildT1(mat_xu,n1,n2);
-
-% Build the Matrix Y = (C(v) C(u)
-
-Yt = [C1 C2];
 
 
-
-end
-
-function Pt = BuildPt(m1,m2,n1,n2,opt_col_index,t1,t2)
-% BuildPt(m,m1,m2,n,n1,n2,opt_col,t1,t2)
-%
-% Build the matrix P_{t}, such that the matrix vector product P*[f;g] gives
-% the column c_{t}.
-%
-% P_{t} * [f;g] = c_{t}
-%
-% Inputs
-%
-% m1 :
-%
-% m2 :
-%
-% n1 :
-%
-% n2 :
-%
-% opt_col :
-%
-% t1 :
-%
-% t2 :
-
-
-% Get the number of coefficients in polynomial f
-nCoeff_f = (m1+1).*(m2+1);
-
-% Get the number of coefficients in polynomial g
-nCoeff_g = (n1+1).*(n2+1);
-
-% Number of columns in T1 of the sylvester matrix
-nColumnsT1 = (n1-t1+1) * (n2-t2+1);
-
-if opt_col_index <= nColumnsT1
-    % Optimal column in first partition
-    
-    % % Build the matrix P
-    
-    % Build the matrix P1
-    P1 = BuildPt_sub(m1,m2,n1,n2,opt_col_index,t1,t2);
-    
-    % Build the matrix P2
-    rows = (m1+n1-t1+1)*(m2+n2-t2+1);
-    P2 = zeros(rows,nCoeff_g);
-    
-    
-    
-else
-    % Optimal column in second partition
-    
-    % Build the matrix P1
-    rows = (m1+n1-t1+1)*(m2+n2-t2+1);
-    P1 = zeros(rows,nCoeff_f);
-    
-    % Build the matrix P2
-    % Get the position of the optimal column with respect to T(g)
-    opt_col_rel = opt_col_index - nColumnsT1;
-    P2 = BuildPt_sub(n1,n2,m1,m2,opt_col_rel,t1,t2);
-    
-    % Build the matrix P.
-    
-    
-end
-
-Pt = [P1 P2];
-
-end
-
-function P = BuildPt_sub(m1,m2,n1,n2,opt_col,t1,t2)
+function P = BuildP1_RelativeDegree_STLN(m1,m2,n1,n2,opt_col,t1,t2)
 % BuildPt_sub(m1,m2,n1,n2,opt_col,t1,t2)
 %
 % Build the matrix P, used in SNTLN function. P is a matrix which is

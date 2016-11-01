@@ -1,28 +1,36 @@
-function [] = GivenCol_getIndex()
+function [i,j] = GivenCol_GetIndex(m,n,col_index)
+% GivenCol_GetIndex(m,n,col_index)
+%
+% Inputs
+%
+% m :    Number of mulitplications with respect to x
+%
+% n :    Number of multiplications with respect to y
+%
+% c :    Index of column removed
 
-m = 3;
-n = 1;
+% Outputs
+% i : number of multiplications with respect to x
+% j : number of multiplications with respect to y
 
-num_diags = (m+1) + (n+1) -1;
+% build the matrix of i coefficients
+i_matrix = ones(m+1,n+1);
 
-i_vec = 1:1:num_diags;
+% multiply the rows by 0,1,2,3,4
+di_mat = diag(0:1:m);
+i_matrix = di_mat * i_matrix ;
 
+i_vec = GetAsVector(i_matrix);
 
-entr_lost_due_to_n = zeros(1,num_diags);
-for i = 1:1:num_diags
-    if i-(n+1) >0
-        entr_lost_due_to_n(i) = i-(n+1);
-    end
+% Build the matrix of j coefficients
+j_matrix = ones(m+1,n+1);
+
+di_mat = diag(0:1:n);
+j_matrix = j_matrix * di_mat;
+
+j_vec = GetAsVector(j_matrix);
+
+i = i_vec(col_index);
+j = j_vec(col_index);
+
 end
-
-entr_lost_due_to_m = zeros(1,num_diags);
-for i = 1:1:num_diags
-    if i-(m+1) >0
-        entr_lost_due_to_m(i) = i-(m+1);
-    end
-end
-
-entr_lost_due_to_n
-entr_lost_due_to_m
-
-num_entries = i_vec - (entr_lost_due_to_n + entr_lost_due_to_m)

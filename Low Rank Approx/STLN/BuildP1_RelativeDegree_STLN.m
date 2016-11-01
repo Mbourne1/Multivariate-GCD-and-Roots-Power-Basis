@@ -1,48 +1,4 @@
-function P = BuildP(m1,m2,n1,n2,alpha,theta1,theta2,opt_col,t1,t2,num_cols_T1)
-% Calculate the matrix DP where P is the matrix such that c = P[f;g]
-
-% Get the number of coefficients in polynomial f
-num_coeff_f = (m1+1).*(m2+1);
-
-% Get the number of coefficients in polynomial g
-num_coeff_g = (n1+1).*(n2+1);
-
-
-    if opt_col <= num_cols_T1
-        % Optimal column in first partition
-        
-        % % Build the matrix P
-        
-        % Build the matrix P1
-        P1 = BuildP_sub(m1,m2,n1,n2,theta1,theta2,opt_col,t1,t2);
-        
-        % Build the matrix P2
-        rows = (m1+n1-t1+1)*(m2+n2-t2+1);
-        P2 = zeros(rows,num_coeff_g);
-        
-        % Build the matrix P
-        P = [P1 P2];
-        
-    else
-        % Optimal column in second partition
-        
-        % Build the matrix P1
-        rows = (m1+n1-t1+1)*(m2+n2-t2+1);
-        P1 = zeros(rows,num_coeff_f);
-        
-        % Build the matrix P2
-        % Get the position of the optimal column with respect to T(g)
-        opt_col_rel = opt_col - num_cols_T1;
-        P2 = BuildP_sub(n1,n2,m1,m2,theta1,theta2,opt_col_rel,t1,t2);
-        
-        % Build the matrix P.
-        P = [P1 alpha.*P2];
-        
-    end
-    
-end
-    
-function P = BuildP_sub(m1,m2,n1,n2,theta1,theta2,opt_col,t1,t2)
+function P = BuildP_RelativeDegree_STLN(m1,m2,n1,n2,theta1,theta2,opt_col,t1,t2)
 % Build the matrix P, used in SNTLN function. P is a matrix which is
 % obtained from the decomposition of a column vector c_{t} into a matrix 
 % vector product P_{t} [f;g]
@@ -97,7 +53,7 @@ num_cols_f = m2+1;
 padd_mat(ihat:i+num_rows_f, jhat:j+num_cols_f) = mat;
 
 % Get the padded matrix as a vector
-vec_padd_mat = GetAsVector(padd_mat);
+vec_padd_mat = getAsVector(padd_mat);
 
 % Diagonalise the vector.
 diag_mat_vec_padd_mat = diag(vec_padd_mat);

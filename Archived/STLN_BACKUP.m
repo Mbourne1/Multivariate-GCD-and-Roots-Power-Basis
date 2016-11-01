@@ -75,7 +75,7 @@ x = ...
 % Build the matrix Y_{t}
 % Where Y(x) * z = E(z) * x
 
-Yt = BuildYt(x,m1,m2,n1,n2,t1,t2);
+Yt = BuildY_RelativeDegree(x,m1,m2,n1,n2,t1,t2);
 %v_fxy = GetAsVector(fxy);
 %v_gxy = GetAsVector(gxy);
 
@@ -84,7 +84,7 @@ Yt = BuildYt(x,m1,m2,n1,n2,t1,t2);
 
 % Build the matrix P_{t}
 % Where P * [f;g] = c_{t}
-Pt = BuildPt(m1,m2,n1,n2,opt_col,t1,t2);
+Pt = BuildP_RelativeDegree(m1,m2,n1,n2,opt_col,t1,t2);
 
 %test1 = Pt * [v_fxy;v_gxy];
 %test2 = ct;
@@ -218,7 +218,7 @@ end
 
 end
 
-function Yt = BuildYt(x,m1,m2,n1,n2,t1,t2)
+function Yt = BuildY_RelativeDegree(x,m1,m2,n1,n2,t1,t2)
 % Build the matrix Y_{t}
 % Where Y(x) * z = E(z) * x
 
@@ -239,7 +239,7 @@ Yt = [C1 C2];
 
 end
 
-function Pt = BuildPt(m1,m2,n1,n2,opt_col,t1,t2)
+function Pt = BuildP_RelativeDegree(m1,m2,n1,n2,opt_col,t1,t2)
 % Build the matrix P_{t}
 % Where P * [f;g] = c_{t}
 
@@ -259,7 +259,7 @@ if opt_col <= num_cols_T1
     % % Build the matrix P
     
     % Build the matrix P1
-    P1 = BuildPt_sub(m1,m2,n1,n2,opt_col,t1,t2);
+    P1 = BuildP1_RelativeDegree(m1,m2,n1,n2,opt_col,t1,t2);
     
     % Build the matrix P2
     rows = (m1+n1-t1+1)*(m2+n2-t2+1);
@@ -278,7 +278,7 @@ else
     % Build the matrix P2
     % Get the position of the optimal column with respect to T(g)
     opt_col_rel = opt_col - num_cols_T1;
-    P2 = BuildPt_sub(n1,n2,m1,m2,opt_col_rel,t1,t2);
+    P2 = BuildP1_RelativeDegree(n1,n2,m1,m2,opt_col_rel,t1,t2);
     
     % Build the matrix P.
     Pt = [P1 P2];
@@ -287,7 +287,7 @@ end
 
 end
 
-function P = BuildPt_sub(m1,m2,n1,n2,opt_col,t1,t2)
+function P = BuildP1_RelativeDegree(m1,m2,n1,n2,opt_col,t1,t2)
 % Build the matrix P, used in SNTLN function. P is a matrix which is
 % obtained from the decomposition of a column vector c_{t} into a matrix
 % vector product P_{t} [f;g]
