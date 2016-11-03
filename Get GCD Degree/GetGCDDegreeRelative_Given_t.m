@@ -55,44 +55,11 @@ for i = 1:1:nPairs
     k1 = k1k2Pairs(i,1);
     k2 = k1k2Pairs(i,2);
     
-    % Build the partitions of the Sylvester matrix
-    T1 = BuildT1(fxy,n1-k1,n2-k2);
-    T2 = BuildT1(gxy,m1-k1,m2-k2);
-    
-    nNonZeros_uxy = GetNumNonZeros(m1-k1,m2-k2,m-t);
-    nNonZeros_vxy = GetNumNonZeros(n1-k1,n2-k2,n-t);
-    
-    nZeros_uxy = (m1-k1+1) * (m2-k2+1) - nNonZeros_uxy;
-    nZeros_vxy = (n1-k1+1) * (n2-k2+1) - nNonZeros_vxy;
-    
-    % %
-    % %
-    
-    % Remove the columns of T1 corresponding to the zeros of v(x,y)
-    T1 = T1(:,1:nNonZeros_vxy);
-    
-    % Remove the columns of T2 corresponding to the zeros of u(x,y)
-    T2 = T2(:,1:nNonZeros_uxy);
- 
-    % % Get number of zeros in product f*v
-    nNonZeros_fv = GetNumNonZeros(m1+n1-k1,m2+n2-k2,m+n-t);
-    
-    % % Get number of zeros in product g*u
-    nNonZeros_gu = GetNumNonZeros(n1+m1-k1,n2+m2-k2,n+m-t);
-    
-    % Remove the rows from the bottom of T1(f)
-    T1 = T1(1:nNonZeros_fv,:);
-    
-    % Remove the rows from the bottom of T2(g)
-    T2 = T2(1:nNonZeros_gu,:);
-    
-    % Build the sylvester matrix
-    Sk1k2 = [T1 T2];
-    
-    %fprintf([mfilename ' : ' sprintf('Size : %i %i', size(Sk1k2,1), size(Sk1k2,2)) '\n' ])
+    % Build the Sylvester matrix S_{k,k1,k2}
+    Skk1k2 = BuildSylvesterMatrix_Both(fxy,gxy,m,n,t,k1,k2);
     
     % Get the singular values of S_{k_{1},k_{2}}
-    vSingularValues = svd(Sk1k2);
+    vSingularValues = svd(Skk1k2);
     
     % Get the minimal singular value
     vMinimumSingularValues_all(i) = min(vSingularValues);

@@ -1,4 +1,4 @@
-function [fxy_lr,gxy_lr] = STLN_Both(fxy_matrix,gxy_matrix,m,n,k,k1,k2,idx__col)
+function [fxy_lr,gxy_lr] = STLN_Both(fxy_matrix,gxy_matrix,m,n,k,k1,k2,idx_col)
 % Given coefficients f(x,y) and g(x,y) find the low rank approximation of
 % the Syvlester subresultant S_{t_{1},t_{2}}.
 %
@@ -85,31 +85,23 @@ nZeros_gu = nCoeff_gu - nNonZeros_gu;
 
 
 % Build the matrix T_{n1-k1,n2-k2}(f)
-Tf = BuildT1(fxy_matrix,n1-k1,n2-k2);
+Tf = BuildT1_Both(fxy_matrix,m,n-k,n1-k1,n2-k2);
 % Build the matrix T_{m1-k1,m2-k2}(g)
-Tg = BuildT1(gxy_matrix,m1-k1,m2-k2);
+Tg = BuildT1_Both(gxy_matrix,n,n-k,m1-k1,m2-k2);
 
 % Remove the columns of T(f) and T(g) which correspond to the zeros in u(x,y)
 % and v(x,y) which are removed from the solution vector x.
 
-% Build the matrix T_{n-k,n1-k1,n2-k2}
-Tf = Tf(:,1:nNonZeros_vxy);
-% Build the matrix T_{m-k,m1-k1,m2-k2}
-Tg = Tg(:,1:nNonZeros_uxy);
-
 % % 
 % %
 % Remove the extra rows of T1 and T2 associated with zeros of f*v and g*u
-Tf = Tf(1:nNonZeros_fv,:);
-Tg = Tg(1:nNonZeros_gu,:);
-
 % Build the matrix S_{t,t_{1},t_{2}} with reduced rows and columns
 St_fg = [Tf Tg];
 
 % Remove optimal column
 At_fg = St_fg;
-At_fg(:,idx__col) = [];
-ct = St_fg(:,idx__col);
+At_fg(:,idx_col) = [];
+ct = St_fg(:,idx_col);
 
 % Build the matrix Et
 At_zfzg = zeros(size(At_fg));
@@ -147,9 +139,9 @@ x_ls = SolveAx_b(At_fg,ct);
 
 vec_x1x2 = ...
     [
-    x_ls(1:idx__col-1);
+    x_ls(1:idx_col-1);
     0;
-    x_ls(idx__col:end);
+    x_ls(idx_col:end);
     ];
 
 
@@ -171,7 +163,7 @@ norm(test1-test2)
 
 % Build the matrix P_{t}
 % Where P * [f;g] = c_{t}
-Pt = BuildP_BothDegree_STLN(m,m1,m2,n,n1,n2,k,k1,k2,idx__col);
+Pt = BuildP_BothDegree_STLN(m,m1,m2,n,n1,n2,k,k1,k2,idx_col);
 test1 = Pt * [v_fxy;v_gxy];
 test2 = ct;
 norm(test1-test2)
@@ -249,35 +241,27 @@ while condition(ite) >  SETTINGS.MAX_ERROR_SNTLN &&  ite < SETTINGS.MAX_ITERATIO
         ,n1,n2);
     
     % Build the matrix B_{t} = [E1(zf) E2(zg)]
-    T1_zf = BuildT1(mat_zf,n1-k1,n2-k2);
-    T1_zg = BuildT1(mat_zg,m1-k1,m2-k2);
-    
-    % Remove the extra columns of E1 and E2
-    T1_zf = T1_zf(:,1:nNonZeros_vxy);
-    T1_zg = T1_zg(:,1:nNonZeros_uxy);
-    
-    % Remove Extra rows of E1 and E2
-    T1_zf = T1_zf(1:nNonZeros_fv,:);
-    T1_zg = T1_zg(1:nNonZeros_gu,:);
+    T1_zf = BuildT1_Both(mat_zf,m,n-k,n1-k1,n2-k2);
+    T1_zg = BuildT1_Both(mat_zg,n,m-k,m1-k1,m2-k2);
     
     % Build the matrix B_{t} equivalent to S_{t}
     St_zfzg = [T1_zf T1_zg];
     
     % Get the matrix E_{t} with optimal column removed
     At_zfzg = St_zfzg;
-    At_zfzg(:,idx__col) = [];
+    At_zfzg(:,idx_col) = [];
     
     % Get the column vector h_{t}, the optimal column removed from B_{t},
     % and equivalent to c_{t} removed from S_{t}
-    ht = St_zfzg(:,idx__col);
+    ht = St_zfzg(:,idx_col);
     
     % Get the updated vector x
     %x_ls = SolveAx_b(At + Et,ct + ht);
     
     vec_x1x2 = [...
-        x_ls(1:idx__col-1);...
+        x_ls(1:idx_col-1);...
         0;...
-        x_ls(idx__col:end)];
+        x_ls(idx_col:end)];
     
     % Build the matrix Y_{t} where Y_{t}(x)*z = E_{t}(z) * x
     Yt = BuildY_BothDegree_STLN(vec_x1x2,m,m1,m2,n,n1,n2,k,k1,k2);

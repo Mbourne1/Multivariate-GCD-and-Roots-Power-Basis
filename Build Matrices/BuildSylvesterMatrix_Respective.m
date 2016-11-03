@@ -1,12 +1,12 @@
-function S = BuildSylvesterMatrix_Respective(fxy_matrix,gxy_matrix,k1,k2)
+function Sk = BuildSylvesterMatrix_Respective(fxy,gxy,k1,k2)
 % Given two input polynomials f(x,y) and g(x,y), build the (k1,k2)-th
 % Sylvester subresultant.
 %
 % Inputs
 %
-% fxy_matrix : Coefficients of input polynomial f(x,y).
+% fxy : Coefficients of input polynomial f(x,y).
 %
-% gxy_matrix : Coefficients of input polynomial g(x,y).
+% gxy : Coefficients of input polynomial g(x,y).
 %
 % k1 : With respect to x.
 %
@@ -18,15 +18,15 @@ function S = BuildSylvesterMatrix_Respective(fxy_matrix,gxy_matrix,k1,k2)
 
 
 % Get degrees m1 and m2 of polynomial f(x,y)
-[m1,m2] = GetDegree(fxy_matrix);
+[m1,m2] = GetDegree(fxy);
 
 % Get degrees n1 and n2 of polynomial g(x,y)
-[n1,n2] = GetDegree(gxy_matrix);
+[n1,n2] = GetDegree(gxy);
 
 % Build the partitions of the Sylvester subresultant matrix S_{k1,k2}(f,g)
-T1 = BuildT1(fxy_matrix,n1-k1,n2-k2);
-T2 = BuildT1(gxy_matrix,m1-k1,m2-k2);
+T1 = BuildT1_Relative(fxy,n1-k1,n2-k2);
+T2 = BuildT1_Relative(gxy,m1-k1,m2-k2);
 
 % Build the sylvester matrix
-S = [T1 T2]; 
+Sk = [T1 T2]; 
 end

@@ -12,6 +12,10 @@ function Sk = BuildSylvesterMatrix_Total(fxy,gxy,m,n,k)
 %
 % k : Total degree of d(x,y) and index of the kth Sylvester subresultant
 % matrix to be built.
+%
+% % Outputs.
+%
+% Sk : The kth Sylvester matrix S_{k}
 
 % Build the partition T_{n-k}(f)
 Tf = BuildT1_TotalDegree(fxy,m,n-k);

@@ -467,3 +467,8 @@ now,EX_NUM,m,n,t,error_dx,MEAN_METHOD,BOOL_ALPHA_THETA,EMIN,EMAX,LOW_RANK_APPROX
 03-Nov-2016 17:12:42, 	 1, 	 7, 	 7, 	 4, 	 2.622166e-08, 	 Geometric Mean Matlab Method, 	 y, 	 1.000000e-08, 	 1.000000e-12, 	 Standard STLN
 03-Nov-2016 17:17:02, 	 1, 	 7, 	 7, 	 4, 	 5.277871e-07, 	 Geometric Mean Matlab Method, 	 y, 	 1.000000e-07, 	 1.000000e-12, 	 Standard STLN
 03-Nov-2016 17:17:22, 	 1, 	 7, 	 7, 	 4, 	 6.339052e-07, 	 Geometric Mean Matlab Method, 	 y, 	 1.000000e-07, 	 1.000000e-12, 	 None
+03-Nov-2016 17:19:23, 	 1, 	 7, 	 7, 	 4, 	 5.277871e-07, 	 Geometric Mean Matlab Method, 	 y, 	 1.000000e-07, 	 1.000000e-12, 	 Standard STLN
+03-Nov-2016 17:41:21, 	 1, 	 7, 	 7, 	 4, 	 6.339052e-07, 	 Geometric Mean Matlab Method, 	 y, 	 1.000000e-07, 	 1.000000e-12, 	 None
+03-Nov-2016 17:47:00, 	 1, 	 7, 	 7, 	 4, 	 5.277871e-07, 	 Geometric Mean Matlab Method, 	 y, 	 1.000000e-07, 	 1.000000e-12, 	 Standard STLN
+03-Nov-2016 17:54:37, 	 1, 	 7, 	 7, 	 4, 	 5.277871e-07, 	 Geometric Mean Matlab Method, 	 y, 	 1.000000e-07, 	 1.000000e-12, 	 Standard STLN
+03-Nov-2016 17:55:01, 	 1, 	 7, 	 7, 	 4, 	 5.361029e-05, 	 Geometric Mean Matlab Method, 	 y, 	 1.000000e-05, 	 1.000000e-12, 	 Standard STLN

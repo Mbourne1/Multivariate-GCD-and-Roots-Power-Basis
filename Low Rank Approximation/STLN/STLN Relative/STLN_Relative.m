@@ -49,8 +49,8 @@ nCoeff_v = (n1-t1+1) * (n2-t2+1);
 nCoeff_u = (m1-t1+1) * (m2-t2+1);
 
 % Build the Sylvester Matrix S(f,g)
-Tf = BuildT1(fxy_matrix,n1-t1,n2-t2);
-Tg = BuildT1(gxy_matrix,m1-t1,m2-t2);
+Tf = BuildT1_Relative(fxy_matrix,n1-t1,n2-t2);
+Tg = BuildT1_Relative(gxy_matrix,m1-t1,m2-t2);
 St = [Tf Tg];
 
 % Remove optimal column

@@ -1,11 +1,12 @@
-function Y = BuildY_BothDegree_STLN(x,m,m1,m2,n,n1,n2,k,k1,k2)
-% Build the matrix Y_{t}
-% Where Y(x) * z = E(z) * x
+function Y_kk1k2 = BuildY_BothDegree_STLN(x,m,m1,m2,n,n1,n2,k,k1,k2)
+% BuildY_BothDegree_STLN(x,m,m1,m2,n,n1,n2,k,k1,k2)
+%
+% Build the matrix Y_{t} Where Y(x) * z = E(z) * x
 % The vector x only contains the non-zero entries of v(x,y) and u(x,y)
 %
 % Inputs
 %
-% x
+% x : Vector obtained by inserting zero into the Least squares solution.
 %
 % m : Total degree of polynomial f(x,y)
 %
@@ -24,7 +25,10 @@ function Y = BuildY_BothDegree_STLN(x,m,m1,m2,n,n1,n2,k,k1,k2)
 % k1 : Degree of polynomial d(x,y) with respect to x
 %
 % k2 : Degree of polynomial d(x,y) with respect to y
-
+%
+% % Outputs
+%
+% Y_kk1k2 : The matrix Y_{k,k_{1},k_{2}}
 
 % Get number of coefficients in u(x,y)
 nCoefficients_uxy = (m1-k1+1) * (m2-k2+1);
@@ -44,11 +48,7 @@ nZeros_uxy = nCoefficients_uxy - nNonZeros_uxy;
 % Get number of zero coefficients in v(x,y)
 nZeros_vxy = nCoefficients_vxy - nNonZeros_vxy;
 
-% Get number of non-zero coefficients in f(x,y)
-nNonZeros_fxy = GetNumNonZeros(m1,m2,m);
 
-% Get number of non-zero coefficients in g(x,y)
-nNonZeros_gxy = GetNumNonZeros(n1,n2,n);
 
 % % Split the vector x
 xv = x(1:nNonZeros_vxy);
@@ -71,24 +71,11 @@ mat_xv = GetAsMatrix(...
     ,n1-k1,n2-k2);
 
 % Build the matrix C1 and C2
-Tv = BuildT1(mat_xv,m1,m2);
-Tu = BuildT1(mat_xu,n1,n2);
+Tv = BuildT1_Both(mat_xv,n-k,m,m1,m2);
+Tu = BuildT1_Both(mat_xu,m-k,n,n1,n2);
 
-% Remove the columns of C1(v) and C2(u) corresponding to zeros in f(x,y) and
-% g(x,y)
-Tv = Tv(:,1:nNonZeros_fxy);
-Tu = Tu(:,1:nNonZeros_gxy);
-
-% Remove the rows of C1(v) and C2(u) corresponding to zeros in the product
-% f(x,y)*v(x,y) and g(x,y)*u(x,y)
-
-nNonZeros_fv = GetNumNonZeros(m1+n1-k1,m2+n2-k2,m+n-k);
-nNonZeros_gu = GetNumNonZeros(n1+m1-k1,n2+m2-k2,n+m-k);
-
-Tv = Tv(1:nNonZeros_fv,:);
-Tu = Tu(1:nNonZeros_gu,:);
-
-Y = [Tv Tu];
+% Build the matrix Y_{k}
+Y_kk1k2 = [Tv Tu];
 
 
 

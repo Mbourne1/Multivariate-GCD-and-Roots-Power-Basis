@@ -42,35 +42,17 @@ t2 = m2-(m2_t2);
 % %
 % %
 % Build matrices C(u) and C(v)
-
-% Build the Cauchy matrix of coefficients of u(w,w)
-C1 = BuildT1(uxy_matrix,t1,t2);
-
-% Build the Cauchy matrix of coefficients of v(w,w)
-C2 = BuildT1(vxy_matrix,t1,t2);
-
-% % 
-% % 
-% Remove the columns of C(u) and C(v) corresponding to zeros in vector of 
-% coefficients of d(x,y)
-
 % Get number of zeros in d(x,y)
 nNonZeros_dxy = GetNumNonZeros(t1,t2,t);
 nZeros_dxy = (t1+1) * (t2+1) - nNonZeros_dxy;
-C1 = C1(:,1:nNonZeros_dxy);
-C2 = C2(:,1:nNonZeros_dxy);
 
-% % 
-% %
-% Remove the rows of C(u) and C(v) corresponding to the zeros in
-% u(x,y)*d(x,y) and v(x,y)*d(x,y) which are the zeros in f(x,y) and g(x,y)
-% respectively.
 nNonZeros_ud = GetNumNonZeros(m1,m2,m);
 nNonZeros_vd = GetNumNonZeros(n1,n2,n);
-C1 = C1(1:nNonZeros_ud,:);
-C2 = C2(1:nNonZeros_vd,:);
 
-C = [C1; C2];
+C1 = BuildT1_Both(uxy_matrix,m-t,t,t1,t2);
+C2 = BuildT1_Both(vxy_matrix,n-t,t,t1,t2);
+
+C = [C1 ; C2];
 
 % % 
 % % 
