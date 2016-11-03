@@ -1,4 +1,4 @@
-function [fxy_lr,gxy_lr] = STLN_Relative(fxy_matrix,gxy_matrix,t1,t2,opt_col)
+function [fxy_lr,gxy_lr] = STLN_Relative(fxy_matrix,gxy_matrix,t1,t2,idx_col)
 % Given coefficients f(x,y) and g(x,y) find the low rank approximation of
 % the Syvlester subresultant S_{t_{1},t_{2}}.
 %
@@ -10,19 +10,23 @@ function [fxy_lr,gxy_lr] = STLN_Relative(fxy_matrix,gxy_matrix,t1,t2,opt_col)
 %
 % gxy_matrix : Coefficients of polynomial g(x,y)
 %
-% m : total degree of f
+% m : Total degree of f(x,y)
 %
-% n : total degree of g
+% n : Total degree of g(x,y)
 %
-% t1 : degree of d(x,y) with respect to x
+% t1 : Degree of d(x,y) with respect to x
 %
-% t2 : degree of d(x,y) with respect to y
+% t2 : Degree of d(x,y) with respect to y
 %
-% opt_col : index of optimal column for removal from S_{t_{1},t_{2}}(f,g)
+% idx_col : Index of optimal column for removal from S_{t_{1},t_{2}}(f,g)
 %
 % Outputs 
 %
-% fxy_matrix : Coefficients of f(x,y) with added perturbations
+% fxy_lr : Coefficients of f(x,y) with added perturbations
+%
+% gxy_lr : Coefficients of g(x,y) with added perturbations
+
+
 global SETTINGS
 
 
@@ -51,8 +55,8 @@ St = [Tf Tg];
 
 % Remove optimal column
 At = St;
-At(:,opt_col) = [];
-ct = St(:,opt_col);
+At(:,idx_col) = [];
+ct = St(:,idx_col);
 
 % Build the matrix Et
 Et = zeros(size(At));
@@ -83,9 +87,9 @@ display(x_ls);
 
 x = ...
     [
-    x_ls(1:opt_col-1);
+    x_ls(1:idx_col-1);
     0;
-    x_ls(opt_col:end);
+    x_ls(idx_col:end);
     ];
 
 
@@ -105,7 +109,7 @@ norm(test1-test2)
 
 % Build the matrix P_{t}
 % Where P * [f;g] = c_{t}
-P = BuildP_RelativeDegree_STLN(m1,m2,n1,n2,opt_col,t1,t2);
+P = BuildP_RelativeDegree_STLN(m1,m2,n1,n2,idx_col,t1,t2);
 test1 = P * [v_fxy;v_gxy];
 test2 = ct;
 norm(test1-test2)
@@ -182,19 +186,19 @@ while condition(ite) >  SETTINGS.MAX_ERROR_SNTLN &&  ite < SETTINGS.MAX_ITERATIO
     
     % Get the matrix E_{t} with optimal column removed
     Et = Bt;
-    Et(:,opt_col) = [];
+    Et(:,idx_col) = [];
     
     % Get the column vector h_{t}, the optimal column removed from B_{t},
     % and equivalent to c_{t} removed from S_{t}
-    ht = Bt(:,opt_col);
+    ht = Bt(:,idx_col);
     
     % Get the updated vector x
     % x_ls = SolveAx_b(At+Et,ct+ht);
     
     x = [...
-        x_ls(1:opt_col-1);...
+        x_ls(1:idx_col-1);...
         0;...
-        x_ls(opt_col:end)];
+        x_ls(idx_col:end)];
     
     % Build the matrix Y_{t} where Y_{t}(x)*z = E_{t}(z) * x
     Y = BuildY_RelativeDegree_STLN(x,m1,m2,n1,n2,t1,t2);
@@ -216,7 +220,7 @@ while condition(ite) >  SETTINGS.MAX_ERROR_SNTLN &&  ite < SETTINGS.MAX_ITERATIO
     
 end
 
-fprintf('\nRequired number of iterations: %i\n',ite)
+fprintf([mfilename ' : ' sprintf('Required number of iterations: %i\n',ite)]);
 
 PlotGraphs_STLN();
 

@@ -16,9 +16,7 @@ function [uxy,vxy] = GetQuotients_Total(fxy,gxy,m,n,k)
 %
 % % Outputs
 % 
-% uxy : Coefficients of polynomial u(x,y)
-%
-% vxy : Coefficeints of polynomial v(x,y)
+% uxy : Coefficients of polynomial u
 
 
 % %
@@ -41,18 +39,19 @@ gxy = padd_matrix;
 
 
 % Build the Sylvester Subresultant matrix S
-Sk = BuildSylvesterMatrix_Total(fxy,gxy,m,n,k);
+St = BuildSylvesterMatrix_Total(fxy,gxy,m,n,k);
 
 % Get the optimal column for removal from S(f,g)
-opt_col = GetOptimalColumn_Total(Sk);
+
+opt_col = GetOptimalColumn_Total(St);
 
 
 % % Having found the optimal column, obtain u and v the quotient polynomials.
-Akj = Sk;
-cki = Sk(:,opt_col);
-Akj(:,opt_col) = [];
+Atj = St;
+cki = St(:,opt_col);
+Atj(:,opt_col) = [];
 
-x_ls = SolveAx_b(Akj,cki);
+x_ls = SolveAx_b(Atj,cki);
 
 % Obtain the solution vector x = [-v;u]
 vecx =[
@@ -79,8 +78,8 @@ uxy_calc = (-1).*vecx(num_coeff_v+1:end);
 zeros_vww = zeros(nchoosek(n-k-1+2,2),1);
 zeros_uww = zeros(nchoosek(m-k-1+2,2),1);
 
-uxy = GetAsMatrix([uxy_calc;zeros_uww],m-k,m-k);
-vxy = GetAsMatrix([vxy_calc;zeros_vww],n-k,n-k);
+uxy_calc_mtrx = GetAsMatrix([uxy_calc;zeros_uww],m-k,m-k);
+vxy_calc_mtrx = GetAsMatrix([vxy_calc;zeros_vww],n-k,n-k);
 
 
 

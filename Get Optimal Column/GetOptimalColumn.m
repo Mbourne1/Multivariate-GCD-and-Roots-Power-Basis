@@ -1,4 +1,4 @@
-function [opt_col] = GetOptimalColumn(fxy,gxy,m,n,t,t1,t2)
+function [idx_col] = GetOptimalColumn(fxy,gxy,m,n,k,k1,k2)
 % Get the optimal column c_{k} of the Sylvester subresultant matrix S(f,g)
 % which when removed from S(f,g) gives minimal residual in the equation
 % A_{k}x = c_{k} when solving for x.
@@ -13,23 +13,43 @@ function [opt_col] = GetOptimalColumn(fxy,gxy,m,n,t,t1,t2)
 % 
 % n : Total degree of polynomial g(x,y)
 %
-% t : Total degree of polynomial d(x,y)
+% k : Total degree of polynomial d(x,y)
 %
-% t1 : Degree of polynomial d(x,y) with respect to x
+% k1 : Degree of polynomial d(x,y) with respect to x
 %
-% t2 : Degree of polynomial d(x,y) with respect to y
+% k2 : Degree of polynomial d(x,y) with respect to y
+%
+% % Outputs
+%
+% idx_col : Index of column to be removed from the Sylvester subresultant
+% matrix.
 
 global SETTINGS
 
 switch SETTINGS.CALC_METHOD
     case 'Total'
-        opt_col = GetOptimalColumn_Total(fxy,gxy,m,n,t);
+        
+        % Build the kth Sylvester matrix
+        Sk = BuildSylvesterMatrix_Total(fxy,gxy,m,n,k);
+        
+        % Get optimal column for removal
+        idx_col = GetOptimalColumn_Total(Sk);
         
     case 'Relative'
-        opt_col = GetOptimalColumn_Respective(fxy,gxy,t1,t2);
+        
+        % Build the kth Sylvester matrix
+        Sk1k2 = BuildSylvesterMatrix_Respective(fxy,gxy,k1,k2);
+        
+        % Get optimal column for removal
+        idx_col = GetOptimalColumn_Respective(Sk1k2);
         
     case 'Both'
-        opt_col = GetOptimalColumn_Both(fxy,gxy,m,n,t,t1,t2);
+        
+        % Build the kth Sylvester matrix
+        Skk1k2 = BuildSylvesterMatrix_Both(fxy,gxy,m,n,k,k1,k2);
+        
+        % Get Optimal column for removal
+        idx_col = GetOptimalColumn_Both(Skk1k2);
         
     otherwise
         error('err')

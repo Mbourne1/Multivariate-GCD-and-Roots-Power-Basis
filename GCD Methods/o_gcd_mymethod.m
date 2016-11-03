@@ -56,7 +56,7 @@ fww = GetWithThetas(fxy_n,th1,th2);
 gww = GetWithThetas(gxy_n,th1,th2);
 
 % Build the 0-th Subresultant of the preprocessed polynomials.
-S_Preproc = BuildSylvesterMatrix(fww,alpha.*gww,0,0);
+S_Preproc = BuildSylvesterMatrix_Respective(fww,alpha.*gww,0,0);
 
 % %
 % %
@@ -131,7 +131,7 @@ fww = GetWithThetas(fxy_n,th1,th2);
 gww = GetWithThetas(gxy_n,th1,th2);
 
 % Build the low rank approximation
-S_LowRankApprox = BuildSylvesterMatrix(fxy_n,gxy_n,0,0);
+S_LowRankApprox = BuildSylvesterMatrix_Respective(fxy_n,gxy_n,0,0);
 
 % %
 % %
@@ -139,7 +139,7 @@ S_LowRankApprox = BuildSylvesterMatrix(fxy_n,gxy_n,0,0);
 % Plot graphs
 
 % Build Subresultant of noisy unprocessed polynomials
-S_Unproc = BuildSylvesterMatrix(fxy,gxy,0,0);
+S_Unproc = BuildSylvesterMatrix_Respective(fxy,gxy,0,0);
 vSingularValues_S_Unproc = svd(S_Unproc);
 vSingularValues_S_Unproc  = Normalise(vSingularValues_S_Unproc);
 

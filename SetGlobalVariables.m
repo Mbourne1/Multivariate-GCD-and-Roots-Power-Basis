@@ -44,9 +44,9 @@ SETTINGS.THRESHOLD_RANK = 2;
 %
 %
 
-SETTINGS.MAX_ITERATIONS_SNTLN = 100;
+SETTINGS.MAX_ITERATIONS_SNTLN = 50;
 
-SETTINGS.MAX_ERROR_SNTLN = 1e-14;
+SETTINGS.MAX_ERROR_SNTLN = 1e-10;
 
 
 %--------------------------------------------------------------------------
@@ -62,7 +62,7 @@ SETTINGS.MAX_ERROR_SNTLN = 1e-14;
 % Relative
 % Both
 %
-SETTINGS.CALC_METHOD = 'Relative';
+SETTINGS.CALC_METHOD = 'Both';
 
 
 %--------------------------------------------------------------------------

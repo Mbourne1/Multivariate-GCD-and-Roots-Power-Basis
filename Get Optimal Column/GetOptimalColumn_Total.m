@@ -1,31 +1,21 @@
-function [opt_col] = GetOptimalColumn_Total(fxy_matrix,gxy_matrix,m,n,t)
+function [opt_col] = GetOptimalColumn_Total(Sk)
 
-% % Build the partitions of the Sylvester matrix S_{t}
-
-% Build the first partition containing coefficients of fxy
-T1 = BuildT1_TotalDegree(fxy_matrix,m,n-t);
-
-% Build the second partition containing coefficients of gxy
-T2 = BuildT1_TotalDegree(gxy_matrix,n,m-t);
-
-% Concatenate the two partitions
-St = [T1 T2];
 
 % From the given subresultant find the optimal column for removal.
-[~,cols_T1] = size(St);
+[~,nCols_T1] = size(Sk);
 
 % Take the QR decomposition of the Subresultant
-[Qk,Rk] = qr(St);
+[Qk,Rk] = qr(Sk);
 
 
-residuals_QR = zeros(cols_T1,1);
-for k=1:1:cols_T1
-    Sk_temp = St;
+residuals_QR = zeros(nCols_T1,1);
+for k=1:1:nCols_T1
+    Sk_temp = Sk;
     % Rem
     ck = Sk_temp(:,k);
     [Q,~] = qrdelete(Qk,Rk,k);
     cd = Q'*ck;
-    d = cd(n+1:end,:);
+    d = cd(nCols_T1+1:end,:);
     residuals_QR(k) = norm(d);
 end
 

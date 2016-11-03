@@ -1,5 +1,5 @@
 function [uxy_calc_matrix,vxy_calc_matrix] = ...
-    GetQuotients_Both(fxy_matrix,gxy_matrix,m,n,t,t1,t2,opt_alpha,th1,th2)
+    GetQuotients_Both(fxy,gxy,m,n,k,k1,k2)
 % GetQuotients(fxy_matrix,gxy_matrix,t1,t2,opt_alpha,th1,th2)
 %
 % Given two polynomials and the knowledge of the degree of the GCD. Obtain
@@ -7,77 +7,49 @@ function [uxy_calc_matrix,vxy_calc_matrix] = ...
 %
 % % Inputs.
 %
-% fxy_matrix : Coefficients of the polynomial f(x,y).
+% fxy : Coefficients of the polynomial f(x,y).
 %
-% gxy_matrix : coefficients of the polynomial g(x,y).
+% gxy : coefficients of the polynomial g(x,y).
 %
-% t1 : Degree of GCD d(x,y).
+% k : Total degree of d(x,y)
 %
-% t2 : Degree of GCD d(x,y).
-
+% k1 : Degree of GCD d(x,y).
+%
+% k2 : Degree of GCD d(x,y).
 
 % Get the degree of polynomial f(x,y).
-[m1,m2] = GetDegree(fxy_matrix);
+[m1,m2] = GetDegree(fxy);
 
 % Get the degree of polynomial g(x,y).
-[n1,n2] = GetDegree(gxy_matrix);
+[n1,n2] = GetDegree(gxy);
 
-% % Build the partitions of the Sylvester matrix S_{t}
-
-% Build the first partition containing coefficients of fxy
-T1 = BuildT1(fxy_matrix,n1-t1,n2-t2);
-
-% Build the second partition containing coefficients of gxy
-T2 = BuildT1(gxy_matrix,m1-t1,m2-t2);
-
-% Get number of non-zero entries in u(x,y) and v(x,y)
-nNoneZeros_uxy = GetNumNonZeros(m1-t1,m2-t2,m-t);
-nNoneZeros_vxy = GetNumNonZeros(n1-t1,n2-t2,n-t);
-
-% Get number of zero entries in u(x,y) and v(x,y)
-nZeros_uxy = (m1-t1+1) * (m2-t2+1) - nNoneZeros_uxy;
-nZeros_vxy = (n1-t1+1) * (n2-t2+1) - nNoneZeros_vxy;
-
-% %
-% %
-% Remove Columns from S(f,g)
-
-% Remove the zero columns from T_{n1-t1,n2-t2}
-T1 = T1(:,1:nNoneZeros_vxy);
-
-% Remove the zero columns from T_{m1-t1,m2-t2}
-T2 = T2(:,1:nNoneZeros_uxy);
-
-% %
-% % 
-% Remove Rows from S(f,g)
-nNoneZeros_fv = GetNumNonZeros(m1+n1-t1,m2+n2-t2,m+n-t);
-nNoneZeros_gu = GetNumNonZeros(n1+m1-t1,n2+m2-t2,n+m-t);
-
-T1 = T1(1:nNoneZeros_fv,:);
-T2 = T2(1:nNoneZeros_gu,:);
-
-
-% Form the Sylvester matrix.
-St = [T1 T2];
+% Build the Sylvester matrix S_{k,k1,k2}
+Skk1k2 = BuildSylvesterMatrix_Both(fxy,gxy,m,n,k,k1,k2);
 
 % % Get the optimal column for removal.
-opt_col = GetOptimalColumn_Both(fxy_matrix,gxy_matrix,m,n,t,t1,t2);
-
+idx_col = GetOptimalColumn_Both(Skk1k2);
 
 % Having found the optimal column, obtain u and v the quotient polynomials.
-Atj = St;
-cki = St(:,opt_col);
-Atj(:,opt_col) = [];
+Atj = Skk1k2;
+cki = Skk1k2(:,idx_col);
+Atj(:,idx_col) = [];
 
 % Get the solution vector.
 x_ls = SolveAx_b(Atj,cki);
 
+% Get number of non-zero entries in u(x,y) and v(x,y)
+nNoneZeros_uxy = GetNumNonZeros(m1-k1,m2-k2,m-k);
+nNoneZeros_vxy = GetNumNonZeros(n1-k1,n2-k2,n-k);
+
+% Get number of zero entries in u(x,y) and v(x,y)
+nZeros_uxy = (m1-k1+1) * (m2-k2+1) - nNoneZeros_uxy;
+nZeros_vxy = (n1-k1+1) * (n2-k2+1) - nNoneZeros_vxy;
+
 % Obtain the solution vector x = [-v;u]
 vecx =[
-    x_ls(1:(opt_col)-1);
+    x_ls(1:(idx_col)-1);
     -1;
-    x_ls(opt_col:end);
+    x_ls(idx_col:end);
     ]  ;
 
 % Get the vector of coefficients of v(x,y)
@@ -96,10 +68,10 @@ uxy_calc = [...
 
 
 % Arrange u(x,y) as a matrix.
-uxy_calc_matrix = GetAsMatrix(uxy_calc,m1-t1,m2-t2);
+uxy_calc_matrix = GetAsMatrix(uxy_calc,m1-k1,m2-k2);
 
 % Arrange v(x,y) as a matrix.
-vxy_calc_matrix = GetAsMatrix(vxy_calc,n1-t1,n2-t2);
+vxy_calc_matrix = GetAsMatrix(vxy_calc,n1-k1,n2-k2);
 
 
 

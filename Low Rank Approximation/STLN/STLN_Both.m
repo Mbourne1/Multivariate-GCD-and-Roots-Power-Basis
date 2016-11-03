@@ -1,4 +1,4 @@
-function [fxy_lr,gxy_lr] = STLN_Both(fxy_matrix,gxy_matrix,m,n,t,t1,t2,idx_opt_col)
+function [fxy_lr,gxy_lr] = STLN_Both(fxy_matrix,gxy_matrix,m,n,k,k1,k2,idx__col)
 % Given coefficients f(x,y) and g(x,y) find the low rank approximation of
 % the Syvlester subresultant S_{t_{1},t_{2}}.
 %
@@ -14,16 +14,19 @@ function [fxy_lr,gxy_lr] = STLN_Both(fxy_matrix,gxy_matrix,m,n,t,t1,t2,idx_opt_c
 %
 % n : total degree of g(x,y)
 %
-% t1 : degree of d(x,y) with respect to x
+% k : Degree of d(x,y) 
 %
-% t2 : degree of d(x,y) with respect to y
+% k1 : degree of d(x,y) with respect to x
 %
-% opt_col : index of optimal column for removal from S_{t_{1},t_{2}}(f,g)
+% k2 : degree of d(x,y) with respect to y
+%
+% idx_col : index of optimal column for removal from S_{t_{1},t_{2}}(f,g)
 %
 % % Outputs 
 %
-% fxy_matrix : Coefficients of f(x,y) with added perturbations
-
+% fxy_lr : Coefficients of f(x,y) with added perturbations
+%
+% gxy_lr : Coefficients of g(x,y) with added perturbations
 
 global SETTINGS
 
@@ -41,23 +44,23 @@ nCoeff_f = (m1+1) * (m2+1);
 nCoeff_g = (n1+1) * (n2+1);
 
 % Get the number of coefficients in v(x,y)
-nCoeff_v = (n1-t1+1) * (n2-t2+1);
+nCoeff_v = (n1-k1+1) * (n2-k2+1);
 
 % Get the number of coefficients in u(x,y)
-nCoeff_u = (m1-t1+1) * (m2-t2+1);
+nCoeff_u = (m1-k1+1) * (m2-k2+1);
 
 % Get the number of coefficients in the vector fv
-nCoeff_fv = (m1+n1-t1+1) * (m2+n2-t2+1);
+nCoeff_fv = (m1+n1-k1+1) * (m2+n2-k2+1);
 
 % Get the number of coefficients in the vector gu
-nCoeff_gu = (n1+m1-t1+1) * (n2+m2-t2+1);
+nCoeff_gu = (n1+m1-k1+1) * (n2+m2-k2+1);
 
 % Get number of zeros in v
-nNonZeros_vxy = GetNumNonZeros(n1-t1,n2-t2,n-t);
+nNonZeros_vxy = GetNumNonZeros(n1-k1,n2-k2,n-k);
 nZeros_vxy = nCoeff_v - nNonZeros_vxy;
 
 % Get number of zeros in u(x,y)
-nNonZeros_uxy = GetNumNonZeros(m1-t1,m2-t2,m-t);
+nNonZeros_uxy = GetNumNonZeros(m1-k1,m2-k2,m-k);
 nZeros_uxy = nCoeff_u - nNonZeros_uxy;
 
 % Get number of zeros in f(x,y)
@@ -69,11 +72,11 @@ nNonZeros_gxy = GetNumNonZeros(n1,n2,n);
 nZeros_gxy = nCoeff_g - nNonZeros_gxy;
 
 % Get number of zeros in the product fv
-nNonZeros_fv = GetNumNonZeros(m1+n1-t1,m2+n2-t2,m+n-t);
+nNonZeros_fv = GetNumNonZeros(m1+n1-k1,m2+n2-k2,m+n-k);
 nZeros_fv = nCoeff_fv - nNonZeros_fv;
 
 % Get number of zeros in the product gu
-nNonZeros_gu = GetNumNonZeros(n1+m1-t1,n2+m2-t2,n+m-t);
+nNonZeros_gu = GetNumNonZeros(n1+m1-k1,n2+m2-k2,n+m-k);
 nZeros_gu = nCoeff_gu - nNonZeros_gu;
 
 
@@ -81,15 +84,17 @@ nZeros_gu = nCoeff_gu - nNonZeros_gu;
 % c_{t}.
 
 
-% Build the Sylvester Matrix S(f,g)
-Tf = BuildT1(fxy_matrix,n1-t1,n2-t2);
-Tg = BuildT1(gxy_matrix,m1-t1,m2-t2);
+% Build the matrix T_{n1-k1,n2-k2}(f)
+Tf = BuildT1(fxy_matrix,n1-k1,n2-k2);
+% Build the matrix T_{m1-k1,m2-k2}(g)
+Tg = BuildT1(gxy_matrix,m1-k1,m2-k2);
 
-% %
-% %
 % Remove the columns of T(f) and T(g) which correspond to the zeros in u(x,y)
 % and v(x,y) which are removed from the solution vector x.
+
+% Build the matrix T_{n-k,n1-k1,n2-k2}
 Tf = Tf(:,1:nNonZeros_vxy);
+% Build the matrix T_{m-k,m1-k1,m2-k2}
 Tg = Tg(:,1:nNonZeros_uxy);
 
 % % 
@@ -98,16 +103,16 @@ Tg = Tg(:,1:nNonZeros_uxy);
 Tf = Tf(1:nNonZeros_fv,:);
 Tg = Tg(1:nNonZeros_gu,:);
 
-% Build the matrix S_{t_{1},t_{2}} with reduced columns
-St = [Tf Tg];
+% Build the matrix S_{t,t_{1},t_{2}} with reduced rows and columns
+St_fg = [Tf Tg];
 
 % Remove optimal column
-At = St;
-At(:,idx_opt_col) = [];
-ct = St(:,idx_opt_col);
+At_fg = St_fg;
+At_fg(:,idx__col) = [];
+ct = St_fg(:,idx__col);
 
 % Build the matrix Et
-Et = zeros(size(At));
+At_zfzg = zeros(size(At_fg));
 ht = zeros(size(ct));
 
 % EDIT 10/03/2016
@@ -115,42 +120,42 @@ ht = zeros(size(ct));
 z = zeros(nNonZeros_fxy + nNonZeros_gxy,1);
 
 % Get the vector of coefficients zf
-vZ_fxy = z(1:nNonZeros_fxy);
+v_zf = z(1:nNonZeros_fxy);
 
 % Get the vector of coefficeints zg
-vZ_gxy = z(nNonZeros_fxy + 1:end);
+v_zg = z(nNonZeros_fxy + 1:end);
 
 % Get zf as a matrix
 % EDIT 10/03/2016 - vZ_fxy has zeros removed, so include the zeros to form
 % a matrix m1+1 * m2+1
-matZ_fxy = GetAsMatrix(...
+mat_zf = GetAsMatrix(...
     [
-    vZ_fxy; 
+    v_zf; 
     zeros(nZeros_fxy,1)
     ],m1,m2);
 
 % Get zg as a matrix
-matZ_gxy = GetAsMatrix(...
+mat_zg = GetAsMatrix(...
     [
-    vZ_gxy; 
+    v_zg; 
     zeros(nZeros_gxy,1)
     ],n1,n2);
 
 % Get the vector x
 % A_{t} x = c_{t}
-x_ls = SolveAx_b(At,ct);
+x_ls = SolveAx_b(At_fg,ct);
 
-x = ...
+vec_x1x2 = ...
     [
-    x_ls(1:idx_opt_col-1);
+    x_ls(1:idx__col-1);
     0;
-    x_ls(idx_opt_col:end);
+    x_ls(idx__col:end);
     ];
 
 
 % Build the matrix Y_{t}
 % Where Y(x) * z = E(z) * x
-Yt = BuildY_BothDegree_STLN(x,m,m1,m2,n,n1,n2,t,t1,t2);
+Yt = BuildY_BothDegree_STLN(vec_x1x2,m,m1,m2,n,n1,n2,k,k1,k2);
 
 
 v_fxy = GetAsVector(fxy_matrix);
@@ -161,31 +166,31 @@ v_gxy = v_gxy(1:nNonZeros_gxy,:);
 
 
 test1 = Yt * [v_fxy;v_gxy];
-test2 = At * x_ls;
+test2 = At_fg * x_ls;
 norm(test1-test2)
 
 % Build the matrix P_{t}
 % Where P * [f;g] = c_{t}
-Pt = BuildP_BothDegree_STLN(m,m1,m2,n,n1,n2,t,t1,t2,idx_opt_col);
+Pt = BuildP_BothDegree_STLN(m,m1,m2,n,n1,n2,k,k1,k2,idx__col);
 test1 = Pt * [v_fxy;v_gxy];
 test2 = ct;
 norm(test1-test2)
 
 
 % Get initial residual (A_{t}+E_{t})x = (c_{t} + h_{t})
-x_ls = SolveAx_b(At+Et,ct+ht);
+x_ls = SolveAx_b(At_fg+At_zfzg,ct+ht);
 
 H_z = Yt - Pt;
 
-H_x = At + Et;
+H_x = At_fg + At_zfzg;
 
 C = [H_z H_x];
 
-E = blkdiag( eye(nNonZeros_fxy + nNonZeros_gxy) , zeros(nNonZeros_uxy + nNonZeros_vxy - 1));
+E = blkdiag( eye(nNonZeros_fxy + nNonZeros_gxy) , eye(nNonZeros_uxy + nNonZeros_vxy - 1));
 
 
 % Get initial residual (A_{t}+E_{t})x = (c_{t} + h_{t})
-res_vec = (ct + ht) - (At*x_ls);
+res_vec = (ct + ht) - (At_fg*x_ls);
 
 start_point     =   ...
     [...
@@ -224,65 +229,65 @@ while condition(ite) >  SETTINGS.MAX_ERROR_SNTLN &&  ite < SETTINGS.MAX_ITERATIO
     x_ls    = x_ls + delta_xk;
     
     % Split vector z into vectors z_f and z_g
-    vZ_fxy = z(1:nNonZeros_fxy);
-    vZ_gxy = z(nNonZeros_fxy + 1:end);
+    v_zf = z(1:nNonZeros_fxy);
+    v_zg = z(nNonZeros_fxy + 1:end);
     
     % Get zf as a matrix
-    matZ_fxy = GetAsMatrix(...
+    mat_zf = GetAsMatrix(...
         [
-            vZ_fxy; 
+            v_zf; 
             zeros(nZeros_fxy,1)
         ]...
         ,m1,m2);
     
     % Get zg as a matrix
-    matZ_gxy = GetAsMatrix(...
+    mat_zg = GetAsMatrix(...
         [
-            vZ_gxy; 
+            v_zg; 
             zeros(nZeros_gxy,1)
         ]...
         ,n1,n2);
     
     % Build the matrix B_{t} = [E1(zf) E2(zg)]
-    E1 = BuildT1(matZ_fxy,n1-t1,n2-t2);
-    E2 = BuildT1(matZ_gxy,m1-t1,m2-t2);
+    T1_zf = BuildT1(mat_zf,n1-k1,n2-k2);
+    T1_zg = BuildT1(mat_zg,m1-k1,m2-k2);
     
     % Remove the extra columns of E1 and E2
-    E1 = E1(:,1:nNonZeros_vxy);
-    E2 = E2(:,1:nNonZeros_uxy);
+    T1_zf = T1_zf(:,1:nNonZeros_vxy);
+    T1_zg = T1_zg(:,1:nNonZeros_uxy);
     
     % Remove Extra rows of E1 and E2
-    E1 = E1(1:nNonZeros_fv,:);
-    E2 = E2(1:nNonZeros_gu,:);
+    T1_zf = T1_zf(1:nNonZeros_fv,:);
+    T1_zg = T1_zg(1:nNonZeros_gu,:);
     
     % Build the matrix B_{t} equivalent to S_{t}
-    Bt = [E1 E2];
+    St_zfzg = [T1_zf T1_zg];
     
     % Get the matrix E_{t} with optimal column removed
-    Et = Bt;
-    Et(:,idx_opt_col) = [];
+    At_zfzg = St_zfzg;
+    At_zfzg(:,idx__col) = [];
     
     % Get the column vector h_{t}, the optimal column removed from B_{t},
     % and equivalent to c_{t} removed from S_{t}
-    ht = Bt(:,idx_opt_col);
+    ht = St_zfzg(:,idx__col);
     
     % Get the updated vector x
     %x_ls = SolveAx_b(At + Et,ct + ht);
     
-    x = [...
-        x_ls(1:idx_opt_col-1);...
+    vec_x1x2 = [...
+        x_ls(1:idx__col-1);...
         0;...
-        x_ls(idx_opt_col:end)];
+        x_ls(idx__col:end)];
     
     % Build the matrix Y_{t} where Y_{t}(x)*z = E_{t}(z) * x
-    Yt = BuildY_BothDegree_STLN(x,m,m1,m2,n,n1,n2,t,t1,t2);
+    Yt = BuildY_BothDegree_STLN(vec_x1x2,m,m1,m2,n,n1,n2,k,k1,k2);
     
     % Get the residual vector
-    res_vec = (ct+ht) - ((At+Et)*x_ls);
+    res_vec = (ct+ht) - ((At_fg+At_zfzg)*x_ls);
   
     % Update the matrix C
     H_z = Yt - Pt;
-    H_x = At + Et;
+    H_x = At_fg + At_zfzg;
     C = [H_z H_x];
     
     % Update fnew - used in LSE Problem.
@@ -294,13 +299,13 @@ while condition(ite) >  SETTINGS.MAX_ERROR_SNTLN &&  ite < SETTINGS.MAX_ITERATIO
     
 end
 
-fprintf('\nRequired number of iterations: %i\n',ite)
+fprintf([mfilename ' : ' sprintf('\nRequired number of iterations: %i\n',ite)]);
 
 
 %if condition(ite) < condition(1)
     
-    fxy_lr = fxy_matrix + matZ_fxy;
-    gxy_lr = gxy_matrix + matZ_gxy;
+    fxy_lr = fxy_matrix + mat_zf;
+    gxy_lr = gxy_matrix + mat_zg;
 %else
 %    fxy_lr = fxy_matrix;
 %    gxy_lr = gxy_matrix;

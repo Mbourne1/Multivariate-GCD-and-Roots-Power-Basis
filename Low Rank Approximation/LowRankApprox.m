@@ -1,4 +1,4 @@
-function [fxy_lr,gxy_lr,alpha, th1,th2] = LowRankApprox(fxy,gxy,alpha,th1,th2,m,n,t,t1,t2,opt_col)
+function [fxy_lr,gxy_lr,alpha, th1,th2] = LowRankApprox(fxy,gxy,alpha,th1,th2,m,n,t,t1,t2,idx_col)
 % Compute low rank approximation of the sylvester matrix formed from
 % coefficients of f(x,y) and g(x,y). Return the modified forms of f(x,y)
 % and g(x,y).
@@ -25,7 +25,7 @@ function [fxy_lr,gxy_lr,alpha, th1,th2] = LowRankApprox(fxy,gxy,alpha,th1,th2,m,
 %
 % t2 : Degree of d(x,y) with respect to y
 %
-% opt_col : Index of optimal column for removal from S_{}(f,g)
+% idx_col : Index of optimal column for removal from S_{}(f,g)
 %
 % % Outputs.
 %
@@ -54,7 +54,7 @@ switch SETTINGS.LOW_RANK_APPROXIMATION_METHOD
         gww = GetWithThetas(gxy,th1,th2);
         
         % Get Low rank approximation by STLN
-        [fww_lr, a_gww_lr ] = STLN(fww,alpha.*gww,m,n,t,t1,t2,opt_col);
+        [fww_lr, a_gww_lr ] = STLN(fww,alpha.*gww,m,n,t,t1,t2,idx_col);
         
         % Remove alpha from alpha.*g(w,w)
         gww_lr = a_gww_lr./ alpha;
@@ -70,7 +70,7 @@ switch SETTINGS.LOW_RANK_APPROXIMATION_METHOD
         
         % Get low rank approximation by SNTLN
         [fxy_lr,gxy_lr,alpha_lr,th1_lr,th2_lr,x_lr] = ...
-                    SNTLN(fxy,gxy,alpha,th1,th2,m,n,t,t1,t2,opt_col);
+                    SNTLN(fxy,gxy,alpha,th1,th2,m,n,t,t1,t2,idx_col);
         
         
         

@@ -1,4 +1,4 @@
-function [opt_col] = GetOptimalColumn_Both(fxy_matrix,gxy_matrix,m,n,t,t1,t2)
+function [opt_col] = GetOptimalColumn_Both(S_kk1k2)
 % Given two polynomials f(x,y) and g(x,y), and the degree structure of
 % their GCD t (t1,t2), pick the optimal column for removal from the 
 % Sylvester matrix S_{t_{1},t_{2}}(f,g), where some columns are removed
@@ -23,42 +23,9 @@ function [opt_col] = GetOptimalColumn_Both(fxy_matrix,gxy_matrix,m,n,t,t1,t2)
 
 global SETTINGS
 
-% Get degree structure of polynomial f(x,y)
-[m1,m2] = GetDegree(fxy_matrix);
-
-% Get degree structure of polynomial g(x,y)
-[n1,n2] = GetDegree(gxy_matrix);
-
-% % Build the partitions of the Sylvester matrix S_{t}
-
-% Build the first partition containing coefficients of fxy
-T1 = BuildT1(fxy_matrix,n1-t1,n2-t2);
-
-% Build the second partition containing coefficients of gxy
-T2 = BuildT1(gxy_matrix,m1-t1,m2-t2);
-
-% Remove the columns of T1 corresponding to the zeros in v(x,y)
-nNonZeros_vxy = GetNumNonZeros(n1-t1,n2-t2,n-t);
-T1 = T1(:,1:nNonZeros_vxy);
-
-% Remove the columns of T2 corresponding to the zeros in u(x,y)
-nNonZeros_uxy = GetNumNonZeros(m1-t1,m2-t2,m-t);
-T2 = T2(:,1:nNonZeros_uxy);
-
-% %
-% %
-% Remove the rows of T1
-nNonZeros_fv = GetNumNonZeros(m1+n1-t1,m2+n2-t2,m+n-t);
-nNonZeros_gu = GetNumNonZeros(n1+m1-t1,n2+m2-t2,n+m-t);
-
-T1 = T1(1:nNonZeros_fv,:);
-T2 = T2(1:nNonZeros_gu,:);
-
-% Concatenate the two partitions
-S_t1t2 = [T1 T2];
 
 % From the given subresultant find the optimal column for removal.
-[~,nCols_S] = size(S_t1t2);
+[~,nCols_S] = size(S_kk1k2);
 
 
 
@@ -92,11 +59,11 @@ vResiduals = zeros(nCols_S,1);
 for i = 1:1:nCols_S
     
     % Get the matrix Ak, which is S_{k} with column c_{k} removed
-    Ak = S_t1t2;
+    Ak = S_kk1k2;
     Ak(:,i) = [];
     
     % Get the column c_{k}
-    ck = S_t1t2(:,i);
+    ck = S_kk1k2(:,i);
     
     % Solve A*x = b
     x_ls = SolveAx_b(Ak,ck);
