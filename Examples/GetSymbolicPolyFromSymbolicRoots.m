@@ -18,7 +18,7 @@ syms x y
 f = 1;
 
 % Get number of distinct factors
-nFactors = size(sym_root_mult_arr_fxy,2);
+nFactors = size(sym_root_mult_arr_fxy,1);
 
 for i = 1:1:nFactors
 

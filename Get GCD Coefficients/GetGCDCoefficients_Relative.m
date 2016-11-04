@@ -38,10 +38,10 @@ t2 = m2-(m2_t2);
 % Build Matrix C
 
 % Build the Cauchy matrix of coefficients of u(w,w)
-C1 = BuildT1(uxy_matrix,t1,t2);
+C1 = BuildT1_Relative(uxy_matrix,t1,t2);
 
 % Build the Cauchy matrix of coefficients of v(w,w)
-C2 = BuildT1(vxy_matrix,t1,t2);
+C2 = BuildT1_Relative(vxy_matrix,t1,t2);
 
 % Build the RHS vector of coefficients of f and g
 C = [C1;C2];

@@ -26,7 +26,7 @@ function [idx_col] = GetOptimalColumn(fxy,gxy,m,n,k,k1,k2)
 
 global SETTINGS
 
-switch SETTINGS.CALC_METHOD
+switch SETTINGS.DEGREE_METHOD
     case 'Total'
         
         % Build the kth Sylvester matrix
@@ -38,10 +38,10 @@ switch SETTINGS.CALC_METHOD
     case 'Relative'
         
         % Build the kth Sylvester matrix
-        Sk1k2 = BuildSylvesterMatrix_Respective(fxy,gxy,k1,k2);
+        Sk1k2 = BuildSylvesterMatrix_Relative(fxy,gxy,k1,k2);
         
         % Get optimal column for removal
-        idx_col = GetOptimalColumn_Respective(Sk1k2);
+        idx_col = GetOptimalColumn_Relative(Sk1k2);
         
     case 'Both'
         

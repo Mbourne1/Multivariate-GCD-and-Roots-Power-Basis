@@ -21,10 +21,10 @@ function [uxy, vxy] = GetQuotients_Relative(fxy,gxy,k1,k2)
 % Get the degree of polynomial g(x,y).
 [n1,n2] = GetDegree(gxy);
 
-Sk = BuildSylvesterMatrix_Respective(fxy,gxy,k1,k2);
+Sk = BuildSylvesterMatrix_Relative(fxy,gxy,k1,k2);
 
 % % Get the optimal column for removal
-opt_col = GetOptimalColumn_Respective(Sk);
+opt_col = GetOptimalColumn_Relative(Sk);
 
 % Having found the optimal column, obtain u and v the quotient polynomials.
 Atj = Sk;

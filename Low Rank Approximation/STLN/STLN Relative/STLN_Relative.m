@@ -1,4 +1,4 @@
-function [fxy_lr,gxy_lr] = STLN_Relative(fxy_matrix,gxy_matrix,t1,t2,idx_col)
+function [fxy_lr,gxy_lr] = STLN_Relative(fxy_matrix,gxy_matrix,k1,k2,idx_col)
 % Given coefficients f(x,y) and g(x,y) find the low rank approximation of
 % the Syvlester subresultant S_{t_{1},t_{2}}.
 %
@@ -14,13 +14,13 @@ function [fxy_lr,gxy_lr] = STLN_Relative(fxy_matrix,gxy_matrix,t1,t2,idx_col)
 %
 % n : Total degree of g(x,y)
 %
-% t1 : Degree of d(x,y) with respect to x
+% k1 : Degree of d(x,y) with respect to x
 %
-% t2 : Degree of d(x,y) with respect to y
+% k2 : Degree of d(x,y) with respect to y
 %
-% idx_col : Index of optimal column for removal from S_{t_{1},t_{2}}(f,g)
+% idx_col : Index of optimal column for removal from S_{k_{1},k_{2}}(f,g)
 %
-% Outputs 
+% Outputs
 %
 % fxy_lr : Coefficients of f(x,y) with added perturbations
 %
@@ -28,7 +28,6 @@ function [fxy_lr,gxy_lr] = STLN_Relative(fxy_matrix,gxy_matrix,t1,t2,idx_col)
 
 
 global SETTINGS
-
 
 % Get degree of polynomials f(x,y)
 [m1,m2] = GetDegree(fxy_matrix);
@@ -43,47 +42,54 @@ nCoeff_f = (m1+1) * (m2+1);
 nCoeff_g = (n1+1) * (n2+1);
 
 % Get the number of coefficients in v(x,y)
-nCoeff_v = (n1-t1+1) * (n2-t2+1);
+nCoeff_v = (n1-k1+1) * (n2-k2+1);
 
 % Get the number of coefficients in u(x,y)
-nCoeff_u = (m1-t1+1) * (m2-t2+1);
+nCoeff_u = (m1-k1+1) * (m2-k2+1);
 
-% Build the Sylvester Matrix S(f,g)
-Tf = BuildT1_Relative(fxy_matrix,n1-t1,n2-t2);
-Tg = BuildT1_Relative(gxy_matrix,m1-t1,m2-t2);
-St = [Tf Tg];
+% Build the Sylvester Matrix S_{k1,k2}(f,g)
+
+% Build the partiton T_{n1-k1,n2-k2}(f)
+Tk_f = BuildT1_Relative(fxy_matrix,n1-k1,n2-k2);
+
+% Build the partition T_{m1-k1,m2-k2}(g)
+Tk_g = BuildT1_Relative(gxy_matrix,m1-k1,m2-k2);
+
+% Build the Sylvester subresultant matrix S_{k1,k2}(f,g)
+Sk_fg = [Tk_f Tk_g];
 
 % Remove optimal column
-At = St;
-At(:,idx_col) = [];
-ct = St(:,idx_col);
+Ak_fg = Sk_fg;
+Ak_fg(:,idx_col) = [];
+ct = Sk_fg(:,idx_col);
 
-% Build the matrix Et
-Et = zeros(size(At));
+% Build the matrix A_{k1,k2}(zf,zg)
+Ak_zfzg = zeros(size(Ak_fg));
+
+% Build the vector removed from S_{k}(zf,zg)
 ht = zeros(size(ct));
 
-% EDIT 10/03/2016
+% Initialise vector of perturbations of f and g
 z = zeros(nCoeff_f + nCoeff_g,1);
 
-% Get the vector of coefficients zf
-vZ_fxy = z(1:nCoeff_f );
+% Get the vector of coefficients zf(x,y)
+v_zf = z(1:nCoeff_f );
 
 % Get the vector of coefficeints zg
-vZ_gxy = z(nCoeff_f+1:end);
+v_zg = z(nCoeff_f+1:end);
 
 % Get zf as a matrix
 % EDIT 10/03/2016 - vZ_fxy has zeros removed, so include the zeros to form
 % a matrix m1+1 * m2+1
-matZ_fxy = GetAsMatrix(vZ_fxy, m1, m2);
+matZ_fxy = GetAsMatrix(v_zf, m1, m2);
 
 % Get zg as a matrix
-matZ_gxy = GetAsMatrix(vZ_gxy, n1, n2);
+matZ_gxy = GetAsMatrix(v_zg, n1, n2);
 
 % Get the vector x
 % A_{t} x = c_{t}
-x_ls = SolveAx_b(At,ct);
+x_ls = SolveAx_b(Ak_fg,ct);
 
-display(x_ls);
 
 x = ...
     [
@@ -96,40 +102,44 @@ x = ...
 
 % Build the matrix Y_{t}
 % Where Y(x) * z = E(z) * x
-Y = BuildY_RelativeDegree_STLN(x,m1,m2,n1,n2,t1,t2);
+Yk = BuildY_RelativeDegree_STLN(x,m1,m2,n1,n2,k1,k2);
 
-v_fxy = GetAsVector(fxy_matrix);
+% Get vector of coefficients of f(x,y)
+%%v_fxy = GetAsVector(fxy_matrix);
 
-v_gxy = GetAsVector(gxy_matrix);
+% Get vector of coefficients of g(x,y)
+%%v_gxy = GetAsVector(gxy_matrix);
 
-display(Y)
-test1 = Y * [v_fxy;v_gxy];
-test2 = At * x_ls;
-norm(test1-test2)
+% Test
+%%test1 = Yk * [v_fxy;v_gxy];
+%%test2 = Ak_fg * x_ls;
+%%norm(test1-test2)
 
 % Build the matrix P_{t}
 % Where P * [f;g] = c_{t}
-P = BuildP_RelativeDegree_STLN(m1,m2,n1,n2,idx_col,t1,t2);
-test1 = P * [v_fxy;v_gxy];
-test2 = ct;
-norm(test1-test2)
+Pk = BuildP_RelativeDegree_STLN(m1,m2,n1,n2,idx_col,k1,k2);
+
+% Test
+%%test1 = P * [v_fxy;v_gxy];
+%%test2 = ct;
+%%norm(test1-test2)
 
 
 % Get initial residual (A_{t}+E_{t})x = (c_{t} + h_{t})
-x_ls = SolveAx_b(At+Et,ct+ht);
+x_ls = SolveAx_b(Ak_fg+Ak_zfzg,ct+ht);
 
 % % Build the Matrix C consisting of H_{z} and H_{x}
-H_z = Y - P;
+H_z = Yk - Pk;
 
-H_x = At + Et;
+H_x = Ak_fg + Ak_zfzg;
 
 C = [H_z H_x];
 
-E = blkdiag( eye(nCoeff_f + nCoeff_g) , zeros(nCoeff_u + nCoeff_v - 1));
+E = blkdiag( eye(nCoeff_f + nCoeff_g) , eye(nCoeff_u + nCoeff_v - 1));
 
 
 % Get initial residual (A_{t}+E_{t})x = (c_{t} + h_{t})
-res_vec = (ct + ht) - At*x_ls;
+res_vec = (ct + ht) - (Ak_fg*x_ls);
 
 start_point     =   ...
     [...
@@ -168,31 +178,32 @@ while condition(ite) >  SETTINGS.MAX_ERROR_SNTLN &&  ite < SETTINGS.MAX_ITERATIO
     x_ls    = x_ls + delta_xk;
     
     % Split vector z into vectors z_f and z_g
-    vZ_fxy = z(1 : nCoeff_f);
-    vZ_gxy = z(nCoeff_f + 1 : end);
+    v_zf = z(1 : nCoeff_f);
+    v_zg = z(nCoeff_f + 1 : end);
     
     % Get zf as a matrix
-    matZ_fxy = GetAsMatrix(vZ_fxy, m1, m2);
+    matZ_fxy = GetAsMatrix(v_zf, m1, m2);
     
     % Get zg as a matrix
-    matZ_gxy = GetAsMatrix(vZ_gxy, n1, n2);
+    matZ_gxy = GetAsMatrix(v_zg, n1, n2);
     
     % Build the matrix B_{t} = [E1(zf) E2(zg)]
-    E1 = BuildT1(matZ_fxy,n1-t1,n2-t2);
-    E2 = BuildT1(matZ_gxy,m1-t1,m2-t2);
+    E1 = BuildT1_Relative(matZ_fxy,n1-k1,n2-k2);
+    E2 = BuildT1_Relative(matZ_gxy,m1-k1,m2-k2);
     
     % Build the matrix B_{t} equivalent to S_{t}
     Bt = [E1 E2];
     
     % Get the matrix E_{t} with optimal column removed
-    Et = Bt;
-    Et(:,idx_col) = [];
+    Ak_zfzg = Bt;
+    Ak_zfzg(:,idx_col) = [];
     
     % Get the column vector h_{t}, the optimal column removed from B_{t},
     % and equivalent to c_{t} removed from S_{t}
     ht = Bt(:,idx_col);
     
-    % Get the updated vector x
+    % Get the updated vector x = [x1 x2] where x1 and x2 are vectors.
+    % S(x1,x2)*[f;g] = ct
     % x_ls = SolveAx_b(At+Et,ct+ht);
     
     x = [...
@@ -201,14 +212,14 @@ while condition(ite) >  SETTINGS.MAX_ERROR_SNTLN &&  ite < SETTINGS.MAX_ITERATIO
         x_ls(idx_col:end)];
     
     % Build the matrix Y_{t} where Y_{t}(x)*z = E_{t}(z) * x
-    Y = BuildY_RelativeDegree_STLN(x,m1,m2,n1,n2,t1,t2);
-       
+    Yk = BuildY_RelativeDegree_STLN(x,m1,m2,n1,n2,k1,k2);
+    
     % Get the residual vector
-    res_vec = (ct+ht) - ((At+Et)*x_ls);
+    res_vec = (ct+ht) - ((Ak_fg+Ak_zfzg)*x_ls);
     
     % Update the matrix C
-    H_z = Y - P;
-    H_x = At + Et;
+    H_z = Yk - Pk;
+    H_x = Ak_fg + Ak_zfzg;
     C = [H_z H_x];
     
     % Update fnew - used in LSE Problem.
@@ -225,9 +236,9 @@ fprintf([mfilename ' : ' sprintf('Required number of iterations: %i\n',ite)]);
 PlotGraphs_STLN();
 
 %if condition(ite) < condition(1)
-    
-    fxy_lr = fxy_matrix + matZ_fxy;
-    gxy_lr = gxy_matrix + matZ_gxy;
+
+fxy_lr = fxy_matrix + matZ_fxy;
+gxy_lr = gxy_matrix + matZ_gxy;
 %else
 %    fxy_lr = fxy_matrix;
 %    gxy_lr = gxy_matrix;

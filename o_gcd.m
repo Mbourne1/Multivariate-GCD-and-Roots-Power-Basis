@@ -1,4 +1,4 @@
-function [] = o_gcd(ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_approx_method)
+function [] = o_gcd(ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_approx_method,degree_method)
 % o_gcd(ex_num,emin,mean_method,bool_alpha_theta,low_rank_approx_method)
 %
 % Calculate the GCD d(x,y) of two polynomials f(x,y) and g(x,y) taken from
@@ -24,8 +24,18 @@ function [] = o_gcd(ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_appro
 %       'Standard SNTLN'
 %       'None'
 %
+% degree_method
+%       'Relative' : Define polynomials in terms of degree with respect to
+%                    x and y, so matrices of coefficients are rectangular.
+%       'Total' :   Define polynomials in terms of total degree, so matrices
+%                   of coefficients are square, where lower right triangle 
+%                   are all zero.
+%       
+%       'Both' :    Combination of both of the above, and typically gives best
+%                   results.
+%
 % % Example
-% >> o_gcd('1',1e-10,1e-12, 'Geometric Mean Matlab Method', 'y','None')
+% >> o_gcd('1',1e-10,1e-12, 'Geometric Mean Matlab Method', 'y','Standard STLN','Relative')
 
 
 % Set the Global Variables
@@ -52,7 +62,7 @@ addpath(genpath('Low Rank Approximation'));
 
 problem_type = 'GCD';
 
-SetGlobalVariables(problem_type,ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_approx_method)
+SetGlobalVariables(problem_type,ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_approx_method,degree_method)
 
 
 % Get example polynomials

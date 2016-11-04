@@ -56,7 +56,7 @@ fww = GetWithThetas(fxy_n,th1,th2);
 gww = GetWithThetas(gxy_n,th1,th2);
 
 % Build the 0-th Subresultant of the preprocessed polynomials.
-S_Preproc = BuildSylvesterMatrix_Respective(fww,alpha.*gww,0,0);
+S_Preproc = BuildSylvesterMatrix_Relative(fww,alpha.*gww,0,0);
 
 % %
 % %
@@ -93,7 +93,7 @@ LineBreakMedium();
 % %
 % Given the total degree, compute relative degrees t_{1} and t_{2}
 
-switch SETTINGS.CALC_METHOD
+switch SETTINGS.DEGREE_METHOD
     case 'Total'
         % Must compute t1 and t2 so do so with relative method
         [t1,t2] = GetGCDDegreeRelative(fww,alpha*gww,m,n,t);
@@ -127,11 +127,11 @@ opt_col = GetOptimalColumn(fww,alpha.*gww,m,n,t,t1,t2);
 [fxy_n,gxy_n,alpha,th1,th2] = LowRankApprox(fxy_n,gxy_n,alpha,th1,th2,m,n,t,t1,t2,opt_col);
 
 % Get f(w,w) from f(x,y) and g(w,w) from g(x,y)
-fww = GetWithThetas(fxy_n,th1,th2);
-gww = GetWithThetas(gxy_n,th1,th2);
+fww_lr = GetWithThetas(fxy_n,th1,th2);
+gww_lr = GetWithThetas(gxy_n,th1,th2);
 
 % Build the low rank approximation
-S_LowRankApprox = BuildSylvesterMatrix_Respective(fxy_n,gxy_n,0,0);
+S_LowRankApprox = BuildSylvesterMatrix_Relative(fww_lr,gww_lr,0,0);
 
 % %
 % %
@@ -139,7 +139,7 @@ S_LowRankApprox = BuildSylvesterMatrix_Respective(fxy_n,gxy_n,0,0);
 % Plot graphs
 
 % Build Subresultant of noisy unprocessed polynomials
-S_Unproc = BuildSylvesterMatrix_Respective(fxy,gxy,0,0);
+S_Unproc = BuildSylvesterMatrix_Relative(fxy,gxy,0,0);
 vSingularValues_S_Unproc = svd(S_Unproc);
 vSingularValues_S_Unproc  = Normalise(vSingularValues_S_Unproc);
 
@@ -187,14 +187,14 @@ end
 % %
 % Get Cofactor polynomials u(x,y) and v(x,y)
 [uww_matrix,vww_matrix] = ...
-            GetQuotients(fww,alpha.*gww,m,n,t,t1,t2);
+            GetQuotients(fww_lr,alpha.*gww_lr,m,n,t,t1,t2);
 
 
 
 % %
 % %
 % Get the coefficients of the GCD d(x,y)
-[dww_matrix] = GetGCDCoefficients(fww,alpha.*gww,uww_matrix,vww_matrix,m,n,t);
+[dww_matrix] = GetGCDCoefficients(fww_lr,alpha.*gww_lr,uww_matrix,vww_matrix,m,n,t);
 
 
 % % 

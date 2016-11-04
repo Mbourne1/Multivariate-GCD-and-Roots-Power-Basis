@@ -8,7 +8,7 @@ emax = 1e-12;
 mean_method_arr = {'Geometric Mean Matlab Method','None'};
 bool_alpha_theta_arr = {'y','n'};
 low_rank_approx_method_arr = {'None'};
-
+degree_method_arr = {'Relative','Total','Both'};
 
 for i1 = 1:1:length(ex_num_arr)
    
@@ -29,8 +29,13 @@ for i1 = 1:1:length(ex_num_arr)
                 
                     low_rank_approx_method = low_rank_approx_method_arr{i5};
                 
-                    o_gcd(ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_approx_method)
-                
+                    for i6 = 1:1:length(degree_method_arr)
+                        
+                        degree_method = degree_method_arr{i6};
+                    
+                        o_gcd(ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_approx_method,degree_method)
+                    
+                    end
                 end
             end
         end

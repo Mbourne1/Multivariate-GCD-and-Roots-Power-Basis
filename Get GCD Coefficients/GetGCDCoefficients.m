@@ -2,7 +2,7 @@ function [dxy] = GetGCDCoefficients(fxy,gxy,uxy,vxy,m,n,t)
 
 global SETTINGS
 
-switch SETTINGS.CALC_METHOD
+switch SETTINGS.DEGREE_METHOD
     case 'Total'
         dxy = ...
             GetGCDCoefficients_Total(fxy,gxy,uxy,vxy,m,n,t);

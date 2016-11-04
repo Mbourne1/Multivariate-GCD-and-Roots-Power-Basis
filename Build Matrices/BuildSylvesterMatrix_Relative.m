@@ -1,4 +1,4 @@
-function Sk = BuildSylvesterMatrix_Respective(fxy,gxy,k1,k2)
+function Sk = BuildSylvesterMatrix_Relative(fxy,gxy,k1,k2)
 % Given two input polynomials f(x,y) and g(x,y), build the (k1,k2)-th
 % Sylvester subresultant.
 %
@@ -14,7 +14,7 @@ function Sk = BuildSylvesterMatrix_Respective(fxy,gxy,k1,k2)
 %
 % Outputs.
 %
-% S : The Sylvester Subresultant S_{k_{1},k_{2}}
+% Sk : The Sylvester Subresultant S_{k_{1},k_{2}}
 
 
 % Get degrees m1 and m2 of polynomial f(x,y)

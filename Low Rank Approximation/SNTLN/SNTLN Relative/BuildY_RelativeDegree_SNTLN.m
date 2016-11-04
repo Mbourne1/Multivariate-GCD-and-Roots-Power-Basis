@@ -10,20 +10,20 @@ x = [first_part ; 0 ; second_part];
 % Separate the x into coefficients of u and coefficients of v
 
 % The first (n1-t1+1) x (n2-t2+1) coefficients are of v
-num_coeff_v = (n1-t1+1) * (n2-t2+1);
+nCoeff_x1 = (n1-t1+1) * (n2-t2+1);
 
 % Get the vector of coefficients of v(w,w)
-vww_vec = x(1:num_coeff_v);
+x1_vec = x(1:nCoeff_x1);
 
 % Get the vector of coefficients of u(w,w)
-uww_vec = - x(num_coeff_v+1:end);
+x2_vec = x(nCoeff_x1+1:end);
 
 
-vww_mat = GetAsMatrix(vww_vec,n1-t1,n2-t2);
-uww_mat = GetAsMatrix(uww_vec,m1-t1,m2-t2);
+x1_mat = GetAsMatrix(x1_vec,n1-t1,n2-t2);
+x2_mat = GetAsMatrix(x2_vec,m1-t1,m2-t2);
 
-T1 = BuildT1(vww_mat,m1,m2);
-T2 = BuildT1(-uww_mat,n1,n2);
+T1 = BuildT1_Relative(x1_mat,m1,m2);
+T2 = BuildT1_Relative(x2_mat,n1,n2);
 
 % The last (m1-t1+1) x (m2-t2+1) coefficients are of u
 

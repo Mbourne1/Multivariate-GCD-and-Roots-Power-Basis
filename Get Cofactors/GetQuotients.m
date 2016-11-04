@@ -4,7 +4,7 @@ function [uxy,vxy] =  GetQuotients(fxy,gxy,m,n,t,t1,t2)
 global SETTINGS
 
 % % Get coefficients of the quotients u(x,y) and v(x,y)
-switch SETTINGS.CALC_METHOD
+switch SETTINGS.DEGREE_METHOD
     case 'Total'
         [uxy,vxy] = ...
             GetQuotients_Total(fxy,gxy,m,n,t);

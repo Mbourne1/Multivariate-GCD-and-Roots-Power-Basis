@@ -1,4 +1,4 @@
-function [] =  SetGlobalVariables(problem_type,ex_num,emin,emax,mean_method,bool_alpha_theta, low_rank_approx_method)
+function [] =  SetGlobalVariables(problem_type,ex_num,emin,emax,mean_method,bool_alpha_theta, low_rank_approx_method,degree_method)
 
 global SETTINGS
 
@@ -12,6 +12,13 @@ SETTINGS.EMAX = emax;
 SETTINGS.PLOT_GRAPHS = 'y';
 
 SETTINGS.SEED = 1024;
+
+%
+% Total
+% Relative
+% Both
+%
+SETTINGS.DEGREE_METHOD = degree_method;
 
 %--------------------------------------------------------------------------
 %
@@ -57,12 +64,7 @@ SETTINGS.MAX_ERROR_SNTLN = 1e-10;
 %
 
 
-%
-% Total
-% Relative
-% Both
-%
-SETTINGS.CALC_METHOD = 'Both';
+
 
 
 %--------------------------------------------------------------------------

@@ -1,7 +1,15 @@
-function [opt_col] = GetOptimalColumn_Respective(Sk)
+function [idx_col] = GetOptimalColumn_Relative(Sk)
 % Given two polynomials f(x,y) and g(x,y), and the degree structure of
 % their GCD, pick the optimal column for removal from the Sylvester matrix
 % S_{t_{1},t_{2}}(f,g).
+%
+% % Inputs.
+%
+% Sk : Sylvester Subresultant matrix S_{k_{1},k_{2}}
+%
+% % Outputs.
+%
+% idx_col : Index of optimal column for removal
 
 global SETTINGS
 
@@ -28,7 +36,7 @@ end
 
 
 % Obtain the column for which the residual is minimal.
-[~,opt_col] = min(log10(residuals_QR));
+[~,idx_col] = min(log10(residuals_QR));
 
 try
 switch SETTINGS.PLOT_GRAPHS

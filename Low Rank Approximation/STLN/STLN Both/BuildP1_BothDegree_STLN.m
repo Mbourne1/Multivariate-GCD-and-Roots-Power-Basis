@@ -41,7 +41,7 @@ padd_mat = zeros(m1+n1-t1+1, m2+n2-t2+1);
 
 % % from the index of the optimal column, Get the number of multiplications
 % with respec to x and number with respect to y.
-[i,j] = GivenCol_GetIndex(n1-t1,n2-t2,opt_col);
+[i,j] = GivenCol_GetIndex_Relative(n1-t1,n2-t2,opt_col);
 
 %
 ihat = i+1;

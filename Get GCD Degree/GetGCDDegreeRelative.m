@@ -48,12 +48,12 @@ vMinimumSingularValues_all = zeros(nPairs,1);
 for i = 1:1:nPairs
     
     % Get the ith pair of (k1,k2)
-    v_k1 = k1k2Pairs(i,1);
-    v_k2 = k1k2Pairs(i,2);
+    k1 = k1k2Pairs(i,1);
+    k2 = k1k2Pairs(i,2);
     
     % Build the partitions of the Sylvester matrix
-    T1 = BuildT1(fxy,n1-v_k1,n2-v_k2);
-    T2 = BuildT1(gxy,m1-v_k1,m2-v_k2);
+    T1 = BuildT1_Relative(fxy,n1-k1,n2-k2);
+    T2 = BuildT1_Relative(gxy,m1-k1,m2-k2);
     
     % Build the sylvester matrix
     Sk1k2 = [T1 T2];

@@ -21,11 +21,11 @@ function [fxy_lr,gxy_lr] = STLN(fxy,gxy,m,n,k,k1,k2,idx_col)
 
 global SETTINGS
 
-switch SETTINGS.CALC_METHOD
+switch SETTINGS.DEGREE_METHOD
     case 'Total'
         
         fxy_lr = fxy;
-        gxy_lr = alpha.*gxy;
+        gxy_lr = gxy;
         
         fprintf('No STLN Developed for total degree \n')
         
@@ -35,14 +35,29 @@ switch SETTINGS.CALC_METHOD
         % Perform STLN to obtain low rank approximation
         [fxy_lr,gxy_lr] = STLN_Relative(fxy,gxy,k1,k2,idx_col);
         
-        BuildSylvesterMatrix_Respective(fxy,gxy,k1,k2);
-        BuildSylvesterMatrix_Respective(fxy_lr,gxy_lr,k1,k2)
+        BuildSylvesterMatrix_Relative(fxy,gxy,k1,k2);
+        BuildSylvesterMatrix_Relative(fxy_lr,gxy_lr,k1,k2);
         
     case 'Both'
         
         % Perform STLN to obtain low rank approximation
         [fxy_lr,gxy_lr] = STLN_Both(fxy,gxy,m,n,k,k1,k2,idx_col);
         
+        S1 = BuildSylvesterMatrix_Both(fxy,gxy,m,n,k,k1,k2);
+        S2 = BuildSylvesterMatrix_Both(fxy_lr,gxy_lr,m,n,k,k1,k2);
+        vec_singValues = svd(S1);
+        vec_singValues_lr = svd(S2);
+        
+        t1 = fxy_lr - fxy;
+        t2 = gxy_lr - gxy;
+        norm(t1)
+        norm(t2)
+        
+        figure()
+        plot(log10(vec_singValues))
+        hold on
+        plot(log10(vec_singValues_lr))
+        hold off
 end
 
 end
