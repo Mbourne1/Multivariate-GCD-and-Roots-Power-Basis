@@ -24,7 +24,7 @@ gxy_matrix = temp_mat;
 
 
 % Build the matrix C(g)
-C1 = BuildT1_TotalDegree(gxy_matrix,n,m-n);
+C1 = BuildT1_Total(gxy_matrix,n,m-n);
 
 % Get the polynomial f(x,y) in vector form
 v_fxy = GetAsVector(fxy_matrix);

@@ -539,7 +539,7 @@ while condition(ite) >(SETTINGS.MAX_ERROR_SNTLN) &&  ite < SETTINGS.MAX_ITERATIO
     TN_theta2 = [TN1_wrt_theta2 alpha(ite).*TN2_wrt_theta2];
     
     % Update xk
-    xk = SolveAx_b(TN*M,ck+h);
+    %xk = SolveAx_b(TN*M,ck+h);
     
     % Calculate the matrix DY where Y is the Matrix such that E_{k}x = Y_{k}z.
     Y = BuildY_RelativeDegree_SNTLN(m1,m2,n1,n2,t1,t2,opt_col,xk,alpha(ite),th1(ite),th2(ite));
@@ -615,40 +615,6 @@ alpha_lr = alpha(ite);
 th1_lr = th1(ite);
 
 th2_lr = th2(ite);
-
-
-if ite == SETTINGS.MAX_ITERATIONS_SNTLN
-    
-    
-    if condition(ite) < condition(1)
-        val = 'Keep Final';
-    else
-        val = 'Revert';
-    end
-    switch val
-        case 'Revert'
-            fprintf([mfilename ' : ' sprintf('SNTLN Failed to converge, default to input values\n')])
-            % SNTLN Failed so revert to previous values
-            fxy_lr = fxy_matrix;
-            gxy_lr = gxy_matrix;
-            alpha_lr = i_alpha;
-            th1_lr = i_th1;
-            th2_lr = i_th2;
-            X_lr = initial_xls;
-            return;
-        case 'Keep Final'
-            fprintf([mfilename ' : ' sprintf('SNTLN Failed to converge, keep termination values\n')])
-            fxy_lr = fxy_matrix + zPert_f_mat;
-            gxy_lr = gxy_matrix + zPert_g_mat;
-            X_lr  = xk;
-            alpha_lr = alpha(ite);
-            th1_lr = th1(ite);
-            th2_lr = th2(ite);
-            
-            return;
-    end
-    
-end
 
 
 % Print the number of iterations

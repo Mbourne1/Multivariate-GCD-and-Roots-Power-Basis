@@ -1,4 +1,4 @@
-function Y = BuildY_BothDegree_SNTLN(x,m,m1,m2,n,n1,n2,k,k1,k2,idx_col,alpha,th1,th2)
+function Y = BuildY_BothDegree_SNTLN(x,m,m1,m2,n,n1,n2,k,k1,k2,alpha,th1,th2)
 % This function builds the matrix Y_{t_{1},t_{2}}, 
 % Where Y(x)*z = E_{t_{1},t_{2}}(z)*x
 %

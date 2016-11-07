@@ -1,13 +1,21 @@
-function [t] = GetGCDDegreeTotal2(fxy_matrix,gxy_matrix,m,n,limits_t)
+function [t] = GetGCDDegree_Total_WithLimits(fxy_matrix,gxy_matrix,m,n,limits_t)
 % Calculate the degree of the GCD of two bivariate Power Basis polynomials.
 %
 % %                 Inputs
 %
-% fxy_matrix    :
+% fxy : Coefficients of polynomial f(x,y)
 %
-% gxy_matrix    :
+% gxy : Coefficients of polynomial g(x,y)
 %
+% m : Total degree of polynomial f(x,y)
 %
+% n : Total degree of polynomial g(x,y)
+%
+% limits_t : Minimum and Maximum values bounding the computation of t
+%
+% % Outputs
+%
+% t : Total degree of the GCD d(x,y).
 
 % Set upper and lower bound for total degree t.
 lower_lim = limits_t(1);
@@ -68,8 +76,8 @@ for k = lower_lim_comp:1:upper_lim_comp
     i = k - lower_lim_comp + 1;
     
     % Build the partitions T1 and T2 of the Sylvester matrix
-    T1 = BuildT1_TotalDegree(fxy_matrix_padd,m,n-k);
-    T2 = BuildT1_TotalDegree(gxy_matrix_padd,n,m-k);
+    T1 = BuildT1_Total(fxy_matrix_padd,m,n-k);
+    T2 = BuildT1_Total(gxy_matrix_padd,n,m-k);
     
     % Build the sylvester matrix
     Sk = [T1 T2];

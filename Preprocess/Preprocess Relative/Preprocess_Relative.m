@@ -1,4 +1,4 @@
-function [lambda,mu,alpha,th1,th2] = Preprocess(fxy,gxy)
+function [lambda,mu,alpha,th1,th2] = Preprocess_Relative(fxy,gxy)
 % Preprocess the polynomial f(x,y) and g(x,y), and return the geometric
 % means and optimal alphas and thetas from the preprocessing.
 %

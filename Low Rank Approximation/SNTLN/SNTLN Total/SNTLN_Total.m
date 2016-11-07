@@ -1,11 +1,12 @@
 function [ fxy_lr, gxy_lr, alpha_lr,th1_lr,th2_lr,X_lr] = ...
-    SNTLN_Both( fxy_matrix,gxy_matrix, i_alpha, i_th1, i_th2,m,n,k,k1,k2,idx_col)
+    SNTLN_Total(fxy_matrix, gxy_matrix, m, n, i_alpha, i_th1, i_th2,k,idx_col)
 % Obtain the low rank approximation of the Sylvester matrix D*T_{t}(f,g)*Q =
 % S_{t}(f,g)
 %
 % SNTLN( fxy_matrix,gxy_matrix, i_alpha, i_th1, i_th2,t1,t2,opt_col)
 %
-% % Inputs:
+% Inputs:
+%
 %
 % fxy_matrix : Coefficients of polynomial f, in standard bernstein basis.
 %
@@ -25,27 +26,45 @@ function [ fxy_lr, gxy_lr, alpha_lr,th1_lr,th2_lr,X_lr] = ...
 %           is the column which is most likely a linear combination of the others.
 %
 %
-% % Outputs:
+% Outputs:
 %
-% o_fxy : Coefficients of f(x,y) on output, in standard bernstein basis,
+%
+% fxy_lr : Coefficients of f(x,y) on output, in standard bernstein basis,
 % including added structured perturbations.
 %
-% o_gxy : Coefficients of g(x,y) on output, in standard bernstein basis,
+% gxy_lr : Coefficients of fx on output, in standard bernstein basis,
 % including added structured perturbations.
 %
-% o_alpha : Optimal value of \alpha
+% alpha_lr : Optimal value of \alpha
 %
-% o_th1 : Optimal value of \theta_{1}
+% th1_lr : Optimal value of \theta_{1}
 %
-% o_th2 : Optimal value of \theta_{2}
+% th2_lr : Optimal value of \theta_{2}
 %
-% o_X : 
+% X_lr :
 %
 
 % Global Inputs
-
 global SETTINGS
 
+%%
+% pad the coefficients of fxy and gxy
+% this is equivalent to degree elevating so that f is of degree (m,m), and
+% g is of degree (n,n)
+fxy_matrix_padd = zeros(m+1,m+1);
+gxy_matrix_padd = zeros(n+1,n+1);
+
+
+[r,c] = size(fxy_matrix);
+fxy_matrix_padd(1:r,1:c) = fxy_matrix;
+
+[r,c] = size(gxy_matrix);
+gxy_matrix_padd(1:r,1:c) = gxy_matrix;
+
+fxy_matrix = fxy_matrix_padd;
+gxy_matrix = gxy_matrix_padd;
+
+%%
 
 % Set the initial iterations number
 ite = 1;
@@ -55,40 +74,35 @@ th1(ite) = i_th1;
 th2(ite) = i_th2;
 alpha(ite) = i_alpha;
 
-% Get degree of polynomials f.
-[m1,m2] = GetDegree(fxy_matrix);
-
-% Get degree of polynomial g.
-[n1,n2] = GetDegree(gxy_matrix);
-
 % Get the number of coefficients in the polynomial f(x,y)
-nCoeff_fxy =  (m1+1) * (m2+1);
-nNonZeros_fxy = GetNumNonZeros(m1,m2,m);
-nZeros_fxy = nCoeff_fxy - nNonZeros_fxy;
+nCoeff_fxy = (m+1) * (m+1);
+nNonZeros_fxy = nchoosek(m+2,2);
+nZeroCoeff_fxy = nchoosek(m+1,2);
 
 % Get the number of coefficients in the polynomial g(x,y)
-nCoeff_gxy = (n1+1) * (n2+1);
-nNonZeros_gxy = GetNumNonZeros(n1,n2,n);
-nZeros_gxy = nCoeff_gxy - nNonZeros_gxy;
+nCoeff_gxy = (n+1) * (n+1);
+nNonZeros_gxy = nchoosek(n+2,2);
+nZeroCoeff_gxy = nchoosek(n+1,2);
 
-% 
-nCoeff_fv = GetNumNonZeros(m1+n1-k1,m2+n2-k2,m+n-k);
+% Get the number of coefficients in both f(x,y) and g(x,y)
+nCoeff_fg = nCoeff_fxy + nCoeff_gxy;
+nNonZeros_fg = nNonZeros_fxy + nNonZeros_gxy;
+nZeroCoeff_fg = nZeroCoeff_fxy + nZeroCoeff_gxy;
 
 % Get the number of coefficients in v(x,y)
-nCoeff_vxy = (n1-k1+1) * (n2-k2+1);
-nNonZeros_vxy = GetNumNonZeros(n1-k1,n2-k2,n-k);
-nZeros_vxy = nCoeff_vxy - nNonZeros_vxy;
+nCoeff_vxy = (n-k+1) * (n-k+1);
+nNonZeros_vxy = nchoosek(n-k+2,2);
+nZeroCoeff_vxy = nchoosek(n-k+1,2);
 
 % Get the number of coefficients in u(x,y)
-nCoeff_uxy = (m1-k1+1) * (m2-k2+1);
-nNonZeros_uxy = GetNumNonZeros(m1-k1,m2-k2,m-k);
-nZeros_uxy = nCoeff_uxy - nNonZeros_uxy;
-
-% Get the number of coefficients in the product f*v(x,y)
+nCoeff_uxy = (m-k+1) * (m-k+1);
+nNonZeros_uxy = nchoosek(m-k+2,2);
+nZeroCoeff_uxy = nchoosek(m-k+1,2);
 
 % Get the number of coefficients in the unknown vector x, where A_{t}x =
 % c_{t}.
-nCoeff_x = nNonZeros_uxy + nNonZeros_vxy - 1;
+nCoeff_x = nCoeff_uxy + nCoeff_vxy - 1;
+nNonZeros_x = nNonZeros_uxy + nNonZeros_vxy - 1;
 
 % Create the identity matrix I, the matrix M formed from I by removing the
 % column equivalent to the optimal column for removal from the Sylvester
@@ -97,18 +111,21 @@ nCoeff_x = nNonZeros_uxy + nNonZeros_vxy - 1;
 
 % Get the number of columns in C_{t}(f), the first partition of the Sylvester
 % Matrix S_{t}(f,g)
-nCols_Tf = nNonZeros_vxy;
-
+nCols_T1 = nNonZeros_vxy;
 
 % Get the number of columns in C_{t}(g), the second partition of the
 % Sylvester matrix S_{t}(f,g)
-nCols_Tg = nNonZeros_uxy;
+nCols_T2 = nNonZeros_uxy;
 
-% Get the total number of columns in the Sylvester matrix S_{t}(f,g)
-nCols_Sylv = nCols_Tf + nCols_Tg;
+% Get the total number of columns in the Sylvester matrix S_{k}(f,g)
+nCols_Sk = nCols_T1 + nCols_T2;
+
+% Get the number of rows in the Sylvester subresultant matrix S_{k}(f,g)
+nRows_Sk = nchoosek(m+n-k+2,2);
+
 
 % Create the identity matrix
-I = eye(nCols_Sylv, nCols_Sylv);
+I = eye(nCols_Sk, nCols_Sk);
 
 % Create the matrix M, such that S(f,g)*M gives A_{t}, the Sylvester Matrix
 % with the optimal column removed.
@@ -120,8 +137,7 @@ M(:,idx_col) = [];
 % removed from the Sylvester subresultant.
 e = I(:,idx_col);
 
-% % Preprocessing
-
+%% Preprocessing
 % Obtain polynomials in Modified Bernstein Basis, using initial values of
 % alpha and theta.
 
@@ -134,75 +150,72 @@ fww_matrix = GetWithThetas(fxy_matrix,th1(ite),th2(ite));
 gww_matrix = GetWithThetas(gxy_matrix,th1(ite),th2(ite));
 
 % Form the Coefficient Matrix T = [C(f(w1,w2))|alpha * C(g(w1,w2))] such that T*x = [col]
-Tf = BuildT1_Both(fww_matrix,m,n-k,n1-k1,n2-k2);
-Tg = BuildT1_Both(gww_matrix,n,m-k,m1-k1,m2-k2);
-Sk_fg = [Tf alpha(ite).*Tg];
+T1_fxy = BuildT1_Total(fww_matrix,m,n-k);
+T2_gxy = BuildT1_Total(gww_matrix,n,m-k);
+T_fg = [T1_fxy alpha(ite).*T2_gxy];
 
 %
 % Calculate the partial derivatives of f(w,w) and g(w,w) with respect to \alpha
-Partial_fw_wrt_alpha_mat            = zeros(m1+1,m2+1);
-Partial_alpha_gw_wrt_alpha_mat      = gxy_matrix;
+Partial_fw_wrt_alpha            = zeros(m+1,m+1);
+Partial_alpha_gw_wrt_alpha      = gxy_matrix;
 
 %
 % Calculate the partial derivatives of f(w,w) with respect to \theta_1
-theta_mat = diag((0:1:m1) ./ th1(ite));
+theta_mat = diag((0:1:m) ./ th1(ite));
 Partial_fw_wrt_theta1    = theta_mat * fww_matrix;
 
 %
 % Calculate the partial derivative of g(w,w) with respect to theta_1
-theta_mat = diag((0:1:n1) ./ th1(ite));
+theta_mat = diag((0:1:n) ./ th1(ite));
 Partial_gw_wrt_theta1    = theta_mat * gww_matrix;
 
 %
 % Calculate the partial derivative of f(w,w) with respect to theta_2
-theta_mat = diag((0:1:m2) ./ th2(ite));
+theta_mat = diag((0:1:m) ./ th2(ite));
 Partial_fw_wrt_theta2 = fww_matrix * theta_mat;
 
 %
 % Calculate the partial deriviates of g(w,w) with respect to theta_2
-theta_mat = diag((0:1:n2)./ th2(ite));
+theta_mat = diag((0:1:n)./ th2(ite));
 Partial_gw_wrt_theta2 = gww_matrix * theta_mat;
 
-% %
+%%
 % Build the derivative of T(f,g) with respect to alpha
-Tf_wrt_alpha = BuildT1_Both(Partial_fw_wrt_alpha_mat,m,n-k,n1-k1,n2-k2);
-Tg_wrt_alpha = BuildT1_Both(Partial_alpha_gw_wrt_alpha_mat,n,m-k,m1-k1,m2-k2);
-T_alpha = [Tf_wrt_alpha Tg_wrt_alpha];
+T1_f_wrt_alpha = BuildT1_Total(Partial_fw_wrt_alpha,m,n-k);
+T2_g_wrt_alpha = BuildT1_Total(Partial_alpha_gw_wrt_alpha,n,m-k);
+T_fg_wrt_alpha = [T1_f_wrt_alpha T2_g_wrt_alpha];
 
-% %
+%%
 % Calculate the derivative of T(f,g) with respect to theta_{1}
-Tf_wrt_theta1 = BuildT1_Both(Partial_fw_wrt_theta1,m,n-k,n1-k1,n2-k2);
-Tg_wrt_theta1 = BuildT1_Both(Partial_gw_wrt_theta1,n,m-k,m1-k1,m2-k2);
-Partial_T_wrt_theta1 = [Tf_wrt_theta1 alpha(ite)* Tg_wrt_theta1];
+T1_f_wrt_theta1 = BuildT1_Total(Partial_fw_wrt_theta1,m,n-k);
+T2_g_wrt_theta1 = BuildT1_Total(Partial_gw_wrt_theta1,n,m-k);
+Partial_T_fg_wrt_theta1 = [T1_f_wrt_theta1 alpha(ite)* T2_g_wrt_theta1];
 
-% %
+%%
 % Calcualte the derivative of T(f,g) with respect to theta_2
-Tf_wrt_theta2 = BuildT1_Both(Partial_fw_wrt_theta2,m,n-k,n1-k1,n2-k2);
-Tg_wrt_theta2 = BuildT1_Both(Partial_gw_wrt_theta2,n,m-k,m1-k1,m2-k2);
-Partial_T_wrt_theta2 = [Tf_wrt_theta2 alpha(ite)*Tg_wrt_theta2];
+T1_f_wrt_theta2 = BuildT1_Total(Partial_fw_wrt_theta2,m,n-k);
+T2_g_wrt_theta2 = BuildT1_Total(Partial_gw_wrt_theta2,n,m-k);
+Partial_T_fg_wrt_theta2 = [T1_f_wrt_theta2 alpha(ite)*T2_g_wrt_theta2];
 
-% %
+%%
 % Initialise the vector z of structured perturbations
 % if we are working with strictly the roots problem, the number of entries
 % in z can be reduced.
 
-nRows_Sylv_mat = nCoeff_fv;
-nCols_Tf = nNonZeros_vxy;
-nCols_Tg = nNonZeros_uxy;
 
-zk = zeros(nNonZeros_fxy + nNonZeros_gxy , 1);
+zk = zeros(nNonZeros_fg , 1);
 
-%
+%%
 % Initilaise the derivative of N wrt alpha.
-Partial_N_wrt_alpha   = zeros(nRows_Sylv_mat,nCols_Tf + nCols_Tg);
+Partial_N_wrt_alpha   = zeros(nRows_Sk,nCols_T1 + nCols_T2);
 
 % Initilaise the derivative of N wrt theta_1.
-Partial_N_wrt_theta1   = zeros(nRows_Sylv_mat,nCols_Tf + nCols_Tg);
+Partial_N_wrt_theta1   = zeros(nRows_Sk,nCols_T1 + nCols_T2);
 
 % Initialise the derivative of N wrt theta 2
-Partial_N_wrt_theta2   = zeros(nRows_Sylv_mat,nCols_Tf + nCols_Tg);
+Partial_N_wrt_theta2   = zeros(nRows_Sk,nCols_T1 + nCols_T2);
 
-%
+%%
 % Initialise the derivative of h
 % Calculate the derivatives wrt alpha and theta of the column of DNQ
 % that is moved to the right hand side.
@@ -213,61 +226,59 @@ Partial_h_wrt_theta2    = Partial_N_wrt_theta2*e;
 
 % Get the matrix A_{k}(f,g), which is the subresultant matrix S(f,g) with
 % an opitmal column removed
-Ak_fg = Sk_fg;
-ck = Sk_fg(:,idx_col);
-Ak_fg(:,idx_col) = [];
+Ak = T_fg;
+ck = T_fg(:,idx_col);
+Ak(:,idx_col) = [];
 
 %% Build the matrix P
-Pk = BuildP_BothDegree_SNTLN(m,m1,m2,n,n1,n2,alpha(ite),th1(ite),th2(ite),idx_col,k,k1,k2);
-% Get the coefficients of f(x,y) in matrix form
-% % fxy_vec = GetAsVector(fxy_matrix);
-% % gxy_vec = GetAsVector(gxy_matrix);
-
+P = BuildP_TotalDegree_SNTLN(m,n,alpha(ite),th1(ite),th2(ite),idx_col,k);
 % Test P
-%ck;
-%ck2 = P*[fxy_vec;gxy_vec];
-%ck - ck2;
+% Get the coefficients of f(x,y) in matrix form
+%%fxy_vec = GetAsVector(fxy_matrix);
+%%gxy_vec = GetAsVector(gxy_matrix);
+
+%%ck;
+%%ck2 = P*[fxy_vec;gxy_vec];
+%%ck - ck2;
 
 %%
 % Calculate the derivatives of ck wrt alpha and theta.
-Partial_ck_wrt_alpha        = T_alpha*e;
-Partial_ck_wrt_theta1       = Partial_T_wrt_theta1*e;
-Partial_ck_wrt_theta2       = Partial_T_wrt_theta2*e;
+Partial_ck_wrt_alpha        = T_fg_wrt_alpha*e;
+Partial_ck_wrt_theta1       = Partial_T_fg_wrt_theta1*e;
+Partial_ck_wrt_theta2       = Partial_T_fg_wrt_theta2*e;
 
 
 %%
 % Perform QR decomposition of Ak to obtain the solution x
-x_ls = SolveAx_b(Ak_fg,ck);
+x_ls = SolveAx_b(Ak,ck);
 
 % store this version of x_ls
-% Insert a zero into the least squares solution x_ls so that 
-% S_{k,k1,k2} x = c_{k,k1,k2}. Also so that when x is split into two 
-% vectors x1 and x2. S(x1,x2) [f;g] =  ck.
+initial_xls = x_ls;
 first_part = x_ls(1:(idx_col-1));
 second_part = x_ls(idx_col:end);
 x = [first_part ; 0 ; second_part];
 
 % Build Matrix Y, where Y(v,u)*[f;g] = S(f,g)*[u;v]
-Yk = BuildY_BothDegree_SNTLN(x,m,m1,m2,n,n1,n2,k,k1,k2,alpha(ite),th1(ite),th2(ite));
+Y = BuildY_TotalDegree_SNTLN(x,m,n,k,alpha(ite),th1(ite),th2(ite));
 % Test Y
 %test1 = Y * [fxy_vec;gxy_vec];
 %test2 = T * x;
 %test1-test2;
 
 % Calculate the initial residual r = ck - (Ak*x)
-res_vec = ck - (Sk_fg*M*x_ls);
+res_vec = ck - (T_fg*M*x_ls);
 
 % Get the matrix p, which will store all the perturbations returned from LSE file
 nEntries = nNonZeros_fxy...
     + nNonZeros_gxy ...
-    + nCoeff_x ...
+    + nNonZeros_x ...
     + 3;
 
 
 % Set the initial value of vector p to be zero
 f = zeros(nNonZeros_fxy...
     + nNonZeros_gxy ...
-    + nCoeff_x ...
+    + nNonZeros_x ...
     + 3,1);
 
 %
@@ -276,32 +287,32 @@ E = eye(nEntries);
 
 %
 % Create the matrix (T+N), initially N is empty so this is the same as T.
-Tf = BuildT1_Both(fww_matrix,m,n-k,n1-k1,n2-k2);
-Tg = BuildT1_Both(gww_matrix,n,m-k,m1-k1,m2-k2);
-TN = [Tf alpha(ite).*Tg];
+T1_fxy = BuildT1_Total(fww_matrix,m,n-k);
+T2_gxy = BuildT1_Total(gww_matrix,n,m-k);
+TN = [T1_fxy alpha(ite).*T2_gxy];
 
 %
 % Create The matrix (T+N) with respect to alpha
-Tf_wrt_alpha = BuildT1_Both(Partial_fw_wrt_alpha_mat,m,n-k,n1-k1,n2-k2);
-Tg_wrt_alpha = BuildT1_Both(Partial_alpha_gw_wrt_alpha_mat,n,m-k,m1-k1,m2-k2);
-TN_wrt_alpha = [Tf_wrt_alpha Tg_wrt_alpha];
+T1_f_wrt_alpha = BuildT1_Total(Partial_fw_wrt_alpha,m,n-k);
+T2_g_wrt_alpha = BuildT1_Total(Partial_alpha_gw_wrt_alpha,n,m-k);
+TN_wrt_alpha = [T1_f_wrt_alpha T2_g_wrt_alpha];
 
 %
 % Create The matrix (T+N) with respect to theta1
-Tf_wrt_theta1 = BuildT1_Both(Partial_fw_wrt_theta1,m,n-k,n1-k1,n2-k2);
-Tg_wrt_theta1 = BuildT1_Both(Partial_gw_wrt_theta1,n,m-k,m1-k1,m2-k2);
-TN_wrt_theta1 = [Tf_wrt_theta1 alpha(ite) * Tg_wrt_theta1];
+T1_f_wrt_theta1 = BuildT1_Total(Partial_fw_wrt_theta1,m,n-k);
+T2_g_wrt_theta1 = BuildT1_Total(Partial_gw_wrt_theta1,n,m-k);
+TN_wrt_theta1 = [T1_f_wrt_theta1 alpha(ite) * T2_g_wrt_theta1];
 
 %
 % Create The matrix (T+N) with respect to theta2
-Tf_wrt_theta2 = BuildT1_Both(Partial_fw_wrt_theta2,m,n-k,n1-k1,n2-k2);
-Tg_wrt_theta2 = BuildT1_Both(Partial_gw_wrt_theta2,n,m-k,m1-k1,m2-k2);
-TN_wrt_theta2 = [Tf_wrt_theta2 alpha(ite) * Tg_wrt_theta2];
+T1_f_wrt_theta2 = BuildT1_Total(Partial_fw_wrt_theta2,m,n-k);
+T2_g_wrt_theta2 = BuildT1_Total(Partial_gw_wrt_theta2,n,m-k);
+TN_wrt_theta2 = [T1_f_wrt_theta2 alpha(ite) * T2_g_wrt_theta2];
 
 %%
 % Create the matrix C for input into iteration
 
-H_z     = Yk-Pk;
+H_z     = Y-P;
 
 H_x     = TN*M;
 
@@ -326,7 +337,7 @@ start_point     =   ...
     th2(ite)
     ];
 
-yy              =   start_point;
+yy =  start_point;
 
 % Set the termination criterion to a large value. It will be
 % over written later.
@@ -353,17 +364,17 @@ while condition(ite) >(SETTINGS.MAX_ERROR_SNTLN) &&  ite < SETTINGS.MAX_ITERATIO
     
     %% Break down y into its sections
     
-    % get the coefficients corresponding to f and g
+    % Get the coefficients corresponding to f and g
     delta_zk        = y(1:nNonZeros_fxy + nNonZeros_gxy ,1);
     
     % Remove the zk coefficients from the list of coefficients
     y(1:nNonZeros_fxy + nNonZeros_gxy) = [];
     
     % Get the coefficients corresponding to x
-    delta_xk        = y(1:nCoeff_x,1);
+    delta_xk        = y(1:nNonZeros_x,1);
     
     % Remove them from the list of coefficients
-    y(1:nCoeff_x) = [];
+    y(1:nNonZeros_x) = [];
     
     % Get the coefficient corresponding to alpha
     delta_alpha     = y(1:1);
@@ -405,59 +416,57 @@ while condition(ite) >(SETTINGS.MAX_ERROR_SNTLN) &&  ite < SETTINGS.MAX_ITERATIO
     gww_matrix = GetWithThetas(gxy_matrix,th1(ite),th2(ite));
     
     % Construct the Sylvester subresultant matrix S.
-    Tf = BuildT1_Both(fww_matrix,m,n-k,n1-k1,n2-k2);
-    Tg = BuildT1_Both(gww_matrix,n,m-k,m1-k1,m2-k2);
-    Sk_fg = [Tf alpha(ite).*Tg];
+    T1_fxy = BuildT1_Total(fww_matrix,m,n-k);
+    T2_gxy = BuildT1_Total(gww_matrix,n,m-k);
+    T_fg = [T1_fxy alpha(ite).*T2_gxy];
     
     % Calculate the partial derivatives of fw and gw with respect to alpha
-    Partial_fw_wrt_alpha_mat            = zeros(m1+1,m2+1);
-    Partial_alpha_gw_wrt_alpha_mat      = gww_matrix;
+    Partial_fw_wrt_alpha            = zeros(m+1,m+1);
+    Partial_alpha_gw_wrt_alpha      = gww_matrix;
     
     %%
     % Calculate the partial derivatives of fw and gw with respect to theta1
     % divide the rows by theta1 and multiply by the old power
     
     % Get the partial derivative of f with respect to theta 1
-    temp_mat = diag((0:1:m1)./th1(ite));
+    temp_mat = diag((0:1:m)./th1(ite));
     Partial_fw_wrt_theta1 = temp_mat * fww_matrix;
     
     % Get the partial derivative of g with respect to theta1
-    temp_mat = diag((0:1:n1)./th1(ite));
+    temp_mat = diag((0:1:n)./th1(ite));
     Partial_gw_wrt_theta1 = temp_mat * gww_matrix;
     
     % Get the partial derivative of f with respect to theta2
-    temp_mat = diag((0:1:m2)./th2(ite));
+    temp_mat = diag((0:1:m)./th2(ite));
     Partial_fw_wrt_theta2 =  fww_matrix * temp_mat;
     
     % Get the partial derivative of g with respect too theta2
-    temp_mat = diag((0:1:n2)./th2(ite));
+    temp_mat = diag((0:1:n)./th2(ite));
     Partial_gw_wrt_theta2 =  gww_matrix * temp_mat;
     
-    
     % Calculate the Partial derivative of T with respect to alpha.
-    Tf_wrt_alpha = BuildT1_Both(Partial_fw_wrt_alpha_mat,m,n-k,n1-k1,n2-k2);
-    Tg_wrt_alpha = BuildT1_Both(Partial_alpha_gw_wrt_alpha_mat,n,m-k,m1-k1,m2-k2);
-    Partial_T_wrt_alpha = [Tf_wrt_alpha Tg_wrt_alpha];
-    
+    T1_f_wrt_alpha = BuildT1_Total(Partial_fw_wrt_alpha, m, n-k);
+    T2_g_wrt_alpha = BuildT1_Total(Partial_alpha_gw_wrt_alpha, n, m-k);
+    Partial_T_wrt_alpha = [T1_f_wrt_alpha T2_g_wrt_alpha];
     
     % Calculate the partial derivative of T with respect to theta1
-    Tf_wrt_theta1 = BuildT1_Both(Partial_fw_wrt_theta1,m,n-k,n1-k1,n2-k2);
-    Tg_wrt_theta1 = BuildT1_Both(Partial_gw_wrt_theta1,n,m-k,m1-k1,m2-k2);
-    Partial_T_wrt_theta1 = [Tf_wrt_theta1 alpha(ite)*Tg_wrt_theta1];
+    T1_f_wrt_theta1 = BuildT1_Total(Partial_fw_wrt_theta1,m,n-k);
+    T2_g_wrt_theta1 = BuildT1_Total(Partial_gw_wrt_theta1,n,m-k);
+    Partial_T_fg_wrt_theta1 = [T1_f_wrt_theta1 alpha(ite)*T2_g_wrt_theta1];
     
     % Calculate the partial derivative of T with respect to theta2
-    Tf_wrt_theta2 = BuildT1_Both(Partial_fw_wrt_theta2,m,n-k,n1-k1,n2-k2);
-    Tg_wrt_theta2 = BuildT1_Both(Partial_gw_wrt_theta2,n,m-k,m1-k1,m2-k2);
+    T1_f_wrt_theta2 = BuildT1_Total(Partial_fw_wrt_theta2,m,n-k);
+    T2_g_wrt_theta2 = BuildT1_Total(Partial_gw_wrt_theta2,n,m-k);
     
-    Partial_T_wrt_theta2 = [Tf_wrt_theta2 alpha(ite)*Tg_wrt_theta2];
+    Partial_T_fg_wrt_theta2 = [T1_f_wrt_theta2 alpha(ite)*T2_g_wrt_theta2];
     
     % Calculate the column c_{k} of DTQ that is moved to the right hand side
-    ck = Sk_fg*e;
+    ck = T_fg*e;
     
     % Calculate the derivatives of c_{k} with respect to \alpha and \theta
     Partial_ck_wrt_alpha        = Partial_T_wrt_alpha*e;
-    Partial_ck_wrt_theta1       = Partial_T_wrt_theta1*e;
-    Partial_ck_wrt_theta2       = Partial_T_wrt_theta2*e;
+    Partial_ck_wrt_theta1       = Partial_T_fg_wrt_theta1*e;
+    Partial_ck_wrt_theta2       = Partial_T_fg_wrt_theta2*e;
     
     % Create the vector of structured perturbations zf and zg applied
     % to F and G.
@@ -465,59 +474,58 @@ while condition(ite) >(SETTINGS.MAX_ERROR_SNTLN) &&  ite < SETTINGS.MAX_ITERATIO
     z_gx      = zk(nNonZeros_fxy + 1 :end);
     
     % Calculate the entries of z_fw and z_gw
-    
-    z_fx_mat = GetAsMatrix([z_fx ; zeros(nZeros_fxy,1)],m1,m2);
-    z_gx_mat = GetAsMatrix([z_gx ; zeros(nZeros_gxy,1)],n1,n2);
+    z_fx_mat = GetAsMatrix([z_fx;zeros(nZeros_fxy,1)],m,m);
+    z_gx_mat = GetAsMatrix([z_gx;zeros(nZeros_gxy,1)],n,n);
     
     % Get z_fw_mat, by multiplying by thetas
     z_fw_mat = GetWithThetas(z_fx_mat,th1(ite),th2(ite));
     z_gw_mat = GetWithThetas(z_gx_mat,th1(ite),th2(ite));
     
     % Calculate the derivatives of z_fw and z_gw with repect to alpha.
-    Partial_zfw_wrt_alpha    = zeros(m1+1,m2+1);
+    Partial_zfw_wrt_alpha    = zeros(m+1,m+1);
     Partial_zgw_wrt_alpha    = z_gw_mat;
     
     % Calculate the derivative of z_fw with respect to theta1.
-    temp_mat = diag((0:1:m1)./th1(ite));
+    temp_mat = diag((0:1:m)./th1(ite));
     Partial_zfw_wrt_theta1 = temp_mat * z_fw_mat;
     
     % Calculate the derivative of z_fw with respect to theta2
-    temp_mat = diag((0:1:m2)./th2(ite));
+    temp_mat = diag((0:1:m)./th2(ite));
     Partial_zfw_wrt_theta2 = z_fw_mat * temp_mat;
     
     % Calculate the derivative of z_gw with respect ot theta1
-    temp_mat = diag((0:1:n1)./th2(ite));
+    temp_mat = diag((0:1:n)./th2(ite));
     Partial_zgw_wrt_theta1 = temp_mat * z_gw_mat;
     
     % Calculate the deriviate of z_gw with respect to theta2
-    temp_mat = diag((0:1:n2)./th2(ite));
+    temp_mat = diag((0:1:n)./th2(ite));
     Partial_zgw_wrt_theta2 = z_gw_mat * temp_mat;
     
     % Build the coefficient Matrix N = [T(z1) T(z2)], of structured perturbations, with
     % same structure as DTQ.
-    N1 = BuildT1_Both(z_fw_mat,m,n-k,n1-k1,n2-k2);
-    N2 = BuildT1_Both(z_gw_mat,n,m-k,m1-k1,m2-k2);
+    N1 = BuildT1_Total(z_fw_mat,m,n-k);
+    N2 = BuildT1_Total(z_gw_mat,n,m-k);
     N = [N1 alpha(ite).*N2];
     
     % Build the coefficient matrix N with respect to alpha
-    Tf_wrt_alpha = BuildT1_Both(Partial_zfw_wrt_alpha,m,n-k,n1-k1,n2-k2);
-    Tg_wrt_alpha = BuildT1_Both(Partial_zgw_wrt_alpha,n,m-k,m1-k1,m2-k2);
-    Partial_N_wrt_alpha = [Tf_wrt_alpha Tg_wrt_alpha];
+    T1_f_wrt_alpha = BuildT1_Total(Partial_zfw_wrt_alpha, m, n-k);
+    T2_g_wrt_alpha = BuildT1_Total(Partial_zgw_wrt_alpha, n, m-k);
+    Partial_N_wrt_alpha = [T1_f_wrt_alpha T2_g_wrt_alpha];
     
     
     % Calculate the derivatives of DNQ with respect to theta
-    Tf_wrt_theta1 = BuildT1_Both(Partial_zfw_wrt_theta1,m,n-k,n1-k1,n2-k2);
-    Tg_wrt_theta1 = BuildT1_Both(Partial_zgw_wrt_theta1,n,m-k,m1-k1,m2-k2);
-    Partial_N_wrt_theta1 = [Tf_wrt_theta1 alpha(ite).*Tg_wrt_theta1];
+    T1_f_wrt_theta1 = BuildT1_Total(Partial_zfw_wrt_theta1, m, n-k);
+    T2_g_wrt_theta1 = BuildT1_Total(Partial_zgw_wrt_theta1, n, m-k);
+    Partial_N_wrt_theta1 = [T1_f_wrt_theta1 alpha(ite).*T2_g_wrt_theta1];
     
     % Calculate the derivatives of DNQ with respect to theta
-    Tf_wrt_theta2 = BuildT1_Both(Partial_zfw_wrt_theta2,m,n-k,n1-k1,n2-k2);
-    Tg_wrt_theta2 = BuildT1_Both(Partial_zgw_wrt_theta2,n,m-k,m1-k1,m2-k2);
-    Partial_N_wrt_theta2 = [Tf_wrt_theta2 alpha(ite).*Tg_wrt_theta2];
+    T1_f_wrt_theta2 = BuildT1_Total(Partial_zfw_wrt_theta2, m, n-k);
+    T2_g_wrt_theta2 = BuildT1_Total(Partial_zgw_wrt_theta2, n, m-k);
+    Partial_N_wrt_theta2 = [T1_f_wrt_theta2 alpha(ite).*T2_g_wrt_theta2];
     
     % Calculate the column of DNQ that is moved to the right hand side, which
     % has the same structure as c_{k} the column of S_{k} moved to the RHS
-    hk = N*e;
+    h = N*e;
     
     % Calculate the derivative of h with respect to alpha
     h_alpha = Partial_N_wrt_alpha*e;
@@ -530,42 +538,35 @@ while condition(ite) >(SETTINGS.MAX_ERROR_SNTLN) &&  ite < SETTINGS.MAX_ITERATIO
     
     % Build the matrix (T+N)
     
-    Tf = BuildT1_Both(fww_matrix + z_fw_mat,m,n-k,n1-k1,n2-k2);
-    Tg = BuildT1_Both(gww_matrix + z_gw_mat,n,m-k,m1-k1,m2-k2);
-    TN = [Tf alpha(ite).*Tg];
+    T1_fxy = BuildT1_Total(fww_matrix + z_fw_mat, m, n-k);
+    T2_gxy = BuildT1_Total(gww_matrix + z_gw_mat, n, m-k);
+    TN = [T1_fxy alpha(ite).*T2_gxy];
     
     % Calculate the paritial derivative of (T+N) with respect to
     % alpha
-    TN1_wrt_alpha = BuildT1_Both(Partial_fw_wrt_alpha_mat + Partial_zfw_wrt_alpha, m,n-k,n1-k1,n2-k2);
-    TN2_wrt_alpha = BuildT1_Both(Partial_alpha_gw_wrt_alpha_mat + Partial_zgw_wrt_alpha,n,m-k, m1-k1,m2-k2);
+    TN1_wrt_alpha = BuildT1_Total(Partial_fw_wrt_alpha + Partial_zfw_wrt_alpha, m, n-k);
+    TN2_wrt_alpha = BuildT1_Total(Partial_alpha_gw_wrt_alpha + Partial_zgw_wrt_alpha, n, m-k);
     TN_alpha = [TN1_wrt_alpha TN2_wrt_alpha];
     
     
     % Calculate the paritial derivative of (T+N) with respect to
     % theta1
-    TN1_wrt_theta1 = BuildT1_Both(Partial_fw_wrt_theta1 + Partial_zfw_wrt_theta1,m,n-k,n1-k1,n2-k2);
-    TN2_wrt_theta1 = BuildT1_Both(Partial_gw_wrt_theta1 + Partial_zgw_wrt_theta1,n,m-k,m1-k1,m2-k2);
+    TN1_wrt_theta1 = BuildT1_Total(Partial_fw_wrt_theta1 + Partial_zfw_wrt_theta1, m, n-k);
+    TN2_wrt_theta1 = BuildT1_Total(Partial_gw_wrt_theta1 + Partial_zgw_wrt_theta1, n, m-k);
     TN_theta1 = [TN1_wrt_theta1 alpha(ite).*TN2_wrt_theta1];
     
     % Calculate the paritial derivative of (T+N) with respect to
     % theta2
-    TN1_wrt_theta2 = BuildT1_Both(Partial_fw_wrt_theta2 + Partial_zfw_wrt_theta2,m,n-k,n1-k1,n2-k2);
-    TN2_wrt_theta2 = BuildT1_Both(Partial_gw_wrt_theta2 + Partial_zgw_wrt_theta2,n,m-k,m1-k1,m2-k2);
+    TN1_wrt_theta2 = BuildT1_Total(Partial_fw_wrt_theta2 + Partial_zfw_wrt_theta2, m, n-k);
+    TN2_wrt_theta2 = BuildT1_Total(Partial_gw_wrt_theta2 + Partial_zgw_wrt_theta2, n, m-k);
     TN_theta2 = [TN1_wrt_theta2 alpha(ite).*TN2_wrt_theta2];
     
-    % Update xk
-    % Insert a zero into the least squares solution x_ls so that 
-    % S_{k,k1,k2} x = c_{k,k1,k2}. Also so that when x is split into two 
-    % vectors x1 and x2. S(x1,x2) [f;g] =  ck.
-    first_part = xk(1:(idx_col-1));
-    second_part = xk(idx_col:end);
-    x = [first_part ; 0 ; second_part];
-
+    
     % Calculate the matrix DY where Y is the Matrix such that E_{k}x = Y_{k}z.
-    Yk = BuildY_BothDegree_SNTLN(x,m,m1,m2,n,n1,n2,k,k1,k2,alpha(ite),th1(ite),th2(ite));
+    Y = BuildY_TotalDegree_SNTLN(m,m,n,n,k,k,idx_col,xk,alpha(ite),th1(ite),th2(ite));
     
     % Calculate the matrix P where ck = P * [f,g]
-    Pk = BuildP_BothDegree_SNTLN(m,m1,m2,n,n1,n2,alpha(ite),th1(ite),th2(ite),idx_col,k,k1,k2);
+    P = BuildP_TotalDegree_SNTLN(m,m,n,n,alpha(ite),th1(ite),th2(ite),idx_col,k,k,nCols_T1);
     
     % Test P
     %ck;
@@ -576,12 +577,12 @@ while condition(ite) >(SETTINGS.MAX_ERROR_SNTLN) &&  ite < SETTINGS.MAX_ITERATIO
     %%
     
     % Get residual as a vector
-    rk = (ck+hk) - TN*M*xk ;
+    rk = (ck+h) - TN*M*xk ;
     
     % Create the matrix C. This is made up of five submatrices, HZ, Hx,
     % H_alpha and H_theta1 and H_theta2.
     
-    Hz          = Yk-Pk;
+    Hz          = Y-P;
     
     Hx          = TN*M;
     
@@ -594,7 +595,7 @@ while condition(ite) >(SETTINGS.MAX_ERROR_SNTLN) &&  ite < SETTINGS.MAX_ITERATIO
     C = [Hz,Hx,H_alpha,H_theta1, H_theta2];  % the matrix C
     
     % Calculate the new right hand vector
-    ek = ck + hk;
+    ek = ck + h;
     
     % update gnew - used in LSE Problem.
     res_vec = rk;
@@ -607,42 +608,36 @@ while condition(ite) >(SETTINGS.MAX_ERROR_SNTLN) &&  ite < SETTINGS.MAX_ITERATIO
     
 end
 
-PlotGraphs_SNTLN();
+PlotGraphs_SNTLN()
 
 
-%%
+%
 
 % Once iterations are complete, assign fx output, gx output, solution X
 % output, alpha output and theta output.
 
 % get the vector zk
-zPert_f_vec = zk(1:nNonZeros_fxy);
-zPert_f_mat = GetAsMatrix([zPert_f_vec ; zeros(nZeros_fxy,1)],m1,m2);
+zPert_f_vec = zk(1:nCoeff_fxy);
+zPert_f_mat = GetAsMatrix(zPert_f_vec,m,m);
 
-zPert_g_vec = zk(nNonZeros_fxy+1:end);
-zPert_g_mat = GetAsMatrix([zPert_g_vec ; zeros(nZeros_gxy,1)],n1,n2);
+zPert_g_vec = zk(nCoeff_fxy+1:end);
+zPert_g_mat = GetAsMatrix(zPert_g_vec,n,n);
 
 % Set outputs of low rank approximation
 
+fprintf([mfilename ' : ' sprintf('SNTLN Failed to converge, keep termination values\n')])
 fxy_lr = fxy_matrix + zPert_f_mat;
-
 gxy_lr = gxy_matrix + zPert_g_mat;
-
 X_lr  = xk;
-
 alpha_lr = alpha(ite);
-
 th1_lr = th1(ite);
-
 th2_lr = th2(ite);
-
-    
 
 
 % Print the number of iterations
 LineBreakLarge();
-fprintf([mfilename sprintf('SNTLN converged within %i iterations \n', ite)]);
-LineBreakLarge();
+fprintf([mfilename ' : ' sprintf('SNTLN converged within %i iterations \n', ite)]);
+LineBreakLarge()
 
 end
 

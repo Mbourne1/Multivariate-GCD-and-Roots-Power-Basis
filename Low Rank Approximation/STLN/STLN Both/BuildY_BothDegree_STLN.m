@@ -51,31 +51,31 @@ nZeros_vxy = nCoefficients_vxy - nNonZeros_vxy;
 
 
 % % Split the vector x
-xv = x(1:nNonZeros_vxy);
-xu = 1.* x(nNonZeros_vxy + 1 : end);
+x1 = x(1:nNonZeros_vxy);
+x2 = 1.* x(nNonZeros_vxy + 1 : end);
 
 % get x_u as a matrix
-mat_xu = GetAsMatrix(...
+mat_x2 = GetAsMatrix(...
     [
-        xu;
+        x2;
         zeros(nZeros_uxy,1)
     ]...
     ,m1-k1,m2-k2);
 
 % Get x_v as a matrix
-mat_xv = GetAsMatrix(...
+mat_x1 = GetAsMatrix(...
     [
-        xv;
+        x1;
         zeros(nZeros_vxy,1);
     ]...
     ,n1-k1,n2-k2);
 
 % Build the matrix C1 and C2
-Tv = BuildT1_Both(mat_xv,n-k,m,m1,m2);
-Tu = BuildT1_Both(mat_xu,m-k,n,n1,n2);
+T_x1 = BuildT1_Both(mat_x1,n-k,m,m1,m2);
+T_x2 = BuildT1_Both(mat_x2,m-k,n,n1,n2);
 
 % Build the matrix Y_{k}
-Y_kk1k2 = [Tv Tu];
+Y_kk1k2 = [T_x1 T_x2];
 
 
 

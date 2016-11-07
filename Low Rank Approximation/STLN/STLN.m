@@ -24,10 +24,11 @@ global SETTINGS
 switch SETTINGS.DEGREE_METHOD
     case 'Total'
         
-        fxy_lr = fxy;
-        gxy_lr = gxy;
-        
         fprintf('No STLN Developed for total degree \n')
+        
+        [fxy_lr,gxy_lr] = STLN_Total(fxy,gxy,m,n,k,idx_col);
+              
+        
         
     case 'Relative'
         

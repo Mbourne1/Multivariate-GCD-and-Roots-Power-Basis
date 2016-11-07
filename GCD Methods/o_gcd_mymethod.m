@@ -43,7 +43,7 @@ function [fxy,gxy,dxy,uxy, vxy, t, t1, t2] = o_gcd_mymethod(fxy, gxy, m,n, limit
 global SETTINGS
 
 % % Preprocessing
-[lambda,mu,alpha,th1,th2] = Preprocess(fxy,gxy);
+[lambda,mu,alpha,th1,th2] = Preprocess_Relative(fxy,gxy);
 
 % Normalise f(x,y) by geometric means
 fxy_n = fxy./lambda;
@@ -65,7 +65,7 @@ S_Preproc = BuildSylvesterMatrix_Relative(fww,alpha.*gww,0,0);
 
 % Get degree using total degree method
 LineBreakMedium();
-t_new = GetGCDDegreeTotal2(fww,alpha.*gww,m,n,limits_t);
+t_new = GetGCDDegree_Total_WithLimits(fww,alpha.*gww,m,n,limits_t);
 LineBreakMedium();
 
 t = t_new;
@@ -96,11 +96,20 @@ LineBreakMedium();
 switch SETTINGS.DEGREE_METHOD
     case 'Total'
         % Must compute t1 and t2 so do so with relative method
-        [t1,t2] = GetGCDDegreeRelative(fww,alpha*gww,m,n,t);
+        [t] = GetGCDDegree_Total_WithLimits(fww,alpha.*gww,m,n,limits_t);
+        t1 = 1000;
+        t2 = 1000;
+        %[t1,t2] = GetGCDDegree_Relative(fww,alpha*gww,m,n,t);
+        
     case 'Relative'
-        [t1,t2] = GetGCDDegreeRelative(fww,alpha.*gww,m,n,t);
+        
+        t = 1000;
+        [t1,t2] = GetGCDDegree_Relative(fww,alpha.*gww);
+        
     case 'Both'
-        [t1,t2] = GetGCDDegreeRelative_Given_t(fww,alpha*gww,m,n,t);
+        [t] = GetGCDDegree_Total_WithLimits(fww,alpha.*gww,m,n,limits_t);
+        
+        [t1,t2] = GetGCDDegree_Relative_Given_t(fww,alpha*gww,m,n,t);
     otherwise
         error('err')
 end

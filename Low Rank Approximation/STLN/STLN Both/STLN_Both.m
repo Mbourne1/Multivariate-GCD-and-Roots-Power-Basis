@@ -31,6 +31,7 @@ function [fxy_lr,gxy_lr] = STLN_Both(fxy_matrix,gxy_matrix,m,n,k,k1,k2,idx_col)
 global SETTINGS
 
 
+
 % Get degree of polynomials f(x,y)
 [m1,m2] = GetDegree(fxy_matrix);
 
@@ -38,25 +39,20 @@ global SETTINGS
 [n1,n2] = GetDegree(gxy_matrix);
 
 % Get the number of coefficients in the polynomial f(x,y)
-nCoeff_f = (m1+1) * (m2+1);
+nCoeff_fxy = (m1+1) * (m2+1);
+nNonZeros_fxy = GetNumNonZeros(m1,m2,m);
+nZeros_fxy = nCoeff_fxy - nNonZeros_fxy;
 
 % Get the number of coefficients in the polynomial g(x,y)
-nCoeff_g = (n1+1) * (n2+1);
+nCoeff_gxy = (n1+1) * (n2+1);
+nNonZeros_gxy = GetNumNonZeros(n1,n2,n);
+nZeros_gxy = nCoeff_gxy - nNonZeros_gxy;
 
 % Get number of zeros in v
 nNonZeros_vxy = GetNumNonZeros(n1-k1,n2-k2,n-k);
 
 % Get number of zeros in u(x,y)
 nNonZeros_uxy = GetNumNonZeros(m1-k1,m2-k2,m-k);
-
-% Get number of zeros in f(x,y)
-nNonZeros_fxy = GetNumNonZeros(m1,m2,m);
-nZeros_fxy = nCoeff_f - nNonZeros_fxy;
-
-% Get number of zeros in g(x,y)
-nNonZeros_gxy = GetNumNonZeros(n1,n2,n);
-nZeros_gxy = nCoeff_g - nNonZeros_gxy;
-
 
 % Build the matrix T_{n1-k1,n2-k2}(f)
 Tf = BuildT1_Both(fxy_matrix,m,n-k,n1-k1,n2-k2);
@@ -80,7 +76,7 @@ ck = St_fg(:,idx_col);
 
 % Build the matrix Et
 Ak_zfzg = zeros(size(Ak_fg));
-ht = zeros(size(ck));
+hk = zeros(size(ck));
 
 % Build the vector z, which is the vector of perturbations of f and g.
 z = zeros(nNonZeros_fxy + nNonZeros_gxy,1);
@@ -144,7 +140,7 @@ norm(test1-test2)
 
 
 % Get initial residual (A_{t}+E_{t})x = (c_{t} + h_{t})
-x_ls = SolveAx_b(Ak_fg+Ak_zfzg,ck+ht);
+x_ls = SolveAx_b(Ak_fg+Ak_zfzg,ck+hk);
 
 H_z = Yk - Pt;
 
@@ -156,7 +152,7 @@ E = blkdiag( eye(nNonZeros_fxy + nNonZeros_gxy) , eye(nNonZeros_uxy + nNonZeros_
 
 
 % Get initial residual (A_{t}+E_{t})x = (c_{t} + h_{t})
-res_vec = (ck + ht) - (Ak_fg*x_ls);
+res_vec = (ck + hk) - (Ak_fg*x_ls);
 
 start_point     =   ...
     [...
@@ -227,7 +223,7 @@ while condition(ite) >  SETTINGS.MAX_ERROR_SNTLN &&  ite < SETTINGS.MAX_ITERATIO
     
     % Get the column vector h_{t}, the optimal column removed from B_{t},
     % and equivalent to c_{t} removed from S_{t}
-    ht = St_zfzg(:,idx_col);
+    hk = St_zfzg(:,idx_col);
     
     % Get the updated vector x
     %x_ls = SolveAx_b(At + Et,ct + ht);
@@ -241,7 +237,7 @@ while condition(ite) >  SETTINGS.MAX_ERROR_SNTLN &&  ite < SETTINGS.MAX_ITERATIO
     Yk = BuildY_BothDegree_STLN(vec_x1x2,m,m1,m2,n,n1,n2,k,k1,k2);
     
     % Get the residual vector
-    res_vec = (ck+ht) - ((Ak_fg+Ak_zfzg)*x_ls);
+    res_vec = (ck+hk) - ((Ak_fg+Ak_zfzg)*x_ls);
   
     % Update the matrix C
     H_z = Yk - Pt;
@@ -252,24 +248,18 @@ while condition(ite) >  SETTINGS.MAX_ERROR_SNTLN &&  ite < SETTINGS.MAX_ITERATIO
     f = -(yy-start_point);
     
     % Update the termination criterion
-    condition(ite) = norm(res_vec)./norm(ck+ht) ;
+    condition(ite) = norm(res_vec)./norm(ck+hk) ;
     
     
 end
 
 fprintf([mfilename ' : ' sprintf('\nRequired number of iterations: %i\n',ite)]);
-
-
-%if condition(ite) < condition(1)
     
-    fxy_lr = fxy_matrix + mat_zf;
-    gxy_lr = gxy_matrix + mat_zg;
-%else
-%    fxy_lr = fxy_matrix;
-%    gxy_lr = gxy_matrix;
-%end
+fxy_lr = fxy_matrix + mat_zf;
+gxy_lr = gxy_matrix + mat_zg;
 
-PlotGraphs_STLN
+
+PlotGraphs_STLN()
 
 
 end

@@ -22,10 +22,10 @@ function dxy_matrix = GetGCDCoefficients_Total(fxy_matrix,gxy_matrix,uxy_matrix,
 
 % % Build Matrix C
 % Build the Cauchy matrix of coefficients of u(w,w)
-C1 = BuildT1_TotalDegree(uxy_matrix,m-t,t);
+C1 = BuildT1_Total(uxy_matrix,m-t,t);
 
 % Build the Cauchy matrix of coefficients of v(w,w)
-C2 = BuildT1_TotalDegree(vxy_matrix,n-t,t);
+C2 = BuildT1_Total(vxy_matrix,n-t,t);
 
 % Build the RHS vector of coefficients of f and g
 C = [C1;C2];

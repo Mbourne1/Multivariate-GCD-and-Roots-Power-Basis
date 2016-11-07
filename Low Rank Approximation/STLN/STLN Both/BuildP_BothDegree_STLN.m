@@ -1,4 +1,4 @@
-function Pt = BuildP_Both_STLN(m,m1,m2,n,n1,n2,t,t1,t2,opt_col_index)
+function Pt = BuildP_BothDegree_STLN(m,m1,m2,n,n1,n2,t,t1,t2,opt_col_index)
 % BuildPt(m,m1,m2,n,n1,n2,opt_col,t1,t2)
 %
 % Build the matrix P_{t}, such that the matrix vector product P*[f;g] gives
@@ -8,43 +8,45 @@ function Pt = BuildP_Both_STLN(m,m1,m2,n,n1,n2,t,t1,t2,opt_col_index)
 %
 % Inputs
 %
-% m  :
+% m  : Total degree of polynomial f(x,y)
 %
-% m1 :
+% m1 : Degree of polynomial f(x,y) with respect to x
 %
-% m2 :
+% m2 : Degree of polynomial f(x,y) with respect to y
 %
-% n  :
+% n  : Total degree of polynomial g(x,y)
 %
-% n1 :
+% n1 : Degree of polynomial g(x,y) with respect to x
 %
-% n2 :
+% n2 : Degree of polynomial g(x,y) with respect to y
 %
-% opt_col :
+% opt_col : index of optimal column for removal from Sylvester subresultant
+% matrix 
 %
-% t
+% t : Total degree of polynomial d(x,y)
 %
-% t1 :
+% t1 : Degree of polynomial d(x,y) with respect to x
 %
-% t2 :
+% t2 : Degree of polynomial d(x,y) with respect to x
 
 
 % Get the number of coefficients in polynomial f(x,y)
-nCoeff_f = (m1+1).*(m2+1);
-
-% Get the number of coefficients in polynomial g(x,y)
-nCoeff_g = (n1+1).*(n2+1);
-
+nCoeff_fxy = (m1+1).*(m2+1);
 % Get the number of nonZero coefficients in f(x,y)
 nNonZeros_fxy = GetNumNonZeros(m1,m2,m);
 
+% Get the number of coefficients in polynomial g(x,y)
+nCoeff_gxy = (n1+1).*(n2+1);
 % Get the number of nonZeros coefficients in g(x,y)
 nNonZeros_gxy = GetNumNonZeros(n1,n2,n);
 
-% Number of columns in T1 of the sylvester matrix
-nColumnsT1 = nNonZeros_fxy;
+nCoeff_vxy = (n1-t1+1) * (n2-t2+1);
+nNonZeros_vxy = GetNumNonZeros(n1-t1,n2-t2,n-t);
 
-nRows = (m1+n1-t1+1)*(m2+n2-t2+1);
+
+% Number of columns in T1 of the sylvester matrix
+nColumnsT1 = nNonZeros_vxy;
+
 nNonZeros_fv = GetNumNonZeros(m1+n1-t1,m2+n2-t2,m+n-t);
 
 if opt_col_index <= nColumnsT1

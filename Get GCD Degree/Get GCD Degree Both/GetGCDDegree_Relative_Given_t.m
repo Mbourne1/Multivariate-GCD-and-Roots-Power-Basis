@@ -1,4 +1,4 @@
-function [t1,t2] = GetGCDDegreeRelative_Given_t(fxy,gxy,m,n,t)
+function [t1,t2] = GetGCDDegree_Relative_Given_t(fxy,gxy,m,n,t)
 % Get the degree structure (t_{1} and t_{2}) of the GCD d(x,y) of the two
 % polynomials f(x,y) and g(x,y)
 %
@@ -33,7 +33,8 @@ function [t1,t2] = GetGCDDegreeRelative_Given_t(fxy,gxy,m,n,t)
 [n1,n2] = GetDegree(gxy);
 
 % Get the set of all pairs of (k1,k2) combinations
-k1k2Pairs = GetPairs(m,m1,m2,n,n1,n2,t);
+%k1k2Pairs = GetPairs_Refined(m,m1,m2,n,n1,n2,t);
+k1k2Pairs = GetPairs_All(m1,m2,n1,n2);
 
 % Get number of pairs in the list
 [nPairs,~] = size(k1k2Pairs);

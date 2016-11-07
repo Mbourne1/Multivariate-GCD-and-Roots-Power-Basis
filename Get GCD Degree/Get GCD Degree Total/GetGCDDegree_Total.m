@@ -1,15 +1,19 @@
-function [t] = GetGCDDegreeTotal(fxy_matrix,gxy_matrix,m,n)
-% Calculate the degree of the GCD of two bivariate Power Basis polynomials.
+function [t] = GetGCDDegreeTotal(fxy,gxy,m,n)
+% Calculate the degree of the GCD of two bivariate power basis polynomials.
 %
-% %                 Inputs
+% % Inputs
 %
-% fxy_matrix    :
+% fxy : Coefficients of polynomial f(x,y)
 %
-% gxy_matrix    :
+% gxy : Coefficients of polynomial g(x,y)
 %
-% m
+% m : Total degree of polynomial f(x,y)
 %
-% n
+% n : Total degree of polynomial g(x,y)
+%
+% % Outputs
+%
+% t : Total degree of the GCD d(x,y)
 
 % % 
 % Calculate the Degree of the GCD
@@ -38,24 +42,24 @@ upper_lim = min(m,n);
 fxy_matrix_padd = zeros(m+1,m+1);
 gxy_matrix_padd = zeros(n+1,n+1);
 
+[r,c] = size(fxy);
+fxy_matrix_padd(1:r,1:c) = fxy;
 
-[r,c] = size(fxy_matrix);
-fxy_matrix_padd(1:r,1:c) = fxy_matrix;
-
-[r,c] = size(gxy_matrix);
-gxy_matrix_padd(1:r,1:c) = gxy_matrix;
+[r,c] = size(gxy);
+gxy_matrix_padd(1:r,1:c) = gxy;
 
 %%
 data = [];
-% let k represent the total degree of the common divisor
+
+% let k represent the total degree of the common divisor d_{k}(x,y)
 for k = 1:1:min(m,n)
     
     % Build the partitions of the Sylvester matrix
-    T1 = BuildT1_TotalDegree(fxy_matrix_padd,m,n-k);
-    T2 = BuildT1_TotalDegree(gxy_matrix_padd,n,m-k);
+    T_f = BuildT1_Total(fxy_matrix_padd,m,n-k);
+    T_g = BuildT1_Total(gxy_matrix_padd,n,m-k);
     
     % Build the sylvester matrix
-    Sk = [T1 T2];
+    Sk = [T_f T_g];
     
     % Using QR Decomposition of the sylvester matrix
     [~,R] = qr(Sk);
@@ -116,8 +120,10 @@ for k = 1:1:min(m,n)
     
 end
 
+% Get max/min diagonal entries 
 vRatio_MaxMin_Diags_R1 = v_maxDiagR1./v_minDiagR1;
 
+% Get max/min row norms
 vRatio_MaxMin_RowNorm_R1 = v_maxRowNormR1./v_minRowNormR1;
 
 

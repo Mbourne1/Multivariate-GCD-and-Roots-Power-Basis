@@ -97,21 +97,24 @@ lower_limit = 1;
 upper_limit = min(m,n);
 t_limits = [lower_limit,upper_limit];
 
-
-
 switch SETTINGS.DEGREE_METHOD
     case 'Total'
+        
+        
+        % pad the coefficients of fxy and gxy
+        % this is equivalent to degree elevating so that f is of degree (m,m), and
+        % g is of degree (n,n)
         fxy_matrix_padd = zeros(m+1,m+1);
         gxy_matrix_padd = zeros(n+1,n+1);
 
         [r,c] = size(fxy);
-        fxy_matrix_padd(1:r,1:c) = fxy;
+        fxy_matrix_padd(1:r,1:c) = fxy_exact;
         
-        [r,c] = size(gxy);
-        gxy_matrix_padd(1:r,1:c) = gxy;
+        [r,c] = size(gxy_exact);
+        gxy_matrix_padd(1:r,1:c) = gxy_exact;
         
-        fxy = fxy_matrix_padd;
-        gxy = gxy_matrix_padd;
+        fxy_exact = fxy_matrix_padd;
+        gxy_exact = gxy_matrix_padd;
         
     case 'Relative'
         
@@ -126,7 +129,7 @@ end
 
 % Compare exact d(x,y) and calculated d(x,y)
 % PrintCoefficients(dxy_calc,dxy_exact,'d(x,y)');
-% try
+try
     switch SETTINGS.DEGREE_METHOD
         case 'Relative'
             
@@ -144,10 +147,10 @@ end
             error_dxy = GetDistanceBetweenPolynomials(dxy_exact,dxy_calc,'d(x,y');
     end
     
-% catch err
-%     fprintf([mfilename ' : ' err.message '\n']);
-%     error_dxy = 9999999;
-% end
+catch err
+    fprintf([mfilename ' : ' err.message '\n']);
+    error_dxy = 9999999;
+end
 
 PrintToFile(m,n,t,error_dxy)
 

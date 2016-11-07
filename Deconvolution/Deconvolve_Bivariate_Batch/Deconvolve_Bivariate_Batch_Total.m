@@ -22,7 +22,7 @@ for i = 2:1:nPolys_arr_fxy
     
      
     % Build the matrix T(f(x,y))
-    T1 = BuildT1_TotalDegree(arr_fxy{i,1},vDegt_arr_fxy(i,1),vDegt_arr_hxy(i-1,1));
+    T1 = BuildT1_Total(arr_fxy{i,1},vDegt_arr_fxy(i,1),vDegt_arr_hxy(i-1,1));
     
     % % Strip the columns corresponding to zeros in f{i-1}
     arr_T1{i-1} = T1;
