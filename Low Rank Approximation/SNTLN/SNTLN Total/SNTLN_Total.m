@@ -563,8 +563,8 @@ while condition(ite) >(SETTINGS.MAX_ERROR_SNTLN) &&  ite < SETTINGS.MAX_ITERATIO
     
     
     % Calculate the matrix DY where Y is the Matrix such that E_{k}x = Y_{k}z.
-    first_part = x_ls(1:(idx_col-1));
-    second_part = x_ls(idx_col:end);
+    first_part = xk(1:(idx_col-1));
+    second_part = xk(idx_col:end);
     x = [first_part ; 0 ; second_part];
     
     Y = BuildY_TotalDegree_SNTLN(x,m,n,k,alpha(ite),th1(ite),th2(ite));

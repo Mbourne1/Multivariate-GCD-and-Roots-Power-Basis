@@ -1,5 +1,5 @@
 function [ fxy_lr, gxy_lr, alpha_lr,th1_lr,th2_lr,X_lr] = ...
-    SNTLN_Relative( fxy_matrix,gxy_matrix, i_alpha, i_th1, i_th2, k1, k2, opt_col)
+    SNTLN_Relative( fxy_matrix,gxy_matrix, i_alpha, i_th1, i_th2, k1, k2, idx_col)
 % Obtain the low rank approximation of the Sylvester matrix D*T_{t}(f,g)*Q =
 % S_{t}(f,g)
 %
@@ -102,12 +102,12 @@ I = eye(num_cols, num_cols);
 % Create the matrix M, such that S(f,g)*M gives A_{t}, the Sylvester Matrix
 % with the optimal column removed.
 M = I;
-M(:,opt_col) = [];
+M(:,idx_col) = [];
 
 % Let e be the column removed from the identity matrix, such that
 % S_{t}(f,g) * e gives the column c_{t}, where c_{t} is the optimal column
 % removed from the Sylvester subresultant.
-e = I(:,opt_col);
+e = I(:,idx_col);
 
 %% Preprocessing
 % Obtain polynomials in Modified Bernstein Basis, using initial values of
@@ -202,11 +202,11 @@ Partial_h_wrt_theta2    = Partial_N_wrt_theta2*e;
 % Get the matrix A_{k}(f,g), which is the subresultant matrix S(f,g) with
 % an opitmal column removed
 Ak = T_fg;
-ck = T_fg(:,opt_col);
-Ak(:,opt_col) = [];
+ck = T_fg(:,idx_col);
+Ak(:,idx_col) = [];
 
 %% Build the matrix P
-P = BuildP_RelativeDegree_SNTLN(m1,m2,n1,n2,alpha(ite),th1(ite),th2(ite),opt_col,k1,k2,nCols_T1);
+P = BuildP_RelativeDegree_SNTLN(m1,m2,n1,n2,k1,k2,alpha(ite),th1(ite),th2(ite),idx_col);
 % Test P
 % Get the coefficients of f(x,y) in matrix form
 %%fxy_vec = GetAsVector(fxy_matrix);
@@ -232,8 +232,8 @@ initial_xls = x_ls;
 
 % Build Matrix Y, where Y(v,u)*[f;g] = S(f,g)*[u;v]
 
-first_part = x_ls(1:(opt_col-1));
-second_part = x_ls(opt_col:end);
+first_part = x_ls(1:(idx_col-1));
+second_part = x_ls(idx_col:end);
 x = [first_part ; 0 ; second_part];
 
 Y = BuildY_RelativeDegree_SNTLN(x,m1,m2,n1,n2,k1,k2,alpha(ite),th1(ite),th2(ite));
@@ -543,10 +543,15 @@ while condition(ite) >(SETTINGS.MAX_ERROR_SNTLN) &&  ite < SETTINGS.MAX_ITERATIO
     %xk = SolveAx_b(TN*M,ck+h);
     
     % Calculate the matrix DY where Y is the Matrix such that E_{k}x = Y_{k}z.
-    Y = BuildY_RelativeDegree_SNTLN(m1,m2,n1,n2,k1,k2,opt_col,xk,alpha(ite),th1(ite),th2(ite));
+    
+    first_part = xk(1:(idx_col-1));
+    second_part = xk(idx_col:end);
+    x = [first_part ; 0 ; second_part];
+
+    Y = BuildY_RelativeDegree_SNTLN(x,m1,m2,n1,n2,k1,k2,alpha(ite),th1(ite),th2(ite));
     
     % Calculate the matrix P where ck = P * [f,g]
-    P = BuildP_RelativeDegree_SNTLN(m1,m2,n1,n2,alpha(ite),th1(ite),th2(ite),opt_col,k1,k2,nCols_T1);
+    P = BuildP_RelativeDegree_SNTLN(m1,m2,n1,n2,k1,k2,alpha(ite),th1(ite),th2(ite),idx_col);
     
     % Test P
     %ck;

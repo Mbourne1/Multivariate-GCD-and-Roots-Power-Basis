@@ -99,14 +99,14 @@ mat_zgxy = GetAsMatrix([v_zg; zeros(nZeros_g,1)], n, n);
 
 % Get the vector x
 % A_{t} x = c_{t}
-x_ls = SolveAx_b(Ak_fg,ct);
+xk = SolveAx_b(Ak_fg,ct);
 
 
 x = ...
     [
-    x_ls(1:idx_col-1);
+    xk(1:idx_col-1);
     0;
-    x_ls(idx_col:end);
+    xk(idx_col:end);
     ];
 
 
@@ -142,7 +142,7 @@ Pk = BuildP_TotalDegree_STLN(m,n,idx_col,k);
 
 
 % Get initial residual (A_{t}+E_{t})x = (c_{t} + h_{t})
-x_ls = SolveAx_b(Ak_fg+Ak_zfzg,ct+ht);
+xk = SolveAx_b(Ak_fg+Ak_zfzg,ct+ht);
 
 % % Build the Matrix C consisting of H_{z} and H_{x}
 H_z = Yk - Pk;
@@ -155,12 +155,12 @@ E = blkdiag( eye(nCoeff_f + nCoeff_g) , eye(nCoeff_u + nCoeff_v - 1));
 
 
 % Get initial residual (A_{t}+E_{t})x = (c_{t} + h_{t})
-res_vec = (ct + ht) - (Ak_fg*x_ls);
+res_vec = (ct + ht) - (Ak_fg*xk);
 
 start_point     =   ...
     [...
     z;...
-    x_ls;
+    xk;
     ];
 
 yy = start_point;
@@ -191,7 +191,7 @@ while condition(ite) >  SETTINGS.MAX_ERROR_SNTLN &&  ite < SETTINGS.MAX_ITERATIO
     
     % Update z and x
     z       = z + delta_zk;
-    x_ls    = x_ls + delta_xk;
+    xk    = xk + delta_xk;
     
     % Split vector z into vectors z_f and z_g
     v_zf = z(1 : nCoeff_f);
@@ -223,15 +223,15 @@ while condition(ite) >  SETTINGS.MAX_ERROR_SNTLN &&  ite < SETTINGS.MAX_ITERATIO
     % x_ls = SolveAx_b(At+Et,ct+ht);
     
     x = [...
-        x_ls(1:idx_col-1);...
+        xk(1:idx_col-1);...
         0;...
-        x_ls(idx_col:end)];
+        xk(idx_col:end)];
     
     % Build the matrix Y_{t} where Y_{t}(x)*z = E_{t}(z) * x
     Yk = BuildY_TotalDegree_STLN(x,m,n,k);
     
     % Get the residual vector
-    res_vec = (ct+ht) - ((Ak_fg+Ak_zfzg)*x_ls);
+    res_vec = (ct+ht) - ((Ak_fg+Ak_zfzg)*xk);
     
     % Update the matrix C
     H_z = Yk - Pk;

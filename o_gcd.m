@@ -126,14 +126,14 @@ end
 
 % Compare exact d(x,y) and calculated d(x,y)
 % PrintCoefficients(dxy_calc,dxy_exact,'d(x,y)');
-% try
+try
     switch SETTINGS.DEGREE_METHOD
         case 'Relative'
             
             error_dxy = GetDistanceBetweenPolynomials(dxy_exact,dxy_calc,'d(x,y');
             
         case 'Total'
-            
+           
             % Get d(x,y) in a matrix in terms of total degree.
             dxy_exact_total = zeros(t_exact+1,t_exact+1);
             dxy_exact_total(1:t1_exact+1,1:t2_exact+1) = dxy_exact;
@@ -144,12 +144,12 @@ end
             error_dxy = GetDistanceBetweenPolynomials(dxy_exact,dxy_calc,'d(x,y');
     end
     
-% catch err
-%     fprintf([mfilename ' : ' err.message '\n']);
-%     error_dxy = 9999999;
-% end
+catch err
+    fprintf([mfilename ' : ' err.message '\n']);
+    error_dxy = 9999999;
+end
 
-PrintToFile(m,n,t,error_dxy)
+PrintToFile(m,n,t,t1,t2,error_dxy)
 
 % Given the two polynomials f(x,y) and g(x,y), Plot the explicit surfaces
 % z = f(x,y) and z = g(x,y).
@@ -176,7 +176,7 @@ end
 
 
 
-function []= PrintToFile(m,n,t,error_dx)
+function []= PrintToFile(m,n,t,t1,t2,error_dx)
 
 global SETTINGS
 
@@ -185,18 +185,21 @@ fullFileName = 'Results_o_gcd.txt';
 
 if exist('Results_o_gcd.txt', 'file')
     fileID = fopen('Results_o_gcd.txt','a');
-    fprintf(fileID,'%s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s\n',...
+    fprintf(fileID,'%s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s\n',...
         datetime('now'),...
         SETTINGS.EX_NUM,...
         int2str(m),...
         int2str(n),...
         int2str(t),...
+        int2str(t1),...
+        int2str(t2),...
         error_dx,...
         SETTINGS.MEAN_METHOD,...
         SETTINGS.BOOL_ALPHA_THETA,...
         SETTINGS.EMIN,...
         SETTINGS.EMAX,...
-        SETTINGS.LOW_RANK_APPROXIMATION_METHOD);
+        SETTINGS.LOW_RANK_APPROXIMATION_METHOD,...
+        SETTINGS.DEGREE_METHOD);
     fclose(fileID);
 else
     % File does not exist.

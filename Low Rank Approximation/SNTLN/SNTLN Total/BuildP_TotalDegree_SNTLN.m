@@ -46,7 +46,7 @@ if idx_col <= nCols_T1
     % % Build the matrix P
     
     % Build the matrix P1
-    P1 = BuildP1_TotalDegree_SNTLN(m,n,th1,th2,idx_col,k);
+    P1 = BuildP1_TotalDegree_SNTLN(m,n,k,th1,th2,idx_col);
     
     % Build the matrix P2
     P2 = zeros(nRows_Skk1k2,nCoeff_gxy);
@@ -64,7 +64,7 @@ else
     % Get the position of the optimal column with respect to T(g)
     opt_col_rel = idx_col - nCols_T1;
     
-    P2 = BuildP1_TotalDegree_SNTLN(n,m,th1,th2,opt_col_rel,k);
+    P2 = BuildP1_TotalDegree_SNTLN(n,m,k,th1,th2,opt_col_rel);
     
     % Build the matrix P.
     P = [P1 alpha.*P2];

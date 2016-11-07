@@ -105,19 +105,19 @@ mat_zg = GetAsMatrix(...
 
 % Get the vector x
 % A_{t} x = c_{t}
-x_ls = SolveAx_b(Ak_fg,ck);
+xk = SolveAx_b(Ak_fg,ck);
 
-vec_x1x2 = ...
+x = ...
     [
-    x_ls(1:idx_col-1);
+    xk(1:idx_col-1);
     0;
-    x_ls(idx_col:end);
+    xk(idx_col:end);
     ];
 
 
 % Build the matrix Y_{t}
 % Where Y(x) * z = E(z) * x
-Yk = BuildY_BothDegree_STLN(vec_x1x2,m,m1,m2,n,n1,n2,k,k1,k2);
+Yk = BuildY_BothDegree_STLN(x,m,m1,m2,n,n1,n2,k,k1,k2);
 
 
 v_fxy = GetAsVector(fxy_matrix);
@@ -128,7 +128,7 @@ v_gxy = v_gxy(1:nNonZeros_gxy,:);
 
 
 test1 = Yk * [v_fxy;v_gxy];
-test2 = Ak_fg * x_ls;
+test2 = Ak_fg * xk;
 norm(test1-test2)
 
 % Build the matrix P_{t}
@@ -140,7 +140,7 @@ norm(test1-test2)
 
 
 % Get initial residual (A_{t}+E_{t})x = (c_{t} + h_{t})
-x_ls = SolveAx_b(Ak_fg+Ak_zfzg,ck+hk);
+xk = SolveAx_b(Ak_fg+Ak_zfzg,ck+hk);
 
 H_z = Yk - Pt;
 
@@ -152,12 +152,12 @@ E = blkdiag( eye(nNonZeros_fxy + nNonZeros_gxy) , eye(nNonZeros_uxy + nNonZeros_
 
 
 % Get initial residual (A_{t}+E_{t})x = (c_{t} + h_{t})
-res_vec = (ck + hk) - (Ak_fg*x_ls);
+res_vec = (ck + hk) - (Ak_fg*xk);
 
 start_point     =   ...
     [...
     z;...
-    x_ls;
+    xk;
     ];
 
 yy = start_point;
@@ -188,7 +188,7 @@ while condition(ite) >  SETTINGS.MAX_ERROR_SNTLN &&  ite < SETTINGS.MAX_ITERATIO
     
     % Update z and x
     z       = z + delta_zk;
-    x_ls    = x_ls + delta_xk;
+    xk    = xk + delta_xk;
     
     % Split vector z into vectors z_f and z_g
     v_zf = z(1:nNonZeros_fxy);
@@ -228,16 +228,16 @@ while condition(ite) >  SETTINGS.MAX_ERROR_SNTLN &&  ite < SETTINGS.MAX_ITERATIO
     % Get the updated vector x
     %x_ls = SolveAx_b(At + Et,ct + ht);
     
-    vec_x1x2 = [...
-        x_ls(1:idx_col-1);...
+    x = [...
+        xk(1:idx_col-1);...
         0;...
-        x_ls(idx_col:end)];
+        xk(idx_col:end)];
     
     % Build the matrix Y_{t} where Y_{t}(x)*z = E_{t}(z) * x
-    Yk = BuildY_BothDegree_STLN(vec_x1x2,m,m1,m2,n,n1,n2,k,k1,k2);
+    Yk = BuildY_BothDegree_STLN(x,m,m1,m2,n,n1,n2,k,k1,k2);
     
     % Get the residual vector
-    res_vec = (ck+hk) - ((Ak_fg+Ak_zfzg)*x_ls);
+    res_vec = (ck+hk) - ((Ak_fg+Ak_zfzg)*xk);
   
     % Update the matrix C
     H_z = Yk - Pt;
