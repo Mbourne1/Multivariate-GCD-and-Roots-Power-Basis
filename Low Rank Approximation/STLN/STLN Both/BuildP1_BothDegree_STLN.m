@@ -32,7 +32,7 @@ function P = BuildP1_BothDegree_STLN(m,m1,m2,n,n1,n2,t,t1,t2,idx_col)
 nNonZeros_fxy = GetNumNonZeros(m1,m2,m);
 
 % Build the coefficient matrix of thetas
-mat = ones(m1+1,m2+1);
+% mat = ones(m1+1,m2+1);
 
 % Get the number of coefficients in a polynomial of total degree m
 nNonZeros_fxy_total = nchoosek(m+2,2);
@@ -41,8 +41,8 @@ vec = [...
     ones(nNonZeros_fxy_total,1);
     zeros(nZeros_fxy_total,1)
     ];
-mat2 = GetAsMatrix(vec,m,m);
-mat2 = mat2(1:m1+1,1:m2+1);
+mat = GetAsMatrix(vec,m,m);
+mat = mat(1:m1+1,1:m2+1);
 
 % pad with zeros
 %num_mult_wrt_x = n1-t1;
@@ -64,7 +64,7 @@ nRows_f = m1+1;
 nCols_f = m2+1;
 
 % insert the theta matrix into the zero matrix
-padd_mat(ihat:i+nRows_f, jhat:j+nCols_f) = mat2;
+padd_mat(ihat:i+nRows_f, jhat:j+nCols_f) = mat;
 
 % Get the padded matrix as a vector
 vec_padd_mat = GetAsVector(padd_mat);

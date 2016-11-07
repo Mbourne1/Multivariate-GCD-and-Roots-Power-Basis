@@ -74,12 +74,12 @@ switch SETTINGS.LOW_RANK_APPROXIMATION_METHOD
         
         % Get distance between f(x,y) and f(x,y) low rank approximation by
         % STLN.
-        test = (fxy_lr - fxy)
+        test = (fxy_lr - fxy);
         norm(test)
         
         % Get distance between f(w,w) and f(w,w) low rank approximation by
         % STLN.
-        test2 = (fww_lr - fww)
+        test2 = (fww_lr - fww);
         norm(test2)
         
         

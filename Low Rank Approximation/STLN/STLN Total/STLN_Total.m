@@ -49,7 +49,7 @@ nZeros_f = nchoosek(m+1,2);
 
 % Get the number of coefficients in the polynomial g(x,y)
 nCoeff_g = nchoosek(n+2,2);
-nZeros_g = nchoosek(m+1,2);
+nZeros_g = nchoosek(n+1,2);
 
 % Get the number of coefficients in v(x,y)
 nCoeff_v = nchoosek(n-k+2,2);
@@ -253,9 +253,6 @@ PlotGraphs_STLN();
 
 fxy_lr = fxy_matrix + mat_sfxy;
 gxy_lr = gxy_matrix + mat_zgxy;
-
-display([GetAsVector(fxy_matrix) GetAsVector(mat_sfxy)]);
-display([GetAsVector(gxy_matrix) GetAsVector(mat_zgxy)]);
 
 end
 

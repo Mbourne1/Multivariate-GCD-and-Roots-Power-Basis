@@ -2,8 +2,8 @@ function [] = o_gcd_batch
 % Performs a batch of GCD computations for a variety of settings
 
 %ex_num_arr = {'1'};
-ex_num_arr = {'1','2','3'};
-emin_arr = {1e-8};
+ex_num_arr = {'1','2','3','4','5','6','7','8','9','10','11'};
+emin_arr = {1e-8,1e-10,1e-12};
 emax_arr = {1e-12};
 mean_method_arr = {'Geometric Mean Matlab Method','None'};
 bool_alpha_theta_arr = {'y','n'};

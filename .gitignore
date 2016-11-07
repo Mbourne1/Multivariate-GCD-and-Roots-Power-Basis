@@ -5,6 +5,7 @@
 *.png
 *.xlsx
 *.txt
+*.asv
 
 # Windows image file caches
 Thumbs.db

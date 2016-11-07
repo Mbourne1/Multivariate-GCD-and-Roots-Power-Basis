@@ -3,7 +3,6 @@ function [dist] = GetDistanceBetweenPolynomials(fxy_exact,fxy_computed,name)
 % distance between them.
 
 LineBreakLarge()
-global SETTINGS
 
 % Ensure that f(x,y) exact and f(x,y) computed are both in term of
 % total degree.
@@ -18,8 +17,8 @@ fprintf([mfilename ' : ' sprintf('Distance of %s exact from %s computed a - b / 
 
 
 
-display(fxy_exact./fxy_exact(1,1))
-display(fxy_computed./fxy_computed(1,1))
+%display(fxy_exact./fxy_exact(1,1));
+%display(fxy_computed./fxy_computed(1,1));
 
 % Normalise f(x,y) exact
 fxy_exact = NormaliseMatrix(fxy_exact);
