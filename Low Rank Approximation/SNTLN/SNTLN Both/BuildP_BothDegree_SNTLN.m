@@ -1,4 +1,4 @@
-function P = BuildP_BothDegree_SNTLN(m,m1,m2,n,n1,n2,alpha,th1,th2,idx_col,k,k1,k2)
+function Pk = BuildP_BothDegree_SNTLN(m,m1,m2,n,n1,n2,k,k1,k2,alpha,th1,th2,idx_col)
 % Calculate the matrix P where P is the matrix such that a column of the 
 % Sylvester subresultant matrix S_{k,k1,k2} can be written as a product of
 % P and the column vector of coefficients of f and g.
@@ -17,6 +17,12 @@ function P = BuildP_BothDegree_SNTLN(m,m1,m2,n,n1,n2,alpha,th1,th2,idx_col,k,k1,
 %
 % n2 : Degree of g(x,y) with respect to y
 %
+% k : Total degree of d(x,y)
+%
+% k1 : Degree of d(x,y) with respect to x
+%
+% k2 : Degree of d(x,y) with respect to y
+%
 % alpha : Optimal value of \alpha
 %
 % th1 : Optimal value of \theta_{1}
@@ -25,11 +31,6 @@ function P = BuildP_BothDegree_SNTLN(m,m1,m2,n,n1,n2,alpha,th1,th2,idx_col,k,k1,
 %
 % idx_col : Index of column removed from S_{k_{1},k_{2}}
 %
-% k : Total degree of d(x,y)
-%
-% k1 : Degree of d(x,y) with respect to x
-%
-% k2 : Degree of d(x,y) with respect to y
 %
 % % Outputs
 %
@@ -57,13 +58,13 @@ if idx_col <= nCols_T1
     % % Build the matrix P
     
     % Build the matrix P1
-    P1 = BuildP1_BothDegree_SNTLN(m,m1,m2,n,n1,n2,th1,th2,idx_col,k,k1,k2);
+    P1 = BuildP1_BothDegree_SNTLN(m,m1,m2,n,n1,n2,k,k1,k2,th1,th2,idx_col);
     
     % Build the matrix P2
     P2 = zeros(nRows_Skk1k2,nCoeff_gxy);
     
     % Build the matrix P
-    P = [P1 P2];
+    Pk = [P1 P2];
     
 else
     % Optimal column in second partition
@@ -75,10 +76,10 @@ else
     % Get the position of the optimal column with respect to T(g)
     opt_col_rel = idx_col - nCols_T1;
     
-    P2 = BuildP1_BothDegree_SNTLN(n,n1,n2,m,m1,m2,th1,th2,opt_col_rel,k,k1,k2);
+    P2 = BuildP1_BothDegree_SNTLN(n,n1,n2,m,m1,m2,k,k1,k2,th1,th2,opt_col_rel);
     
     % Build the matrix P.
-    P = [P1 alpha.*P2];
+    Pk = [P1 alpha.*P2];
     
 end
 

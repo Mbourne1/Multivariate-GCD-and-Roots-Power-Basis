@@ -4,12 +4,7 @@ function [idx_col] = GetOptimalColumn_Total(Sk)
 %
 % % Inputs.
 % 
-% Sk : Sylvester subresultant matrix S_{k}(f,g)
-%
-% % Outputs
-%
-% idx_col : Index of column to be removed
-
+% Sk 
 
 % From the given subresultant find the optimal column for removal.
 [~,nCols_T1] = size(Sk);
@@ -29,8 +24,6 @@ for k=1:1:nCols_T1
     residuals_QR(k) = norm(d);
 end
 
-% Obtain the column for which the residual is minimal.
-[~,idx_col] = min(log10(residuals_QR));
 
 % Obtain the column for which the residual is minimal.
 global SETTINGS

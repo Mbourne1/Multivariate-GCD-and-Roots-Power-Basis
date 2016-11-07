@@ -13,6 +13,8 @@ function Y = BuildY_TotalDegree_SNTLN(x,m,n,k,alpha,th1,th2)
 %
 % k : Total degree of d(x,y)
 %
+% idx_col : Index of column removed from Sylvester subresultant matrix
+%
 % alpha : Optimal value of \alpha
 % 
 % th1 : Optimal value of \theta_{1}

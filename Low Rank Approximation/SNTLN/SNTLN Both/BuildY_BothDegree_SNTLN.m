@@ -80,7 +80,7 @@ th1_mat = diag(th1.^(0:1:n1));
 th2_mat = diag(th2.^(0:1:n2));
 gww_thetas_mat = th1_mat * ones(n1+1,n2+1) * th2_mat;
 th_mat2 = GetAsVector(gww_thetas_mat);
-nCoeff_g = GetNumNonZeros(n1,n2,n)
+nCoeff_g = GetNumNonZeros(n1,n2,n);
 th_mat2 = th_mat2(1:nCoeff_g);
 
 % multiply

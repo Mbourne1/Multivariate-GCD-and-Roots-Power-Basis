@@ -1,16 +1,12 @@
-function Y = BuildY_RelativeDegree_SNTLN(m1,m2,n1,n2,t1,t2,opt_col,x_ls,alpha,theta1,theta2)
+function Y = BuildY_RelativeDegree_SNTLN(x,m1,m2,n1,n2,k1,k2,alpha,theta1,theta2)
 % This function builds the matrix Y_{t_{1},t_{2}}, 
 % Where Y(x)*z = E_{t_{1},t_{2}}(z)*x
 
-% Insert a zero into the position of the optimal_column
-first_part = x_ls(1:(opt_col-1));
-second_part = x_ls(opt_col:end);
-x = [first_part ; 0 ; second_part];
 
 % Separate the x into coefficients of u and coefficients of v
 
 % The first (n1-t1+1) x (n2-t2+1) coefficients are of v
-nCoeff_x1 = (n1-t1+1) * (n2-t2+1);
+nCoeff_x1 = (n1-k1+1) * (n2-k2+1);
 
 % Get the vector of coefficients of v(w,w)
 x1_vec = x(1:nCoeff_x1);
@@ -19,8 +15,8 @@ x1_vec = x(1:nCoeff_x1);
 x2_vec = x(nCoeff_x1+1:end);
 
 
-x1_mat = GetAsMatrix(x1_vec,n1-t1,n2-t2);
-x2_mat = GetAsMatrix(x2_vec,m1-t1,m2-t2);
+x1_mat = GetAsMatrix(x1_vec,n1-k1,n2-k2);
+x2_mat = GetAsMatrix(x2_vec,m1-k1,m2-k2);
 
 T1 = BuildT1_Relative(x1_mat,m1,m2);
 T2 = BuildT1_Relative(x2_mat,n1,n2);

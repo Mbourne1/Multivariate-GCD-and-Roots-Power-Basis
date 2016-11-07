@@ -1,4 +1,4 @@
-function P = BuildP1_BothDegree_SNTLN(m,m1,m2,n,n1,n2,th1,th2,idx_col,k,k1,k2)
+function P = BuildP1_BothDegree_SNTLN(m,m1,m2,n,n1,n2,k,k1,k2,th1,th2,idx_col)
 % Build the matrix P, used in SNTLN function. P is a matrix which is
 % obtained from the decomposition of a column vector c_{t} into a matrix
 % vector product P_{t} [f;g]
@@ -18,17 +18,17 @@ function P = BuildP1_BothDegree_SNTLN(m,m1,m2,n,n1,n2,th1,th2,idx_col,k,k1,k2)
 %
 % n2 :    Degree of polynomial g(x,y) with respect to y
 %
-% th1 : Optimal value of theta_{1}
-%
-% th2 : Optimal value of theta_{2}
-%
-% idx_col : Optimal column for removal from S(f,g)
-%
 % k : Total degree of d(x,y)
 %
 % k1 : Degree of GCD d(x,y) with respect to x
 %
 % k2 : Degree of GCD d(x,y) with respect to y
+%
+% th1 : Optimal value of theta_{1}
+%
+% th2 : Optimal value of theta_{2}
+%
+% idx_col : Optimal column for removal from S(f,g)
 
 
 % Build the coefficient matrix of thetas

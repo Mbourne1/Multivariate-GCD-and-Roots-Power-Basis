@@ -48,7 +48,7 @@ function [ fxy_lr, gxy_lr, alpha_lr,th1_lr,th2_lr,X_lr] = ...
 global SETTINGS
 
 %%
-% pad the coefficients of fxy and gxy
+% Pad the coefficients of fxy and gxy
 % this is equivalent to degree elevating so that f is of degree (m,m), and
 % g is of degree (n,n)
 fxy_matrix_padd = zeros(m+1,m+1);
@@ -77,27 +77,27 @@ alpha(ite) = i_alpha;
 % Get the number of coefficients in the polynomial f(x,y)
 nCoeff_fxy = (m+1) * (m+1);
 nNonZeros_fxy = nchoosek(m+2,2);
-nZeroCoeff_fxy = nchoosek(m+1,2);
+nZeros_fxy = nchoosek(m+1,2);
 
 % Get the number of coefficients in the polynomial g(x,y)
 nCoeff_gxy = (n+1) * (n+1);
 nNonZeros_gxy = nchoosek(n+2,2);
-nZeroCoeff_gxy = nchoosek(n+1,2);
+nZeros_gxy = nchoosek(n+1,2);
 
 % Get the number of coefficients in both f(x,y) and g(x,y)
 nCoeff_fg = nCoeff_fxy + nCoeff_gxy;
 nNonZeros_fg = nNonZeros_fxy + nNonZeros_gxy;
-nZeroCoeff_fg = nZeroCoeff_fxy + nZeroCoeff_gxy;
+nZeros_fg = nZeros_fxy + nZeros_gxy;
 
 % Get the number of coefficients in v(x,y)
 nCoeff_vxy = (n-k+1) * (n-k+1);
 nNonZeros_vxy = nchoosek(n-k+2,2);
-nZeroCoeff_vxy = nchoosek(n-k+1,2);
+nZeros_vxy = nchoosek(n-k+1,2);
 
 % Get the number of coefficients in u(x,y)
 nCoeff_uxy = (m-k+1) * (m-k+1);
 nNonZeros_uxy = nchoosek(m-k+2,2);
-nZeroCoeff_uxy = nchoosek(m-k+1,2);
+nZeros_uxy = nchoosek(m-k+1,2);
 
 % Get the number of coefficients in the unknown vector x, where A_{t}x =
 % c_{t}.
@@ -231,7 +231,7 @@ ck = T_fg(:,idx_col);
 Ak(:,idx_col) = [];
 
 %% Build the matrix P
-P = BuildP_TotalDegree_SNTLN(m,n,alpha(ite),th1(ite),th2(ite),idx_col,k);
+P = BuildP_TotalDegree_SNTLN(m,n,k,alpha(ite),th1(ite),th2(ite),idx_col);
 % Test P
 % Get the coefficients of f(x,y) in matrix form
 %%fxy_vec = GetAsVector(fxy_matrix);
@@ -563,10 +563,14 @@ while condition(ite) >(SETTINGS.MAX_ERROR_SNTLN) &&  ite < SETTINGS.MAX_ITERATIO
     
     
     % Calculate the matrix DY where Y is the Matrix such that E_{k}x = Y_{k}z.
-    Y = BuildY_TotalDegree_SNTLN(m,m,n,n,k,k,idx_col,xk,alpha(ite),th1(ite),th2(ite));
+    first_part = x_ls(1:(idx_col-1));
+    second_part = x_ls(idx_col:end);
+    x = [first_part ; 0 ; second_part];
+    
+    Y = BuildY_TotalDegree_SNTLN(x,m,n,k,alpha(ite),th1(ite),th2(ite));
     
     % Calculate the matrix P where ck = P * [f,g]
-    P = BuildP_TotalDegree_SNTLN(m,m,n,n,alpha(ite),th1(ite),th2(ite),idx_col,k,k,nCols_T1);
+    P = BuildP_TotalDegree_SNTLN(m,n,k,alpha(ite),th1(ite),th2(ite),idx_col);
     
     % Test P
     %ck;
@@ -617,11 +621,11 @@ PlotGraphs_SNTLN()
 % output, alpha output and theta output.
 
 % get the vector zk
-zPert_f_vec = zk(1:nCoeff_fxy);
-zPert_f_mat = GetAsMatrix(zPert_f_vec,m,m);
+zPert_f_vec = zk(1:nNonZeros_fxy);
+zPert_f_mat = GetAsMatrix([zPert_f_vec; zeros(nZeros_fxy,1)],m,m);
 
-zPert_g_vec = zk(nCoeff_fxy+1:end);
-zPert_g_mat = GetAsMatrix(zPert_g_vec,n,n);
+zPert_g_vec = zk(nNonZeros_fxy+1:end);
+zPert_g_mat = GetAsMatrix([zPert_g_vec; zeros(nZeros_gxy,1)],n,n);
 
 % Set outputs of low rank approximation
 

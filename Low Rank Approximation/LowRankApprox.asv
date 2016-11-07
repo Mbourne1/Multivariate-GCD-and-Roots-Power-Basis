@@ -114,7 +114,26 @@ switch SETTINGS.LOW_RANK_APPROXIMATION_METHOD
         norm(test1)
         test2 = (fxy - fxy_lr);
         norm(test2)
-
+        
+        S1 = BuildSylvesterMatrix(fxy,gxy,m,n,k,k1,k2);
+        S2 = BuildSylvesterMatrix(fxy_lr,gxy_lr,m,n,k,k1,k2);
+        S3 = BuildSylvesterMatrix(fww,alpha.*gww,m,n,k,k1,k2);
+        S4 = BuildSylvesterMatrix(fww_lr,alpha_lr.*gww_lr,m,n,k,k1,k2);
+        
+        vec_SingularValues_1 = svd(S1);
+        vec_SingularValues_2 = svd(S2);
+        vec_SingularValues_3 = svd(S3);
+        vec_SingularValues_4 = svd(S4);
+        
+        figure_name = 'Singular Values';
+        figure('name', figure_name )
+        plot(log10(vec_SingularValues_1),'DisplayName','f(x,y) g(x,y)')
+        hold on
+        plot(log10(vec_SingularValues_2),'DisplayName','f(x,y) g(x,y) low rank')
+        plot(log10(vec_SingularValues_3),'-o','DisplayName','f(w,w) g(w,w)')
+        plot(log10(vec_SingularValues_4),'-s','DisplayName','f(w,w) g(w,w) low rank')
+        legend(gca,'show');
+        hold off
         
     case 'None'
         fxy_lr = fxy;
@@ -134,17 +153,16 @@ end
         S2 = BuildSylvesterMatrix(fxy_lr,gxy_lr,m,n,k,k1,k2);
         % Build Sylvester matrix of polys in preprocessed form
         S3 = BuildSylvesterMatrix(fww,alpha.*gww,m,n,k,k1,k2);
-        % Build Sylvester matrix of polys in preprocessed form with pert.
+        % Build Sylvester matrix of polys in preprocessed form with low
+        % rank app
         S4 = BuildSylvesterMatrix(fww_lr,alpha.*gww_lr,m,n,k,k1,k2);
         
-        % Get Singular Values
         vec_SingularValues_1 = svd(S1);
         vec_SingularValues_2 = svd(S2);
         vec_SingularValues_3 = svd(S3);
         vec_SingularValues_4 = svd(S4);
         
-        % Plot singular values
-        figure_name = sprintf([mfilename ' : ' 'Singular Values']);
+        figure_name = 'Singular Values';
         figure('name', figure_name )
         plot(log10(vec_SingularValues_1),'DisplayName','f(x,y) g(x,y)')
         hold on

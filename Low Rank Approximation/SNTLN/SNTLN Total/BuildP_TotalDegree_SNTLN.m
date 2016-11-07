@@ -1,4 +1,4 @@
-function P = BuildP_TotalDegree_SNTLN(m,n,alpha,th1,th2,idx_col,k)
+function P = BuildP_TotalDegree_SNTLN(m, n, k, alpha, th1, th2, idx_col)
 % Calculate the matrix P where P is the matrix such that a column of the 
 % Sylvester subresultant matrix S_{k,k1,k2} can be written as a product of
 % P and the column vector of coefficients of f and g.
@@ -9,15 +9,15 @@ function P = BuildP_TotalDegree_SNTLN(m,n,alpha,th1,th2,idx_col,k)
 %
 % n : Total degree of polynomial g(x,y)
 %
+% k : Total degree of polynomial d(x,y)
+%
 % alpha : Optimal value of \alpha
 %
 % th1 : Optimal value of \theta_{1}
 %
 % th2 : Optimal value of \theta_{2}
 %
-% idx_opt_col : Index of column removed from S_{k_{1},k_{2}}
-%
-% k : Total degree of polynomial d(x,y)
+% idx_col : Index of column removed from S_{k_{1},k_{2}}
 % 
 % % Outputs
 %

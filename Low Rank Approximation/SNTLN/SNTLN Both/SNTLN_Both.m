@@ -218,7 +218,7 @@ ck = Sk_fg(:,idx_col);
 Ak_fg(:,idx_col) = [];
 
 %% Build the matrix P
-Pk = BuildP_BothDegree_SNTLN(m,m1,m2,n,n1,n2,alpha(ite),th1(ite),th2(ite),idx_col,k,k1,k2);
+Pk = BuildP_BothDegree_SNTLN(m,m1,m2,n,n1,n2,k,k1,k2,alpha(ite),th1(ite),th2(ite),idx_col);
 % Get the coefficients of f(x,y) in matrix form
 % % fxy_vec = GetAsVector(fxy_matrix);
 % % gxy_vec = GetAsVector(gxy_matrix);
@@ -565,7 +565,7 @@ while condition(ite) >(SETTINGS.MAX_ERROR_SNTLN) &&  ite < SETTINGS.MAX_ITERATIO
     Yk = BuildY_BothDegree_SNTLN(x,m,m1,m2,n,n1,n2,k,k1,k2,alpha(ite),th1(ite),th2(ite));
     
     % Calculate the matrix P where ck = P * [f,g]
-    Pk = BuildP_BothDegree_SNTLN(m,m1,m2,n,n1,n2,alpha(ite),th1(ite),th2(ite),idx_col,k,k1,k2);
+    Pk = BuildP_BothDegree_SNTLN(m,m1,m2,n,n1,n2,k,k1,k2,alpha(ite),th1(ite),th2(ite),idx_col);
     
     % Test P
     %ck;

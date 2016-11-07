@@ -54,7 +54,8 @@ switch SETTINGS.DEGREE_METHOD
         norm(t1)
         norm(t2)
         
-        figure()
+        figure_name = sprintf([mfilename ' : ' 'Singular Values of S_{k,k1,k2}'])
+        figure('name',figure_name)
         plot(log10(vec_singValues))
         hold on
         plot(log10(vec_singValues_lr))
