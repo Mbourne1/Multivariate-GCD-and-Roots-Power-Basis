@@ -12,7 +12,7 @@ switch SETTINGS.PLOT_GRAPHS
         figure_name = sprintf('%s : Minimum Singular Values',calling_function);
         figure('name',figure_name)
         hold on
-        xlim([1,+inf])
+        xlim([0,+inf])
         vMinimumSingularValues_all_log = log10(vMinimumSingularValues_all);
         scatter3(k1k2Pairs(:,1),k1k2Pairs(:,2),vMinimumSingularValues_all_log)
         xlabel('k1')

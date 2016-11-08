@@ -43,7 +43,16 @@ function [fxy,gxy,dxy,uxy, vxy, t, t1, t2] = o_gcd_mymethod(fxy, gxy, m,n, limit
 global SETTINGS
 
 % % Preprocessing
+
+[alpha,th1,th2] = OptimalAlphaAndTheta_Both(fxy,gxy,m,n);
+[alphab,th1b,th2b] = OptimalAlphaAndTheta_Relative(fxy,gxy);
+[alphac,th1c,th2c] = OptimalAlphaAndTheta_Total(fxy,gxy,m,n);
+
 [lambda,mu,alpha,th1,th2] = Preprocess_Relative(fxy,gxy);
+display(alpha)
+display(th1)
+display(th2)
+
 
 % Normalise f(x,y) by geometric means
 fxy_n = fxy./lambda;

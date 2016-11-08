@@ -1,5 +1,5 @@
 function dxy_matrix = GetGCDCoefficients_Both(fxy_matrix,gxy_matrix,...
-    uxy_matrix, vxy_matrix,m,n,t)
+    uxy_matrix, vxy_matrix,m,n,k)
 % Given the matrices of coefficients of f(x,y) and g(x,y), the quotient
 % polynomials u(x,y) and v(x,y), and optimal values for alpha, theta_{1}
 % and theta_{2}, calculate the coefficients of the GCD d(x,y).
@@ -18,7 +18,7 @@ function dxy_matrix = GetGCDCoefficients_Both(fxy_matrix,gxy_matrix,...
 % 
 % n : Total degree of g(x,y)
 % 
-% t : Total degree of d(x,y)
+% k : Total degree of d(x,y)
 
 % Calculate the GCD of two bivariate polynomials f(x,y) and g(x,y)
 
@@ -33,24 +33,24 @@ function dxy_matrix = GetGCDCoefficients_Both(fxy_matrix,gxy_matrix,...
 [n1,n2] = GetDegree(gxy_matrix);
 
 % Get degrees of polynomial u(x,y)
-[m1_t1,m2_t2] = GetDegree(uxy_matrix);
+[m1_k1,m2_k2] = GetDegree(uxy_matrix);
 
 % Get degrees of polynomial d(x,y)
-t1 = m1-(m1_t1);
-t2 = m2-(m2_t2);
+t1 = m1-(m1_k1);
+t2 = m2-(m2_k2);
 
 % %
 % %
 % Build matrices C(u) and C(v)
 % Get number of zeros in d(x,y)
-nNonZeros_dxy = GetNumNonZeros(t1,t2,t);
+nNonZeros_dxy = GetNumNonZeros(t1,t2,k);
 nZeros_dxy = (t1+1) * (t2+1) - nNonZeros_dxy;
 
 nNonZeros_ud = GetNumNonZeros(m1,m2,m);
 nNonZeros_vd = GetNumNonZeros(n1,n2,n);
 
-C1 = BuildT1_Both(uxy_matrix,m-t,t,t1,t2);
-C2 = BuildT1_Both(vxy_matrix,n-t,t,t1,t2);
+C1 = BuildT1_Both(uxy_matrix,m-k,k,t1,t2);
+C2 = BuildT1_Both(vxy_matrix,n-k,k,t1,t2);
 
 C = [C1 ; C2];
 

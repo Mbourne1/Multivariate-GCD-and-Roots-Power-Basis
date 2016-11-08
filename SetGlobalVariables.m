@@ -9,7 +9,7 @@ SETTINGS.EX_NUM = ex_num;
 SETTINGS.EMIN = emin;
 SETTINGS.EMAX = emax;
 
-SETTINGS.PLOT_GRAPHS = 'n';
+SETTINGS.PLOT_GRAPHS = 'y';
 
 SETTINGS.SEED = 1024;
 
@@ -53,17 +53,7 @@ SETTINGS.THRESHOLD_RANK = 2;
 
 SETTINGS.MAX_ITERATIONS_SNTLN = 50;
 
-SETTINGS.MAX_ERROR_SNTLN = 1e-10;
-
-
-%--------------------------------------------------------------------------
-%
-%       SETTINGS : 
-%
-%
-%
-
-
+SETTINGS.MAX_ERROR_SNTLN = 1e-11;
 
 
 

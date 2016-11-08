@@ -47,8 +47,6 @@ global SETTINGS
 switch SETTINGS.DEGREE_METHOD
     case 'Total'
         %
-        fprintf('No STLN method specified in terms of total degree \n')
-        %error('err : Not yet developed')
         [fxy_lr,gxy_lr,alpha_lr,theta1_lr,theta2_lr,x_lr] = ...
             SNTLN_Total(fxy,gxy,m,n,alpha,th1,th2,t,idx_col);
         

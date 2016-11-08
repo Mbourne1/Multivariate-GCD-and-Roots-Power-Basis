@@ -10,6 +10,7 @@ f = GetAsVector(fxy);
 
 % Remove the zeros from the vector of coefficients of f(x,y)
 nCoefficients_fxy = nchoosek(m+2,2);
+
 f = f(1:nCoefficients_fxy);
 
 % Get the number of zero coefficients in f(x,y)

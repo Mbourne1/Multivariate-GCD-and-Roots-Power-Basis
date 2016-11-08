@@ -1,4 +1,4 @@
-function [alpha,theta1,theta2] = OptimalAlpha(fxy_matrix, gxy_matrix)
+function [alpha] = OptimalAlpha(fxy_matrix, gxy_matrix)
 % OptimalAlphaAndTheta(fxy_matrix, gxy_matrix)
 %
 % Obtain the optimal values of alpha, theta1 and theta2 for the Sylvester 
@@ -9,23 +9,38 @@ function [alpha,theta1,theta2] = OptimalAlpha(fxy_matrix, gxy_matrix)
 % fxy_matrix : Coefficients of the polynomial f(x,y)
 %
 % gxy_matrix : Coefficients of the polynomial g(x,y)
-
+%
+% % Outputs
+%
+% alpha : Optimal value of \alpha, such that the two partitions of the
+% Sylvester matrix S_{k}(f,\alpha*g) are balanced.
 
 % Define vector f
 f = [1 -1 0];
 
-% get the degree of polynomial f and g
-
+% Get the degree of polynomial f(x,y) with respect to x and y
 [m1,m2] = GetDegree(fxy_matrix);
+
+% Get the degree of polynomial g(x,y) with respect to x and y.
 [n1,n2] = GetDegree(gxy_matrix);
 
+% Get the number of coefficients of f(x,y)
 nEntries_f = (m1 + 1) * (m2 + 1);
+
+% Get the number of coefficients of g(x,y)
 nEntries_g = (n1 + 1) * (n2 + 1);
 
+% Get the matrix whose columns are [i1 | i2] which are the powers of
+% \theta_{1} and \theta_{2} corresponding to the vector of coefficients
+% a_{i1,i2}.
 
+% Get vector of i1
 v_i1_f = GetAsVector(diag(0:1:m1) * ones(m1+1,m2+1));
+
+% Get vector of i2
 v_i2_f = GetAsVector(ones(m1+1,m2+1) * diag(0:1:m2));
 
+% Get the vector i_{1} and i_{2} 
 v_i1_g = GetAsVector(diag(0:1:n1) * ones(n1+1,n2+1));
 v_i2_g = GetAsVector(ones(n1+1,n2+1) * diag(0:1:n2));
 

@@ -29,12 +29,12 @@ function Y = BuildY_TotalDegree_SNTLN(x,m,n,k,alpha,th1,th2)
 nNonZeros_x1 = nchoosek(n-k+2,2);
 nNonZeros_x2 = nchoosek(m-k+2,2);
 
-nCoeff_x1_mat = (n-k+1) * (n-k+1);
-nCoeff_x2_mat = (m-k+1) * (m-k+1);
-
 nZeros_x1_mat = nchoosek(n-k+1,2);
 nZeros_x2_mat = nchoosek(m-k+1,2);
 
+% Get the number of non-zeros in f(x,y) and g(x,y)
+nNonZeros_fxy = nchoosek(m+2,2);
+nNonZeros_gxy = nchoosek(n+2,2);
 
 % Get the vector of coefficients of x1
 x1_vec = x(1:nNonZeros_x1);
@@ -50,39 +50,35 @@ x1_mat = GetAsMatrix(x1_vec,n-k,n-k);
 x2_mat = GetAsMatrix(x2_vec,m-k,m-k);
 
 % Build the convolution matrix T_{m,m1,m2}(x1)
-T1 = BuildT1_Total(x1_mat,n-k,m);
+T_x1 = BuildT1_Total(x1_mat,n-k,m);
 
 % Build the convolution matrix T_{n,n1,n2}(x2)
-T2 = BuildT1_Total(x2_mat,m-k,n);
+T_x2 = BuildT1_Total(x2_mat,m-k,n);
 
+% Multiply the two convolution matrices T(x1) T(x2) by the thetas 
+% corresponding to f(w,w) and g(w,w) so [T(x1) T(x2)]* [f;g]
 
-
-% Multiply by the thetas of f and g
+% Get thetas corresponding to the coefficients of polynomial f(x,y)
 th1_mat = diag(th1.^(0:1:m));
 th2_mat = diag(th2.^(0:1:m));
 fww_thetas_mat = th1_mat * ones(m+1,m+1) * th2_mat;
 th_mat1 = GetAsVector(fww_thetas_mat);
-
-% Get number of coefficients in f(x,y).
-nCoeff_fxy = nchoosek(m+2,2);
-th_mat1 = th_mat1(1:nCoeff_fxy);
+th_mat1 = th_mat1(1:nNonZeros_fxy);
 
 
-%
+% Get thetas corresponding to the coefficients of polynomial g(x,y)
 th1_mat = diag(th1.^(0:1:n));
 th2_mat = diag(th2.^(0:1:n));
 gww_thetas_mat = th1_mat * ones(n+1,n+1) * th2_mat;
 th_mat2 = GetAsVector(gww_thetas_mat);
+th_mat2 = th_mat2(1:nNonZeros_gxy);
 
-% Get number of coefficients in g(x,y)
-nCoeff_gxy = nchoosek(n+2,2);
-th_mat2 = th_mat2(1:nCoeff_gxy);
-
-% multiply
+% Get thetas as a diagonal matrix
 vec = [th_mat1 ; th_mat2];
 th_mat = diag(vec);
 
-% multiply by the alpha of g
-Y = [T1 alpha.*T2] * th_mat;
+% Multiply the second partiton by alpha, and multiply the matrix T(x1)
+% T(x2) by the theta matrix.
+Y = [T_x1 alpha.*T_x2] * th_mat;
 
 end

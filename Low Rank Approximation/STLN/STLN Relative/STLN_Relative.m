@@ -10,10 +10,6 @@ function [fxy_lr,gxy_lr] = STLN_Relative(fxy_matrix,gxy_matrix,k1,k2,idx_col)
 %
 % gxy_matrix : Coefficients of polynomial g(x,y)
 %
-% m : Total degree of f(x,y)
-%
-% n : Total degree of g(x,y)
-%
 % k1 : Degree of d(x,y) with respect to x
 %
 % k2 : Degree of d(x,y) with respect to y
@@ -105,24 +101,24 @@ x = ...
 Yk = BuildY_RelativeDegree_STLN(x,m1,m2,n1,n2,k1,k2);
 
 % Get vector of coefficients of f(x,y)
-%%v_fxy = GetAsVector(fxy_matrix);
+v_fxy = GetAsVector(fxy_matrix);
 
 % Get vector of coefficients of g(x,y)
-%%v_gxy = GetAsVector(gxy_matrix);
+v_gxy = GetAsVector(gxy_matrix);
 
 % Test
-%%test1 = Yk * [v_fxy;v_gxy];
-%%test2 = Ak_fg * x_ls;
-%%norm(test1-test2)
+test1 = Yk * [v_fxy;v_gxy];
+test2 = Ak_fg * xk;
+norm(test1-test2)
 
 % Build the matrix P_{t}
 % Where P * [f;g] = c_{t}
 Pk = BuildP_RelativeDegree_STLN(m1,m2,n1,n2,idx_col,k1,k2);
 
 % Test
-%%test1 = P * [v_fxy;v_gxy];
-%%test2 = ct;
-%%norm(test1-test2)
+test1 = Pk * [v_fxy;v_gxy];
+test2 = ct;
+norm(test1-test2)
 
 
 % Get initial residual (A_{t}+E_{t})x = (c_{t} + h_{t})

@@ -15,30 +15,47 @@ function [idx_col] = GetOptimalColumn_Total(Sk)
 [~,nCols_T1] = size(Sk);
 
 % Take the QR decomposition of the Subresultant
-[Qk,Rk] = qr(Sk);
+% [Qk,Rk] = qr(Sk);
 
 
-residuals_QR = zeros(nCols_T1,1);
-for k=1:1:nCols_T1
-    Sk_temp = Sk;
-    % Rem
-    ck = Sk_temp(:,k);
-    [Q,~] = qrdelete(Qk,Rk,k);
-    cd = Q'*ck;
-    d = cd(nCols_T1+1:end,:);
-    residuals_QR(k) = norm(d);
+vResiduals = zeros(nCols_T1,1);
+
+for i = 1 : 1 : nCols_T1
+
+%     Sk_temp = Sk;
+%     % Rem
+%     ck = Sk_temp(:,k);
+%     [Q,~] = qrdelete(Qk,Rk,k);
+%     cd = Q'*ck;
+%     d = cd(nCols_T1+1:end,:);
+%     residuals_QR(k) = norm(d);
+    
+    % Get the matrix Ak, which is S_{k} with column c_{k} removed
+    Ak = Sk;
+    Ak(:,i) = [];
+    
+    % Get the column c_{k}
+    ck = Sk(:,i);
+    
+    % Solve A*x = b
+    x_ls = SolveAx_b(Ak,ck);
+    
+    % Get the residual from this solution
+    vResiduals(i) = norm(ck - (Ak*x_ls));    
+    
 end
 
 % Obtain the column for which the residual is minimal.
-[~,idx_col] = min(log10(residuals_QR));
+[~,idx_col] = min(log10(vResiduals));
 
 % Obtain the column for which the residual is minimal.
 global SETTINGS
 switch SETTINGS.PLOT_GRAPHS
     case 'y'
-        [~,idx_col] = min(log10(residuals_QR));
-        figure('name','Optimal Column Calculation')
-        plot(log10(residuals_QR),'-s');
+        figure_title = sprintf([mfilename ' : ' 'Optimal Column Calculation' ]);
+        [~,idx_col] = min(log10(vResiduals));
+        figure('name',figure_title);
+        plot(log10(vResiduals),'-s');
         hold on
         title('Residuals from removing each column c_{t_{1},t_{2},j} of S_{t_{1},t_{2}}')
         xlabel('k: Index of subresultant colum removednfrom S_{t_{1},t_{2}}')

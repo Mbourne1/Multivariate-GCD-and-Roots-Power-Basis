@@ -1,4 +1,4 @@
-function [alpha,theta1,theta2] = OptimalAlphaAndTheta(fxy_matrix, gxy_matrix)
+function [alpha,theta1,theta2] = OptimalAlphaAndTheta_Relative(fxy_matrix, gxy_matrix)
 % OptimalAlphaAndTheta(fxy_matrix, gxy_matrix)
 %
 % Obtain the optimal values of alpha, theta1 and theta2 for the Sylvester 

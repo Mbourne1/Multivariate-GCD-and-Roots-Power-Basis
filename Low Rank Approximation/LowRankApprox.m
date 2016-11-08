@@ -130,10 +130,13 @@ end
 
         % Build Sylvester matrix of input polynomials.
         S1 = BuildSylvesterMatrix(fxy,gxy,m,n,k,k1,k2);
+        
         % Build Sylvester matrix of low rank approx of input polys.
         S2 = BuildSylvesterMatrix(fxy_lr,gxy_lr,m,n,k,k1,k2);
+        
         % Build Sylvester matrix of polys in preprocessed form
         S3 = BuildSylvesterMatrix(fww,alpha.*gww,m,n,k,k1,k2);
+        
         % Build Sylvester matrix of polys in preprocessed form with pert.
         S4 = BuildSylvesterMatrix(fww_lr,alpha.*gww_lr,m,n,k,k1,k2);
         
@@ -143,14 +146,15 @@ end
         vec_SingularValues_3 = svd(S3);
         vec_SingularValues_4 = svd(S4);
         
+        
         % Plot singular values
         figure_name = sprintf([mfilename ' : ' 'Singular Values']);
         figure('name', figure_name )
-        plot(log10(vec_SingularValues_1),'DisplayName','f(x,y) g(x,y)')
+        plot(log10(vec_SingularValues_1),'-s', 'DisplayName','f(x,y) g(x,y)')
         hold on
-        plot(log10(vec_SingularValues_2),'DisplayName','f(x,y) g(x,y) low rank')
-        plot(log10(vec_SingularValues_3),'DisplayName','f(w,w) g(w,w)')
-        plot(log10(vec_SingularValues_4),'DisplayName','f(w,w) g(w,w) low rank')
+        plot(log10(vec_SingularValues_2),'-*', 'DisplayName','f(x,y) g(x,y) low rank')
+        plot(log10(vec_SingularValues_3),'-s', 'DisplayName','f(w,w) g(w,w)')
+        plot(log10(vec_SingularValues_4),'-s', 'DisplayName','f(w,w) g(w,w) low rank')
         legend(gca,'show');
         hold off
 

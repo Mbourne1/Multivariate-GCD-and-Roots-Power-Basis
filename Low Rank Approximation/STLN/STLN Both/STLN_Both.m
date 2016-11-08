@@ -119,13 +119,12 @@ x = ...
 % Where Y(x) * z = E(z) * x
 Yk = BuildY_BothDegree_STLN(x,m,m1,m2,n,n1,n2,k,k1,k2);
 
-
+% Test Y_{k}
 v_fxy = GetAsVector(fxy_matrix);
 v_fxy = v_fxy(1:nNonZeros_fxy,:);
 
 v_gxy = GetAsVector(gxy_matrix);
 v_gxy = v_gxy(1:nNonZeros_gxy,:);
-
 
 test1 = Yk * [v_fxy;v_gxy];
 test2 = Ak_fg * xk;
@@ -226,7 +225,7 @@ while condition(ite) >  SETTINGS.MAX_ERROR_SNTLN &&  ite < SETTINGS.MAX_ITERATIO
     hk = St_zfzg(:,idx_col);
     
     % Get the updated vector x
-    %x_ls = SolveAx_b(At + Et,ct + ht);
+    xk = SolveAx_b(Ak_fg + Ak_zfzg,ck + hk);
     
     x = [...
         xk(1:idx_col-1);...
@@ -237,7 +236,7 @@ while condition(ite) >  SETTINGS.MAX_ERROR_SNTLN &&  ite < SETTINGS.MAX_ITERATIO
     Yk = BuildY_BothDegree_STLN(x,m,m1,m2,n,n1,n2,k,k1,k2);
     
     % Get the residual vector
-    res_vec = (ck+hk) - ((Ak_fg+Ak_zfzg)*xk);
+    res_vec = (ck + hk) - ((Ak_fg + Ak_zfzg) * xk);
   
     % Update the matrix C
     H_z = Yk - Pt;

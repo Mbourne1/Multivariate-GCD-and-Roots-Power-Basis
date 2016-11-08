@@ -60,7 +60,7 @@ switch SETTINGS.BOOL_ALPHA_THETA
                 
             case 'Together'
                 
-                [alpha, th1,th2] = OptimalAlphaAndTheta(fxy_n,gxy_n);
+                [alpha, th1,th2] = OptimalAlphaAndTheta_Relative(fxy_n,gxy_n);
                 
                 str1 = sprintf('Alpha : %2.4f', alpha);
                 str2 = sprintf('Theta_{1} : %2.4f', th1);

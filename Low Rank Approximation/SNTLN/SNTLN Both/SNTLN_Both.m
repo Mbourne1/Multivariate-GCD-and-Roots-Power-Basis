@@ -17,11 +17,17 @@ function [ fxy_lr, gxy_lr, alpha_lr,th1_lr,th2_lr,X_lr] = ...
 %
 % i_th2 : Initial value of theta2
 %
-% t1 : Degree of AGCD d(x,y) with respect to x
+% m : Total degree of polynomial f(x,y)
 %
-% t2 : Degree of AGCD d(x,y) with repsect to y
+% n : Total degree of polynomial g(x,y)
 %
-% opt_col : Optimal column for removal from the sylvester matrix, such that col
+% k : Total degree of polynomial d(x,y)
+%
+% k1 : Degree of AGCD d(x,y) with respect to x
+%
+% k2 : Degree of AGCD d(x,y) with repsect to y
+%
+% idx_col : Optimal column for removal from the sylvester matrix, such that col
 %           is the column which is most likely a linear combination of the others.
 %
 %
@@ -219,14 +225,18 @@ Ak_fg(:,idx_col) = [];
 
 %% Build the matrix P
 Pk = BuildP_BothDegree_SNTLN(m,m1,m2,n,n1,n2,k,k1,k2,alpha(ite),th1(ite),th2(ite),idx_col);
+
 % Get the coefficients of f(x,y) in matrix form
-% % fxy_vec = GetAsVector(fxy_matrix);
-% % gxy_vec = GetAsVector(gxy_matrix);
+fxy_vec = GetAsVector(fxy_matrix);
+fxy_vec = fxy_vec(1:nNonZeros_fxy);
+gxy_vec = GetAsVector(gxy_matrix);
+gxy_vec = gxy_vec(1:nNonZeros_gxy);
 
 % Test P
-%ck;
-%ck2 = P*[fxy_vec;gxy_vec];
-%ck - ck2;
+test1_a = ck;
+test1_b =  Pk * [fxy_vec;gxy_vec];
+test1 = norm(test1_a - test1_b);
+display(test1);
 
 %%
 % Calculate the derivatives of ck wrt alpha and theta.
@@ -249,10 +259,12 @@ x = [first_part ; 0 ; second_part];
 
 % Build Matrix Y, where Y(v,u)*[f;g] = S(f,g)*[u;v]
 Yk = BuildY_BothDegree_SNTLN(x,m,m1,m2,n,n1,n2,k,k1,k2,alpha(ite),th1(ite),th2(ite));
+
 % Test Y
-%test1 = Y * [fxy_vec;gxy_vec];
-%test2 = T * x;
-%test1-test2;
+test2a = Yk * [fxy_vec;gxy_vec];
+test2b = Sk_fg * x;
+test2 = norm(test2a - test2b);
+display(test2);
 
 % Calculate the initial residual r = ck - (Ak*x)
 res_vec = ck - (Sk_fg*M*x_ls);
