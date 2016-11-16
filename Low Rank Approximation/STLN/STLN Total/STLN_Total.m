@@ -1,4 +1,5 @@
-function [fxy_lr,gxy_lr] = STLN_Total(fxy_matrix,gxy_matrix,m,n,k,idx_col)
+function [fxy_lr, gxy_lr, uxy_lr, vxy_lr] = ...
+    STLN_Total(fxy, gxy, m, n, k, idx_col)
 % STLN(fxy_matrix, gxy_matrix, m, n, k, idx_col)
 %
 % Given coefficients f(x,y) and g(x,y) find the low rank approximation of
@@ -7,9 +8,9 @@ function [fxy_lr,gxy_lr] = STLN_Total(fxy_matrix,gxy_matrix,m,n,k,idx_col)
 %
 % Inputs.
 %
-% fxy_matrix : Coefficients of polynomial f(x,y)
+% fxy : Coefficients of polynomial f(x,y)
 %
-% gxy_matrix : Coefficients of polynomial g(x,y)
+% gxy : Coefficients of polynomial g(x,y)
 %
 % m : Total degree of f(x,y)
 %
@@ -24,22 +25,26 @@ function [fxy_lr,gxy_lr] = STLN_Total(fxy_matrix,gxy_matrix,m,n,k,idx_col)
 % fxy_lr : Coefficients of f(x,y) with added perturbations
 %
 % gxy_lr : Coefficients of g(x,y) with added perturbations
+%
+% uxy_lr : Coefficients of polynomial u(x,y)
+%
+% vxy_lr : Coefficients of polynomial v(x,y)
 
-%%
+%
 % pad the coefficients of fxy and gxy
 % this is equivalent to degree elevating so that f is of degree (m,m), and
 % g is of degree (n,n)
 fxy_matrix_padd = zeros(m+1,m+1);
 gxy_matrix_padd = zeros(n+1,n+1);
 
-[r,c] = size(fxy_matrix);
-fxy_matrix_padd(1:r,1:c) = fxy_matrix;
+[r,c] = size(fxy);
+fxy_matrix_padd(1:r,1:c) = fxy;
 
-[r,c] = size(gxy_matrix);
-gxy_matrix_padd(1:r,1:c) = gxy_matrix;
+[r,c] = size(gxy);
+gxy_matrix_padd(1:r,1:c) = gxy;
 
-fxy_matrix = fxy_matrix_padd;
-gxy_matrix = gxy_matrix_padd;
+fxy = fxy_matrix_padd;
+gxy = gxy_matrix_padd;
 %%
 global SETTINGS
 
@@ -53,17 +58,19 @@ nZeros_gxy = nchoosek(n+1,2);
 
 % Get the number of coefficients in v(x,y)
 nNonZeros_vxy = nchoosek(n-k+2,2);
+nZeros_vxy = nchoosek(n-k+1,2);
 
 % Get the number of coefficients in u(x,y)
 nNonZeros_uxy = nchoosek(m-k+2,2);
+nZeros_uxy = nchoosek(m-k+1,2);
 
 % Build the Sylvester Matrix S_{k1,k2}(f,g)
 
 % Build the partiton T_{n1-k1,n2-k2}(f)
-Tk_fxy = BuildT1_Total(fxy_matrix,m,n-k);
+Tk_fxy = BuildT1_Total(fxy,m,n-k);
 
 % Build the partition T_{m1-k1,m2-k2}(g)
-Tk_gxy = BuildT1_Total(gxy_matrix,n,m-k);
+Tk_gxy = BuildT1_Total(gxy,n,m-k);
 
 % Build the Sylvester subresultant matrix S_{k1,k2}(f,g)
 Sk_fg = [Tk_fxy Tk_gxy];
@@ -83,16 +90,16 @@ hk = zeros(size(ck));
 z = zeros(nNonZeros_fxy + nNonZeros_gxy,1);
 
 % Get the vector of coefficients zf(x,y)
-v_zf = z(1:nNonZeros_fxy );
+v_zf_xy = z(1:nNonZeros_fxy );
 
 % Get the vector of coefficeints zg
-v_zg = z(nNonZeros_fxy+1:end);
+v_zg_xy = z(nNonZeros_fxy+1:end);
 
 % Get zf as a matrix
-mat_zfxy = GetAsMatrix([v_zf; zeros(nZeros_fxy,1)], m, m);
+z_fxy = GetAsMatrix([v_zf_xy; zeros(nZeros_fxy,1)], m, m);
 
 % Get zg as a matrix
-mat_zgxy = GetAsMatrix([v_zg; zeros(nZeros_gxy,1)], n, n);
+z_gxy = GetAsMatrix([v_zg_xy; zeros(nZeros_gxy,1)], n, n);
 
 % Get the vector x
 % A_{t} x = c_{t}
@@ -114,11 +121,11 @@ x = ...
 Yk = BuildY_TotalDegree_STLN(x,m,n,k);
 
 % Get vector of coefficients of f(x,y)
-v_fxy = GetAsVector(fxy_matrix);
+v_fxy = GetAsVector(fxy);
 v_fxy = v_fxy(1:nNonZeros_fxy);
 
 % Get vector of coefficients of g(x,y)
-v_gxy = GetAsVector(gxy_matrix);
+v_gxy = GetAsVector(gxy);
 v_gxy = v_gxy(1:nNonZeros_gxy);
 
 % % Test the funciton which constructs Y_{k}
@@ -135,7 +142,7 @@ Pk = BuildP_TotalDegree_STLN(m,n,idx_col,k);
 test2a = Pk * [v_fxy;v_gxy];
 test2b = ck;
 test2 = norm(test2a - test2b);
-display(test2)
+display(test2);
 
 % % Build the Matrix C consisting of H_{z} and H_{x}
 H_z = Yk - Pk;
@@ -144,7 +151,7 @@ H_x = Ak_fg + Ak_zfzg;
 
 C = [H_z H_x];
 
-E = blkdiag( eye(nNonZeros_fxy + nNonZeros_gxy) , eye(nNonZeros_uxy + nNonZeros_vxy - 1));
+E = blkdiag(eye(nNonZeros_fxy + nNonZeros_gxy) , eye(nNonZeros_uxy + nNonZeros_vxy - 1));
 
 
 % Get initial residual (A_{t}+E_{t})x = (c_{t} + h_{t})
@@ -183,22 +190,22 @@ while condition(ite) >  SETTINGS.MAX_ERROR_SNTLN &&  ite < SETTINGS.MAX_ITERATIO
     delta_xk        = y_lse((nNonZeroEntries_z+1):end);
     
     % Update z and x
-    z       = z + delta_zk;
-    xk    = xk + delta_xk;
+    z = z + delta_zk;
+    xk = xk + delta_xk;
     
     % Split vector z into vectors z_f and z_g
-    v_zf = z(1 : nNonZeros_fxy);
-    v_zg = z(nNonZeros_fxy + 1 : end);
+    v_zf_xy = z(1 : nNonZeros_fxy);
+    v_zg_xy = z(nNonZeros_fxy + 1 : end);
     
     % Get coefficients of zf(x,y) in a matrix
-    mat_zfxy = GetAsMatrix([v_zf; zeros(nZeros_fxy,1)], m, m);
+    z_fxy = GetAsMatrix([v_zf_xy; zeros(nZeros_fxy,1)], m, m);
     
     % Get coefficients of zg(x,y) in a matrix
-    mat_zgxy = GetAsMatrix([v_zg;zeros(nZeros_gxy,1)], n, n);
+    z_gxy = GetAsMatrix([v_zg_xy;zeros(nZeros_gxy,1)], n, n);
     
     % Build the matrix B_{t} = [E1(zf) E2(zg)]
-    E1 = BuildT1_Total(mat_zfxy, m, n-k);
-    E2 = BuildT1_Total(mat_zgxy, n, m-k);
+    E1 = BuildT1_Total(z_fxy, m, n-k);
+    E2 = BuildT1_Total(z_gxy, n, m-k);
     
     % Build the matrix B_{t} equivalent to S_{t}
     Bt = [E1 E2];
@@ -213,7 +220,7 @@ while condition(ite) >  SETTINGS.MAX_ERROR_SNTLN &&  ite < SETTINGS.MAX_ITERATIO
     
     % Get the updated vector x = [x1 x2] where x1 and x2 are vectors.
     % S(x1,x2)*[f;g] = ct
-    % x_ls = SolveAx_b(At+Et,ct+ht);
+    
     
     x = [...
         xk(1:idx_col-1);...
@@ -224,7 +231,7 @@ while condition(ite) >  SETTINGS.MAX_ERROR_SNTLN &&  ite < SETTINGS.MAX_ITERATIO
     Yk = BuildY_TotalDegree_STLN(x,m,n,k);
     
     % Get the residual vector
-    res_vec = (ck+hk) - ((Ak_fg+Ak_zfzg)*xk);
+    res_vec = (ck + hk) - ((Ak_fg + Ak_zfzg)*xk);
     
     % Update the matrix C
     H_z = Yk - Pk;
@@ -235,9 +242,8 @@ while condition(ite) >  SETTINGS.MAX_ERROR_SNTLN &&  ite < SETTINGS.MAX_ITERATIO
     f = -(yy-start_point);
     
     % Update the termination criterion
-    condition(ite) = norm(res_vec)./norm(ck+hk) ;
-    
-    
+    condition(ite) = norm(res_vec)./norm(ck + hk) ;
+
 end
 
 fprintf([mfilename ' : ' sprintf('Required number of iterations: %i\n',ite)]);
@@ -245,8 +251,20 @@ fprintf([mfilename ' : ' sprintf('Required number of iterations: %i\n',ite)]);
 PlotGraphs_STLN();
 
 
-fxy_lr = fxy_matrix + mat_zfxy;
-gxy_lr = gxy_matrix + mat_zgxy;
+fxy_lr = fxy + z_fxy;
+gxy_lr = gxy + z_gxy;
+
+% Get coefficients of polynomials u(x,y) and v(x,y)
+x = [...
+        xk(1:idx_col-1);...
+        -1;...
+        xk(idx_col:end)];
+
+vec_vxy = x(1:nNonZeros_vxy);
+vec_uxy = -1 .* x(nNonZeros_vxy+1:end);
+
+vxy_lr = GetAsMatrix([vec_vxy ; zeros(nZeros_vxy,1)],n-k,n-k);
+uxy_lr = GetAsMatrix([vec_uxy ; zeros(nZeros_uxy,1)],m-k,m-k);
 
 end
 

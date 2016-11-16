@@ -1,10 +1,12 @@
-function P1 = BuildP1_BothDegree_SNTLN(m,m1,m2,n,n1,n2,k,k1,k2,th1,th2,idx_col)
+function P1 = BuildP1_BothDegree_SNTLN(m,m1,m2,n,n1,n2,k,k1,k2,idx_col)
+% BuildP1_BothDegree_SNTLN(m,m1,m2,n,n1,n2,k,k1,k2,idx_col)
+%
 % Build the matrix P, used in SNTLN function. P is a matrix which is
 % obtained from the decomposition of a column vector c_{t} into a matrix
 % vector product P_{t} [f;g]
 % c_{t} is the column of the Sylvester matrix S_{t}(f,g).
 %
-% %   Inputs
+% % Inputs
 %
 % m : Total degree of f(x,y)
 %
@@ -31,16 +33,18 @@ function P1 = BuildP1_BothDegree_SNTLN(m,m1,m2,n,n1,n2,k,k1,k2,th1,th2,idx_col)
 % idx_col : Optimal column for removal from S(f,g)
 
 
-% Build the matrix of \thetas corresponding to the coefficients of
-% polynomial f(x,y).
-theta_mat = zeros(m1+1,m2+1);
-for i1 = 0:1:m1
-    for i2 = 0:1:m2
-        if (i1+i2 <= m)
-            theta_mat(i1+1,i2+1) = (th1.^i1)  * (th2.^i2);
-        end
-    end
-end
+% Get number of nonzeros of f(x,y).
+nNonZeros_fxy = GetNumNonZeros(m1,m2,m);
+nZeros_fxy_relative = ((m1+1) * (m2+1)) - nNonZeros_fxy;
+
+% Build a matrix the same size of f(x,y) with the coefficients replaced by
+% ones.
+vec = [...
+    ones(nNonZeros_fxy,1);
+    zeros(nZeros_fxy_relative,1)
+    ];
+
+mat = GetAsMatrix(vec,m1,m2);
 
 
 % Produce a zero matrix.
@@ -57,7 +61,7 @@ nRows_f = m1+1;
 nCols_f = m2+1;
 
 % Insert the theta matrix into the zero matrix
-padd_mat(ihat:i+nRows_f, jhat:j+nCols_f) = theta_mat;
+padd_mat(ihat:i+nRows_f, jhat:j+nCols_f) = mat;
 
 % Get the padded matrix as a vector
 vec_padd_mat = GetAsVector(padd_mat);

@@ -6,9 +6,9 @@ function fxy = GetWithoutThetas(fww,th1,th2)
 %
 % fww : Coefficients of polynomial f(\omega_{1},\omega_{2})
 %
-% th1 : theta_{1}
+% th1 : \theta_{1}
 %
-% th2 : theta_{2}
+% th2 : \theta_{2}
 %
 % % Outputs
 % 

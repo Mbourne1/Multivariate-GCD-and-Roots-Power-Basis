@@ -10,4 +10,6 @@ switch SETTINGS.PLOT_GRAPHS
         plot(log10(condition),'-s')
         hold off
     case 'n'
+    otherwise 
+        error('err')
 end

@@ -6,7 +6,7 @@ function [f] = GetSymbolicPolyFromSymbolicRoots(sym_root_mult_arr_fxy)
 %
 % Inputs
 %
-% factors_f : Factors of polynomial f(x,y)
+% sym_root_mult_arr_fxy : Symbolic Factors and multiplicities of polynomial f(x,y)
 %
 % Outputs.
 %

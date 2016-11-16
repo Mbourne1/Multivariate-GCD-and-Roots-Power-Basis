@@ -31,18 +31,20 @@ function Pt = BuildP_BothDegree_STLN(m,m1,m2,n,n1,n2,t,t1,t2,opt_col_index)
 
 
 % Get the number of coefficients in polynomial f(x,y)
-nCoeff_fxy = (m1+1).*(m2+1);
+nCoeffs_fxy = (m1+1).*(m2+1);
 % Get the number of nonZero coefficients in f(x,y)
 nNonZeros_fxy = GetNumNonZeros(m1,m2,m);
+nZeros_fxy = nCoeffs_fxy - nNonZeros_fxy;
 
 % Get the number of coefficients in polynomial g(x,y)
-nCoeff_gxy = (n1+1).*(n2+1);
+nCoeffs_gxy = (n1+1).*(n2+1);
 % Get the number of nonZeros coefficients in g(x,y)
 nNonZeros_gxy = GetNumNonZeros(n1,n2,n);
+nZeros_gxy = nCoeffs_gxy - nNonZeros_gxy;
 
-nCoeff_vxy = (n1-t1+1) * (n2-t2+1);
+nCoeffs_vxy = (n1-t1+1) * (n2-t2+1);
 nNonZeros_vxy = GetNumNonZeros(n1-t1,n2-t2,n-t);
-
+nZeros_vxy = nCoeffs_vxy - nNonZeros_vxy;
 
 % Number of columns in T1 of the sylvester matrix
 nColumnsT1 = nNonZeros_vxy;

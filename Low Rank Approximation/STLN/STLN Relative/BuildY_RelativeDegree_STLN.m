@@ -1,4 +1,3 @@
-
 function Y = BuildY_RelativeDegree_STLN(x,m1,m2,n1,n2,k1,k2)
 % Build the matrix Y_{t}
 % Where Y(x) * z = E(z) * x
@@ -21,14 +20,14 @@ function Y = BuildY_RelativeDegree_STLN(x,m1,m2,n1,n2,k1,k2)
 
 
 % Get the  number of coefficients of x_{1}, the perturbations of v(x,y)
-nCoeff_x1 = (n1-k1+1) * (n2-k2+1);
-nCoeff_x2 = (m1-k1+1) * (m2-k2+1);
+nCoeffs_x1 = (n1-k1+1) * (n2-k2+1);
+nCoeffs_x2 = (m1-k1+1) * (m2-k2+1);
 
 % Get vector of coefficients of x_{1}(x,y)
-x1 = x(1:nCoeff_x1);
+x1 = x(1:nCoeffs_x1);
 
 % Get vector of coefficients of x_{2}(x,y)
-x2 = x(nCoeff_x1+1:nCoeff_x1 + nCoeff_x2);
+x2 = x(nCoeffs_x1+1:nCoeffs_x1 + nCoeffs_x2);
 
 
 % Get x_{u}(x,y) and x_{v}(x,y) as a matrix

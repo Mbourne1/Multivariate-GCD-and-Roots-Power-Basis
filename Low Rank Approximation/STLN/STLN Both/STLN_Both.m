@@ -1,8 +1,10 @@
-function [fxy_lr,gxy_lr] = STLN_Both(fxy_matrix,gxy_matrix,m,n,k,k1,k2,idx_col)
+function [fxy_lr,gxy_lr,uxy_lr,vxy_lr] = STLN_Both(fxy_matrix,gxy_matrix,m,n,k,k1,k2,idx_col)
+% STLN(fxy,gxy,m,n,t1,t2,opt_col)
+%
 % Given coefficients f(x,y) and g(x,y) find the low rank approximation of
 % the Syvlester subresultant S_{t_{1},t_{2}}.
 %
-% STLN(fxy,gxy,m,n,t1,t2,opt_col)
+%
 %
 % % Inputs.
 %
@@ -14,7 +16,7 @@ function [fxy_lr,gxy_lr] = STLN_Both(fxy_matrix,gxy_matrix,m,n,k,k1,k2,idx_col)
 %
 % n : total degree of g(x,y)
 %
-% k : Degree of d(x,y) 
+% k : Degree of d(x,y)
 %
 % k1 : degree of d(x,y) with respect to x
 %
@@ -22,15 +24,17 @@ function [fxy_lr,gxy_lr] = STLN_Both(fxy_matrix,gxy_matrix,m,n,k,k1,k2,idx_col)
 %
 % idx_col : index of optimal column for removal from S_{t_{1},t_{2}}(f,g)
 %
-% % Outputs 
+% % Outputs
 %
 % fxy_lr : Coefficients of f(x,y) with added perturbations
 %
 % gxy_lr : Coefficients of g(x,y) with added perturbations
+%
+% uxy_lr : Coefficients of u(x,y)
+%
+% vxy_lr : Coefficients of v(x,y)
 
 global SETTINGS
-
-
 
 % Get degree of polynomials f(x,y)
 [m1,m2] = GetDegree(fxy_matrix);
@@ -49,10 +53,15 @@ nNonZeros_gxy = GetNumNonZeros(n1,n2,n);
 nZeros_gxy = nCoeff_gxy - nNonZeros_gxy;
 
 % Get number of zeros in v
+nCoeff_vxy = (n1-k1+1) * (n2-k2+1);
 nNonZeros_vxy = GetNumNonZeros(n1-k1,n2-k2,n-k);
+nZeros_vxy = nCoeff_vxy - nNonZeros_vxy;
+
 
 % Get number of zeros in u(x,y)
+nCoeff_uxy = (m1-k1+1) * (m2-k2+1);
 nNonZeros_uxy = GetNumNonZeros(m1-k1,m2-k2,m-k);
+nZeros_uxy = nCoeff_uxy - nNonZeros_uxy;
 
 % Build the matrix T_{n1-k1,n2-k2}(f)
 Tf = BuildT1_Both(fxy_matrix,m,n-k,n1-k1,n2-k2);
@@ -63,16 +72,16 @@ Tg = BuildT1_Both(gxy_matrix,n,m-k,m1-k1,m2-k2);
 % Remove the columns of T(f) and T(g) which correspond to the zeros in u(x,y)
 % and v(x,y) which are removed from the solution vector x.
 
-% % 
+% %
 % %
 % Remove the extra rows of T1 and T2 associated with zeros of f*v and g*u
 % Build the matrix S_{t,t_{1},t_{2}} with reduced rows and columns
-St_fg = [Tf Tg];
+Sk_fg = [Tf Tg];
 
 % Remove optimal column
-Ak_fg = St_fg;
+Ak_fg = Sk_fg;
 Ak_fg(:,idx_col) = [];
-ck = St_fg(:,idx_col);
+ck = Sk_fg(:,idx_col);
 
 % Build the matrix Et
 Ak_zfzg = zeros(size(Ak_fg));
@@ -92,14 +101,14 @@ v_zg = z(nNonZeros_fxy + 1:end);
 % a matrix m1+1 * m2+1
 mat_zf = GetAsMatrix(...
     [
-    v_zf; 
+    v_zf;
     zeros(nZeros_fxy,1)
     ],m1,m2);
 
 % Get zg as a matrix
 mat_zg = GetAsMatrix(...
     [
-    v_zg; 
+    v_zg;
     zeros(nZeros_gxy,1)
     ],n1,n2);
 
@@ -126,17 +135,18 @@ v_fxy = v_fxy(1:nNonZeros_fxy,:);
 v_gxy = GetAsVector(gxy_matrix);
 v_gxy = v_gxy(1:nNonZeros_gxy,:);
 
-test1 = Yk * [v_fxy;v_gxy];
-test2 = Ak_fg * xk;
-norm(test1-test2)
+test1a = Yk * [v_fxy;v_gxy];
+test1b = Sk_fg * x;
+test1 = norm(test1a-test1b);
+display(test1)
 
 % Build the matrix P_{t}
 % Where P * [f;g] = c_{t}
 Pt = BuildP_BothDegree_STLN(m,m1,m2,n,n1,n2,k,k1,k2,idx_col);
-test1 = Pt * [v_fxy;v_gxy];
-test2 = ck;
-norm(test1-test2)
-
+test2a = Pt * [v_fxy;v_gxy];
+test2b = ck;
+test2 = norm(test2a-test2b)
+display(test2)
 
 % Get initial residual (A_{t}+E_{t})x = (c_{t} + h_{t})
 xk = SolveAx_b(Ak_fg+Ak_zfzg,ck+hk);
@@ -186,7 +196,7 @@ while condition(ite) >  SETTINGS.MAX_ERROR_SNTLN &&  ite < SETTINGS.MAX_ITERATIO
     delta_xk        = y_lse((nEntries_z+1):end);
     
     % Update z and x
-    z       = z + delta_zk;
+    z     = z + delta_zk;
     xk    = xk + delta_xk;
     
     % Split vector z into vectors z_f and z_g
@@ -196,16 +206,16 @@ while condition(ite) >  SETTINGS.MAX_ERROR_SNTLN &&  ite < SETTINGS.MAX_ITERATIO
     % Get zf as a matrix
     mat_zf = GetAsMatrix(...
         [
-            v_zf; 
-            zeros(nZeros_fxy,1)
+        v_zf;
+        zeros(nZeros_fxy,1)
         ]...
         ,m1,m2);
     
     % Get zg as a matrix
     mat_zg = GetAsMatrix(...
         [
-            v_zg; 
-            zeros(nZeros_gxy,1)
+        v_zg;
+        zeros(nZeros_gxy,1)
         ]...
         ,n1,n2);
     
@@ -224,8 +234,6 @@ while condition(ite) >  SETTINGS.MAX_ERROR_SNTLN &&  ite < SETTINGS.MAX_ITERATIO
     % and equivalent to c_{t} removed from S_{t}
     hk = St_zfzg(:,idx_col);
     
-    % Get the updated vector x
-    xk = SolveAx_b(Ak_fg + Ak_zfzg,ck + hk);
     
     x = [...
         xk(1:idx_col-1);...
@@ -237,7 +245,7 @@ while condition(ite) >  SETTINGS.MAX_ERROR_SNTLN &&  ite < SETTINGS.MAX_ITERATIO
     
     % Get the residual vector
     res_vec = (ck + hk) - ((Ak_fg + Ak_zfzg) * xk);
-  
+    
     % Update the matrix C
     H_z = Yk - Pt;
     H_x = Ak_fg + Ak_zfzg;
@@ -253,10 +261,21 @@ while condition(ite) >  SETTINGS.MAX_ERROR_SNTLN &&  ite < SETTINGS.MAX_ITERATIO
 end
 
 fprintf([mfilename ' : ' sprintf('\nRequired number of iterations: %i\n',ite)]);
-    
+
 fxy_lr = fxy_matrix + mat_zf;
 gxy_lr = gxy_matrix + mat_zg;
 
+x = [...
+    xk(1:idx_col-1);...
+    -1;...
+    xk(idx_col:end)...
+    ];
+
+vec_vxy = x(1:nNonZeros_vxy);
+vec_uxy = -1.* x(nNonZeros_vxy+1:end);
+
+vxy_lr = GetAsMatrix([vec_vxy ; zeros(nZeros_vxy,1)],n1-k1,n2-k2);
+uxy_lr = GetAsMatrix([vec_uxy ; zeros(nZeros_uxy,1)],m1-k1,m2-k2);
 
 PlotGraphs_STLN()
 

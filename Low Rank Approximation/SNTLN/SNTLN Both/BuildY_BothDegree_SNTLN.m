@@ -36,20 +36,27 @@ function Y = BuildY_BothDegree_SNTLN(x,m,m1,m2,n,n1,n2,k,k1,k2,alpha,th1,th2)
 
 % Separate the x into x1 and x2
 % The first (n1-t1+1) x (n2-t2+1) coefficients are of x1
-nCoeff_x1 = GetNumNonZeros(n1-k1,n2-k2,n-k);
-nCoeff_x2 = GetNumNonZeros(m1-k1,m2-k2,m-k);
+nCoeffs_x1 = GetNumNonZeros(n1-k1,n2-k2,n-k);
+nCoeffs_x2 = GetNumNonZeros(m1-k1,m2-k2,m-k);
 
-nCoeff_x1_mat = (n1-k1+1) * (n2-k2+1);
-nCoeff_x2_mat = (m1-k1+1) * (m2-k2+1);
-nZeros_x1_mat = nCoeff_x1_mat - nCoeff_x1;
-nZeros_x2_mat = nCoeff_x2_mat - nCoeff_x2;
+nNonZeros_fxy = GetNumNonZeros(m1,m2,m);
+nZeros_fxy = (m1+1)*(m2+1) - nNonZeros_fxy;
+
+nNonZeros_gxy = GetNumNonZeros(n1,n2,n);
+nZeros_gxy = (n1+1)*(n2+1) - nNonZeros_gxy;
+
+
+nCoeffs_x1_mat = (n1-k1+1) * (n2-k2+1);
+nCoeffs_x2_mat = (m1-k1+1) * (m2-k2+1);
+nZeros_x1_mat = nCoeffs_x1_mat - nCoeffs_x1;
+nZeros_x2_mat = nCoeffs_x2_mat - nCoeffs_x2;
 
 
 % Get the vector of coefficients of x1
-x1_vec = x(1:nCoeff_x1);
+x1_vec = x(1:nCoeffs_x1);
 
 % Get the vector of coefficients of x2
-x2_vec = x(nCoeff_x1+1:nCoeff_x1 + nCoeff_x2);
+x2_vec = x(nCoeffs_x1+1:nCoeffs_x1 + nCoeffs_x2);
 
 x1_vec = [x1_vec ; zeros(nZeros_x1_mat,1)];
 x2_vec = [x2_vec ; zeros(nZeros_x2_mat,1)];
@@ -66,28 +73,28 @@ T2 = BuildT1_Both(x2_mat,m-k,n,n1,n2);
 
 
 
-% Multiply by the thetas of f and g
-th1_mat = diag(th1.^(0:1:m1));
-th2_mat = diag(th2.^(0:1:m2));
-fww_thetas_mat = th1_mat * ones(m1+1,m2+1) * th2_mat;
-th_mat1 = GetAsVector(fww_thetas_mat);
-nCoeff_f = GetNumNonZeros(m1,m2,m);
-th_mat1 = th_mat1(1:nCoeff_f);
+f_vec = [ones(nNonZeros_fxy,1); zeros(nZeros_fxy,1)];
+f_mat = GetAsMatrix(f_vec,m1,m2);
+
+g_vec = [ones(nNonZeros_gxy,1); zeros(nZeros_gxy,1)];
+g_mat = GetAsMatrix(g_vec,n1,n2);
 
 
-%
-th1_mat = diag(th1.^(0:1:n1));
-th2_mat = diag(th2.^(0:1:n2));
-gww_thetas_mat = th1_mat * ones(n1+1,n2+1) * th2_mat;
-th_mat2 = GetAsVector(gww_thetas_mat);
-nCoeff_g = GetNumNonZeros(n1,n2,n);
-th_mat2 = th_mat2(1:nCoeff_g);
+% Get a vector of theta_{1}theta_{2} corresponding to entries of the
+% polynomial f(x,y)
+th_f = GetWithThetas(f_mat,th1,th2);
+th_f = GetAsVector(th_f);
+th_f = th_f(1:nNonZeros_fxy);
+th_f = diag(th_f);
 
-% multiply
+% Get a vector of \theta_{1}\theta_{2} corresponding to entires of the
+% polynomial g(x,y)
+th_g = GetWithThetas(g_mat,th1,th2);
+th_g = GetAsVector(th_g);
+th_g = th_g(1:nNonZeros_gxy);
+th_g = diag(th_g);
 
-vec = [th_mat1 ; th_mat2];
-th_mat = diag(vec);
 
 % multiply by the alpha of g
-Y = [T1 alpha.*T2] * th_mat;
+Y = [T1*th_f alpha.*T2*th_g] ;
 end

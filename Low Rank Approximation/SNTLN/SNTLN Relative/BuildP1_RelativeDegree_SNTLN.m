@@ -1,4 +1,4 @@
-function P = BuildP1_RelativeDegree_SNTLN(m1,m2,n1,n2,k1,k2,th1,th2,idx_col)
+function P = BuildP1_RelativeDegree_SNTLN(m1,m2,n1,n2,k1,k2,idx_col)
 % Build the matrix P, used in SNTLN function. P is a matrix which is
 % obtained from the decomposition of a column vector c_{t} into a matrix
 % vector product P_{t} [f;g]
@@ -25,11 +25,8 @@ function P = BuildP1_RelativeDegree_SNTLN(m1,m2,n1,n2,k1,k2,th1,th2,idx_col)
 %   idx_col : Optimal column for removal from S(f,g)
 
 
-% Build the coefficient matrix of thetas
-pre_thetas = diag(th1.^(0:1:m1));
-post_thetas = diag(th2.^(0:1:m2));
+% Build the matrix of ones, the size of the matrix of coefficients of f(x,y)
 mat = ones(m1+1,m2+1);
-mat = pre_thetas * mat * post_thetas;
 
 
 % Produce a zero matrix to fill the space

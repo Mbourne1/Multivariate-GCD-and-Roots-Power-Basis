@@ -12,7 +12,7 @@ count = 1;
 % Get number of diagonals in the matrix fxy.
 num_diags = (m1+1) + (m2+1) -1;
 
-for tot = 0:1:num_diags -1;
+for tot = 0:1:num_diags -1
     for i = tot:-1:0
         j = tot-i;
         if i > m1 || j> m2

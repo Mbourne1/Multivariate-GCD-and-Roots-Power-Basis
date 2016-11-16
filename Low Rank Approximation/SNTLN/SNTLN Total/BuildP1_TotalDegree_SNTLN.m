@@ -1,4 +1,4 @@
-function P = BuildP1_TotalDegree_SNTLN(m,n,k,th1,th2,idx_col)
+function P = BuildP1_TotalDegree_SNTLN(m,n,k,idx_col)
 % Build the matrix P, used in SNTLN function. P is a matrix which is
 % obtained from the decomposition of a column vector c_{t} into a matrix
 % vector product P_{t} [f;g]
@@ -19,21 +19,19 @@ function P = BuildP1_TotalDegree_SNTLN(m,n,k,th1,th2,idx_col)
 % idx_col : Optimal column for removal from S(f,g)
 
 
-% Build the coefficient matrix of thetas
-pre_thetas = diag(th1.^(0:1:m));
-post_thetas = diag(th2.^(0:1:m));
-mat = zeros(m+1,m+1);
+% Get the number of coefficients in f(x,y)
+nNonZeros_fxy = nchoosek(m+2,2);
+% Get the number of zeros in the matrix f(x,y)
+nZeros_fxy = nchoosek(m+1,2);
 
-%mat = pre_thetas * mat * post_thetas;
 
-for i1 = 0:1:m
-    for i2 = 0:1:m
-        if (i1+i2 <= m)
-            mat(i1+1,i2+1) = (th1.^i1)  * (th2.^i2);
-        end
-    end
-end
-
+% Get a matrix the same size as f(x,y) where the coefficients are replaced
+% by ones.
+vec = [...
+    ones(nNonZeros_fxy,1);...
+    zeros(nZeros_fxy,1);...
+    ];
+mat = GetAsMatrix(vec,m,m);
 
 
 % Produce a zero matrix to fill the space

@@ -1,5 +1,5 @@
-function [fxy_lr,gxy_lr,alpha_lr,theta1_lr,theta2_lr,x_lr] = ...
-    SNTLN(fxy,gxy,alpha,th1,th2,m,n,t,t1,t2,idx_col)
+function [fxy_lr, gxy_lr, uxy_lr, vxy_lr, alpha_lr,th1_lr,th2_lr] = ...
+    SNTLN(fxy, gxy, alpha, th1, th2, m, n, t, t1, t2, idx_col)
 %
 % % Inputs
 %
@@ -32,11 +32,15 @@ function [fxy_lr,gxy_lr,alpha_lr,theta1_lr,theta2_lr,x_lr] = ...
 %
 % gxy_lr : Coefficients of polynomial g(x,y) + \delta g(x,y)
 %
+% uxy_lr : Coefficients of polynomial u(x,y) + \delta u(x,y)
+%
+% vxy_lr : Coefficients of polynomial g(x,y) + \delta g(x,y)
+%
 % alpha_lr : \alpha + \delta \alpha
 %
-% theta1_lr : \theta_{1} + \delta \theta_{1}
+% th1_lr : \theta_{1} + \delta \theta_{1}
 %
-% theta1_lr : \theta_{2} + \delta \theta_{2}
+% th1_lr : \theta_{2} + \delta \theta_{2}
 %
 % x_lr : The solution vector x in the problem Ax = b.
 
@@ -47,20 +51,19 @@ global SETTINGS
 switch SETTINGS.DEGREE_METHOD
     case 'Total'
         %
-        [fxy_lr,gxy_lr,alpha_lr,theta1_lr,theta2_lr,x_lr] = ...
-            SNTLN_Total(fxy,gxy,m,n,alpha,th1,th2,t,idx_col);
+        [fxy_lr, gxy_lr, uxy_lr, vxy_lr, alpha_lr, th1_lr, th2_lr] = ...
+            SNTLN_Total(fxy, gxy, m, n, alpha, th1, th2, t, idx_col);
         
     case 'Relative'
         % Get the SNTLN of the Sylvester matrix
-        [fxy_lr,gxy_lr,alpha_lr,theta1_lr,theta2_lr,x_lr] = ...
-            SNTLN_Relative(fxy,gxy,alpha,th1,th2,t1,t2,idx_col);
+        [fxy_lr, gxy_lr, uxy_lr, vxy_lr, alpha_lr, th1_lr, th2_lr] = ...
+            SNTLN_Relative(fxy, gxy, alpha, th1, th2, t1, t2, idx_col);
         
     case 'Both'
         
-        %error('err : Not yet developed')
         % Get the SNTLN of the Sylvester matrix
-        [fxy_lr,gxy_lr,alpha_lr,theta1_lr,theta2_lr,x_lr] = ...
-            SNTLN_Both(fxy,gxy,alpha,th1,th2,m,n,t,t1,t2,idx_col);
+        [fxy_lr, gxy_lr, uxy_lr, vxy_lr, alpha_lr, th1_lr, th2_lr] = ...
+            SNTLN_Both(fxy, gxy, alpha, th1, th2, m, n, t, t1, t2, idx_col);
 end
 
 end

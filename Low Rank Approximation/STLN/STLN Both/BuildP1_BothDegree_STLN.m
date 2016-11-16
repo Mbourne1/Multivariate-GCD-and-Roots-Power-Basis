@@ -1,12 +1,12 @@
 function P = BuildP1_BothDegree_STLN(m,m1,m2,n,n1,n2,t,t1,t2,idx_col)
-% BuildPt_sub(m1,m2,n1,n2,opt_col,t1,t2)
+% BuildP1_BothDegree_STLN(m,m1,m2,n,n1,n2,t,t1,t2,idx_col)
 %
 % Build the matrix P, used in STLN function. P is a matrix which is
 % obtained from the decomposition of a column vector c_{t} into a matrix
 % vector product P_{t} [f;g]
 % c_{t} is the column of the Sylvester matrix S_{t}(f,g).
 %
-%   %   Inputs
+% % Inputs
 %
 % m : Total degree of polynomial f(x,y)
 % 
@@ -30,23 +30,17 @@ function P = BuildP1_BothDegree_STLN(m,m1,m2,n,n1,n2,t,t1,t2,idx_col)
 
 % Get number of nonzeros of f(x,y).
 nNonZeros_fxy = GetNumNonZeros(m1,m2,m);
+nZeros_fxy_relative = ((m1+1) * (m2+1)) - nNonZeros_fxy;
 
-% Build the coefficient matrix of thetas
-% mat = ones(m1+1,m2+1);
-
-% Get the number of coefficients in a polynomial of total degree m
-nNonZeros_fxy_total = nchoosek(m+2,2);
-nZeros_fxy_total = nchoosek(m+1,2);
+% Build a matrix the same size of f(x,y) with the coefficients replaced by
+% ones.
 vec = [...
-    ones(nNonZeros_fxy_total,1);
-    zeros(nZeros_fxy_total,1)
+    ones(nNonZeros_fxy,1);
+    zeros(nZeros_fxy_relative,1)
     ];
-mat = GetAsMatrix(vec,m,m);
-mat = mat(1:m1+1,1:m2+1);
 
-% pad with zeros
-%num_mult_wrt_x = n1-t1;
-%num_mult_wrt_y = n2-t2;
+mat = GetAsMatrix(vec,m1,m2);
+
 
 % Produce a zero matrix to fill the space
 padd_mat = zeros(m1+n1-t1+1, m2+n2-t2+1);

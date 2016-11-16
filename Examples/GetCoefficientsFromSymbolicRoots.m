@@ -28,7 +28,6 @@ end
 
 symbolic_poly = temp_sym_poly;
 
-display(symbolic_poly);
 
 % Get coefficients of the polynomial 
 fxy = double(rot90(coeffs(symbolic_poly,[x,y],'All'),2));

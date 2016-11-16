@@ -28,10 +28,10 @@ function P = BuildP_RelativeDegree_SNTLN(m1,m2,n1,n2,k1,k2,alpha,th1,th2,idx_col
 % P : Matrix P
 
 % Get the number of coefficients in polynomial f(x,y)
-nCoeff_f = (m1+1).*(m2+1);
+nCoeffs_fxy = (m1+1).*(m2+1);
 
 % Get the number of coefficients in polynomial g(x,y)
-nCoeff_g = (n1+1).*(n2+1);
+nCoeffs_gxy = (n1+1).*(n2+1);
 
 % Get the number of cols in the first partition of the Sylvester
 % subresultant matrix S_{k1,k2}
@@ -39,34 +39,53 @@ nCols_T1 = (n1-k1+1) * (n2-k2+1);
 
 nRowsSylvester = (m1+n1-k1+1)*(m2+n2-k2+1);
 
-if idx_col <= nCols_T1
-    % Optimal column in first partition
+if idx_col <= nCols_T1 % Optimal column in first partition
+    
     
     % % Build the matrix P
     
     % Build the matrix P1
-    P1 = BuildP1_RelativeDegree_SNTLN(m1,m2,n1,n2,k1,k2,th1,th2,idx_col);
+    P1 = BuildP1_RelativeDegree_SNTLN(m1,m2,n1,n2,k1,k2,idx_col);
     
     % Build the matrix P2
-    P2 = zeros(nRowsSylvester,nCoeff_g);
+    P2 = zeros(nRowsSylvester,nCoeffs_gxy);
     
-    % Build the matrix P
-    P = [P1 P2];
+      
+else % Optimal column in second partition
     
-else
-    % Optimal column in second partition
     
     % Build the matrix P1
-    P1 = zeros(nRowsSylvester,nCoeff_f);
+    P1 = zeros(nRowsSylvester,nCoeffs_fxy);
     
-    % Build the matrix P2
+    
     % Get the position of the optimal column with respect to T(g)
     opt_col_rel = idx_col - nCols_T1;
-    P2 = BuildP1_RelativeDegree_SNTLN(n1,n2,m1,m2,k1,k2,th1,th2,opt_col_rel);
     
-    % Build the matrix P.
-    P = [P1 alpha.*P2];
+    % Build the matrix P2
+    P2 = BuildP1_RelativeDegree_SNTLN(n1,n2,m1,m2,k1,k2,opt_col_rel);
+    
+    
     
 end
+
+% Get vector of thetas corresponding to the coefficients of f(\omega_{1},\omega_{2})
+pre_th1s = diag(th1.^(0:1:m1));
+post_th2s = diag(th2.^(0:1:m2));
+fww_thetas_mat = ones(m1+1,m2+1);
+fww_thetas_mat = pre_th1s * fww_thetas_mat * post_th2s;
+th_f = GetAsVector(fww_thetas_mat);
+th_f = diag(th_f);
+
+% Get vector of thetas corresponding to the coefficients of g(\omega_{1},\omega_{2})
+pre_th1s = diag(th1.^(0:1:n1));
+post_th2s = diag(th2.^(0:1:n2));
+gww_thetas_mat = ones(n1+1,n2+1);
+gww_thetas_mat = pre_th1s * gww_thetas_mat * post_th2s;
+th_g = GetAsVector(gww_thetas_mat);
+th_g = diag(th_g);
+
+
+% Build the matrix P.
+P = [P1*th_f alpha.*P2*th_g];
 
 end

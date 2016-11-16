@@ -8,6 +8,10 @@ function fww = GetWithThetas(fxy,th1,th2)
 % th1 : \theta_{1}
 %
 % th2 : \theta_{2}
+%
+% % Outputs
+%
+% fww : Matrix of coefficients of polynomial f(\omega_{1},\omega_{2})
 
 % Get degree of polynomial f(x,y)
 [m1,m2] = GetDegree(fxy);

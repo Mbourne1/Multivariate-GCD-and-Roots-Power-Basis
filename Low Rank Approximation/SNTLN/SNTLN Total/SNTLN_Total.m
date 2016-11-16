@@ -1,5 +1,5 @@
-function [ fxy_lr, gxy_lr, alpha_lr,th1_lr,th2_lr,X_lr] = ...
-    SNTLN_Total(fxy_matrix, gxy_matrix, m, n, i_alpha, i_th1, i_th2,k,idx_col)
+function [ fxy_lr, gxy_lr, uxy_lr, vxy_lr, alpha_lr,th1_lr,th2_lr] = ...
+    SNTLN_Total(fxy, gxy, m, n, i_alpha, i_th1, i_th2,k,idx_col)
 % Obtain the low rank approximation of the Sylvester matrix D*T_{t}(f,g)*Q =
 % S_{t}(f,g)
 %
@@ -8,9 +8,9 @@ function [ fxy_lr, gxy_lr, alpha_lr,th1_lr,th2_lr,X_lr] = ...
 % Inputs:
 %
 %
-% fxy_matrix : Coefficients of polynomial f, in standard bernstein basis.
+% fxy : Coefficients of polynomial f(x,y) in the Bernstein basis.
 %
-% gxy_matrix : Coefficients of polynomial g, in standard bernstein basis.
+% gxy : Coefficients of polynomial g, in the Bernstein basis.
 %
 % i_alpha : Initial value of alpha
 %
@@ -26,23 +26,25 @@ function [ fxy_lr, gxy_lr, alpha_lr,th1_lr,th2_lr,X_lr] = ...
 %           is the column which is most likely a linear combination of the others.
 %
 %
-% Outputs:
+% % Outputs:
 %
 %
 % fxy_lr : Coefficients of f(x,y) on output, in standard bernstein basis,
 % including added structured perturbations.
 %
-% gxy_lr : Coefficients of fx on output, in standard bernstein basis,
+% gxy_lr : Coefficients of g(x,y) on output, in standard bernstein basis,
 % including added structured perturbations.
+%
+% uxy_lr : Coefficients of the polynomial u(x,y)
+%
+% vxy_lr : Coefficients of the polynomial v(x,y)
 %
 % alpha_lr : Optimal value of \alpha
 %
 % th1_lr : Optimal value of \theta_{1}
 %
 % th2_lr : Optimal value of \theta_{2}
-%
-% X_lr :
-%
+
 
 % Global Inputs
 global SETTINGS
@@ -55,14 +57,14 @@ fxy_matrix_padd = zeros(m+1,m+1);
 gxy_matrix_padd = zeros(n+1,n+1);
 
 
-[nRows_fxy,nCols_fxy] = size(fxy_matrix);
-fxy_matrix_padd(1:nRows_fxy,1:nCols_fxy) = fxy_matrix;
+[nRows_fxy,nCols_fxy] = size(fxy);
+fxy_matrix_padd(1:nRows_fxy,1:nCols_fxy) = fxy;
 
-[nRows_gxy,nCols_gxy] = size(gxy_matrix);
-gxy_matrix_padd(1:nRows_gxy,1:nCols_gxy) = gxy_matrix;
+[nRows_gxy,nCols_gxy] = size(gxy);
+gxy_matrix_padd(1:nRows_gxy,1:nCols_gxy) = gxy;
 
-fxy_matrix = fxy_matrix_padd;
-gxy_matrix = gxy_matrix_padd;
+fxy = fxy_matrix_padd;
+gxy = gxy_matrix_padd;
 
 %%
 
@@ -143,11 +145,11 @@ e = I(:,idx_col);
 
 % Multiply the rows of fxy_matrix by theta1, and multiply the cols of
 % fxy_matrix by theta2
-fww_matrix = GetWithThetas(fxy_matrix,th1(ite),th2(ite));
+fww_matrix = GetWithThetas(fxy,th1(ite),th2(ite));
 
 % Multiply the rows of gxy_matrix by theta1, and multiply the cols of
 % gxy_matrix by theta2
-gww_matrix = GetWithThetas(gxy_matrix,th1(ite),th2(ite));
+gww_matrix = GetWithThetas(gxy,th1(ite),th2(ite));
 
 % Form the Coefficient Matrix T = [C(f(w1,w2))|alpha * C(g(w1,w2))] such that T*x = [col]
 T1_fxy = BuildT1_Total(fww_matrix,m,n-k);
@@ -157,7 +159,7 @@ T_fg = [T1_fxy alpha(ite).*T2_gxy];
 %
 % Calculate the partial derivatives of f(w,w) and g(w,w) with respect to \alpha
 Partial_fw_wrt_alpha            = zeros(m+1,m+1);
-Partial_alpha_gw_wrt_alpha      = gxy_matrix;
+Partial_alpha_gw_wrt_alpha      = gxy;
 
 %
 % Calculate the partial derivatives of f(w,w) with respect to \theta_1
@@ -233,9 +235,9 @@ Pk = BuildP_TotalDegree_SNTLN(m,n,k,alpha(ite),th1(ite),th2(ite),idx_col);
 
 % Test 1 - Test the Build P function
 % Get the coefficients of f(x,y) in matrix form
-fxy_vec = GetAsVector(fxy_matrix);
+fxy_vec = GetAsVector(fxy);
 fxy_vec = fxy_vec(1:nNonZeros_fxy);
-gxy_vec = GetAsVector(gxy_matrix);
+gxy_vec = GetAsVector(gxy);
 gxy_vec = gxy_vec(1:nNonZeros_gxy);
 
 test1a = ck;
@@ -265,7 +267,6 @@ Yk = BuildY_TotalDegree_SNTLN(x,m,n,k,alpha(ite),th1(ite),th2(ite));
 % Test Y
 test2a  = Yk * [fxy_vec;gxy_vec];
 test2b = T_fg * x;
-test2c = ck;
 test2 = norm(test2a - test2b);
 display(test2)
 
@@ -410,10 +411,10 @@ while condition(ite) >(SETTINGS.MAX_ERROR_SNTLN) &&  ite < SETTINGS.MAX_ITERATIO
     % Obtain polynomials in modified bersntein basis a_{i}\theta^{i}
     
     % Obtain new f(w,w) with improved theta1, and theta2
-    fww_matrix = GetWithThetas(fxy_matrix,th1(ite),th2(ite));
+    fww_matrix = GetWithThetas(fxy,th1(ite),th2(ite));
     
     % Obtain new g(w,w) with improved theta1 and theta2
-    gww_matrix = GetWithThetas(gxy_matrix,th1(ite),th2(ite));
+    gww_matrix = GetWithThetas(gxy,th1(ite),th2(ite));
     
     % Construct the Sylvester subresultant matrix S.
     T1_fxy = BuildT1_Total(fww_matrix,m,n-k);
@@ -615,9 +616,29 @@ zPert_g_vec = zk(nNonZeros_fxy+1:end);
 zPert_g_mat = GetAsMatrix([zPert_g_vec; zeros(nZeros_gxy,1)],n,n);
 
 % Set outputs of low rank approximation
-fxy_lr = fxy_matrix + zPert_f_mat;
-gxy_lr = gxy_matrix + zPert_g_mat;
-X_lr  = xk;
+fxy_lr = fxy + zPert_f_mat;
+gxy_lr = gxy + zPert_g_mat;
+
+% Get coefficients of the polynomials u(x,y) and v(x,y)
+
+first_part = xk(1:(idx_col-1));
+second_part = xk(idx_col:end);
+x = [first_part ; -1 ; second_part];
+
+%
+vec_vww = x(1:nNonZeros_vxy);
+vec_uww = -1.* x(nNonZeros_vxy+1:end);
+
+%
+vww = GetAsMatrix([vec_vww ; zeros(nZeros_vxy,1)],n-k,n-k);
+vxy_lr = GetWithoutThetas(vww,th1(ite),th2(ite));
+
+%
+uww = GetAsMatrix([vec_uww ; zeros(nZeros_uxy,1)],m-k,m-k); 
+uxy_lr = GetWithoutThetas(uww,th1(ite),th2(ite));
+
+% %
+%
 alpha_lr = alpha(ite);
 th1_lr = th1(ite);
 th2_lr = th2(ite);

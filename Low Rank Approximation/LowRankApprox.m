@@ -1,19 +1,20 @@
-function [fxy_lr,gxy_lr,alpha_lr, th1_lr,th2_lr] = LowRankApprox(fxy,gxy,alpha,th1,th2,m,n,k,k1,k2,idx_col)
+function [fxy_lr, gxy_lr, uxy_lr, vxy_lr, alpha_lr, th1_lr,th2_lr] = ...
+    LowRankApprox(fxy, gxy, alpha, th1, th2, m, n, k, k1, k2, idx_col)
 % Compute low rank approximation of the sylvester matrix formed from
 % coefficients of f(x,y) and g(x,y). Return the modified forms of f(x,y)
 % and g(x,y).
 %
 % % Inputs
 % 
-% fxy_n : Coefficients of polynomial f(x,y)
+% fxy : Coefficients of polynomial f(x,y)
 %
-% gxy_n : Coefficients of polynomial g(x,y)
+% gxy : Coefficients of polynomial g(x,y)
 %
-% alpha : alpha
+% alpha : \alpha
 %
-% th1 : theta_{1}
+% th1 : \theta_{1}
 %
-% th2 : theta_{2}
+% th2 : \theta_{2}
 %
 % m : Total degree of f(x,y)
 %
@@ -40,9 +41,6 @@ function [fxy_lr,gxy_lr,alpha_lr, th1_lr,th2_lr] = LowRankApprox(fxy,gxy,alpha,t
 % th2 : Refined theta_{2}
 
 
-
-
-
 % Global Settings
 global SETTINGS
 
@@ -57,7 +55,7 @@ switch SETTINGS.LOW_RANK_APPROXIMATION_METHOD
         gww = GetWithThetas(gxy,th1,th2);
         
         % Get Low rank approximation by STLN
-        [fww_lr, a_gww_lr ] = STLN(fww,alpha.*gww,m,n,k,k1,k2,idx_col);
+        [fww_lr, a_gww_lr, uww_lr, vww_lr] = STLN(fww,alpha.*gww,m,n,k,k1,k2,idx_col);
         
         % Remove alpha from alpha.*g(w,w)
         gww_lr = a_gww_lr ./ alpha;
@@ -65,8 +63,14 @@ switch SETTINGS.LOW_RANK_APPROXIMATION_METHOD
         % Get f(x,y) from f(w,w).
         fxy_lr = GetWithoutThetas(fww_lr,th1,th2);
         
-        % Get g(x,y) from g(w,w).
+        % Get g(x,y)_lr from g(w,w).
         gxy_lr = GetWithoutThetas(gww_lr,th1,th2);
+        
+        % Get u(x,y) from u(w,w)
+        uxy_lr = GetWithoutThetas(uww_lr,th1,th2);
+        
+        % Get u(x,y) from u(w,w)
+        vxy_lr = GetWithoutThetas(vww_lr,th1,th2);
         
         alpha_lr = alpha;
         th1_lr = th1;
@@ -81,9 +85,7 @@ switch SETTINGS.LOW_RANK_APPROXIMATION_METHOD
         % STLN.
         test2 = (fww_lr - fww);
         norm(test2)
-        
-        
-        
+                
         % Note that minimial perturbations of f(w,w) found by low rank approximation
         % may be small, but CAN be large perturbations of f(x,y).
         
@@ -93,7 +95,7 @@ switch SETTINGS.LOW_RANK_APPROXIMATION_METHOD
     case 'Standard SNTLN'
         
         % Get low rank approximation by SNTLN
-        [fxy_lr,gxy_lr,alpha_lr,th1_lr,th2_lr,x_lr] = ...
+        [fxy_lr,gxy_lr,uxy_lr,vxy_lr,alpha_lr,th1_lr,th2_lr] = ...
                     SNTLN(fxy,gxy,alpha,th1,th2,m,n,k,k1,k2,idx_col);
         
         
@@ -106,7 +108,7 @@ switch SETTINGS.LOW_RANK_APPROXIMATION_METHOD
         % Get f(w,w)_lr from f(x,y)_lr
         fww_lr = GetWithThetas(fxy,th1_lr,th2_lr);
         
-        % Get g(w,w) from g(x,y)
+        % Get g(w,w)_lr from g(x,y)_lr
         gww_lr = GetWithThetas(gxy,th1_lr,th2_lr);
         
         % 
@@ -117,12 +119,25 @@ switch SETTINGS.LOW_RANK_APPROXIMATION_METHOD
 
         
     case 'None'
+        
+        fww = GetWithThetas(fxy,th1,th2);
+        gww = GetWithThetas(gxy,th1,th2);
+        a_gww = alpha.*gww; 
+        
+        [uww_lr,vww_lr] = GetQuotients(fww,a_gww,m,n,k,k1,k2);
+        
+        uxy_lr = GetWithoutThetas(uww_lr,th1,th2);
+        vxy_lr = GetWithoutThetas(vww_lr,th1,th2);
+        
         fxy_lr = fxy;
         gxy_lr = gxy;
         alpha_lr = alpha;
         th1_lr = th1;
         th2_lr = th2;
-        return
+        
+        fww_lr = fww;
+        gww_lr = gww;
+        
     otherwise
         error([mfilename ' : ' 'LOW_RANK_APPROXIMATION_METHOD' ...
             'must be set to either (Standard STLN) or (Standard SNTLN) or (None)'])

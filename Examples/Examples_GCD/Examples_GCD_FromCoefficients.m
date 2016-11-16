@@ -3,8 +3,6 @@ function [fxy, gxy,uxy,vxy,dxy,...
     n,n1,n2,...
     t,t1,t2] = Examples_GCD_FromCoefficients(ex_num)
 
-uxy = [];
-vxy = [];
 
 syms x y
 
@@ -17,6 +15,8 @@ addpath('../Examples')
 [fxy,m,m1,m2] = GetCoefficientsFromSymbolicRoots(f_roots_mult_arr);
 [gxy,n,n1,n2] = GetCoefficientsFromSymbolicRoots(g_roots_mult_arr);
 [dxy,t,t1,t2] = GetCoefficientsFromSymbolicRoots(d_roots_mult_arr);
+[uxy,~,~,~] = GetCoefficientsFromSymbolicRoots(u_roots_mult_arr);
+[vxy,~,~,~] = GetCoefficientsFromSymbolicRoots(v_roots_mult_arr);
 
 symbolic_f = GetSymbolicPolyFromSymbolicRoots(f_roots_mult_arr);
 symbolic_g = GetSymbolicPolyFromSymbolicRoots(g_roots_mult_arr);
