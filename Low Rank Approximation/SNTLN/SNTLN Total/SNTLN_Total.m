@@ -240,6 +240,7 @@ fxy_vec = fxy_vec(1:nNonZeros_fxy);
 gxy_vec = GetAsVector(gxy);
 gxy_vec = gxy_vec(1:nNonZeros_gxy);
 
+%Test
 test1a = ck;
 test1b = Pk*[fxy_vec;gxy_vec];
 test1 = norm(test1a - test1b);
@@ -601,7 +602,7 @@ while condition(ite) >(SETTINGS.MAX_ERROR_SNTLN) &&  ite < SETTINGS.MAX_ITERATIO
 end
 
 PlotGraphs_SNTLN()
-
+SETTINGS.LOW_RANK_APPROX_REQ_ITE = ite;
 
 %
 

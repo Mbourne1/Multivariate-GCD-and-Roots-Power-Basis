@@ -110,7 +110,7 @@ v_fxy = GetAsVector(fxy);
 % Get vector of coefficients of g(x,y)
 v_gxy = GetAsVector(gxy);
 
-% Test
+% Test Yk
 test1 = Yk * [v_fxy;v_gxy];
 test2 = Ak_fg * xk;
 norm(test1-test2)
@@ -119,7 +119,7 @@ norm(test1-test2)
 % Where P * [f;g] = c_{t}
 Pk = BuildP_RelativeDegree_STLN(m1,m2,n1,n2,idx_col,k1,k2);
 
-% Test
+% Test Pk
 test1 = Pk * [v_fxy;v_gxy];
 test2 = ck;
 norm(test1-test2)
@@ -230,6 +230,7 @@ while condition(ite) >  SETTINGS.MAX_ERROR_SNTLN &&  ite < SETTINGS.MAX_ITERATIO
     
     
 end
+SETTINGS.LOW_RANK_APPROX_REQ_ITE = ite;
 
 LineBreakLarge();
 fprintf([mfilename ' : ' sprintf('Required number of iterations: %i\n',ite)]);

@@ -1,9 +1,9 @@
 function [] = o_gcd_batch
 % Performs a batch of GCD computations for a variety of settings
 
-%ex_num_arr = {'1','2','3','4','5','6','7','8','9','10','11'};
-ex_num_arr = {'1','2'};
-%emin_arr = {1e-7,1e-8,1e-9,1e-10,1e-11,1e-12};
+ex_num_arr = {'1','2','3','4','5','6','7','8','9','10','11'};
+%ex_num_arr = {'1','2'};
+emin_arr = {1e-7,1e-8,1e-9,1e-10,1e-11,1e-12};
 emin_arr = {1e-8,1e-10};
 emax_arr = {1e-12};
 mean_method_arr = {'Geometric Mean Matlab Method','None'};
@@ -37,13 +37,18 @@ for i1 = 1:1:length(ex_num_arr)
                             degree_method = degree_method_arr{i7};
                             
                             
-%                             try
+                            try
                                 close all;
                                 clc;
                                 o_gcd(ex_num, emin, emax, mean_method, bool_alpha_theta, low_rank_approx_method, apf_method, degree_method)
-%                             catch
-%                                 
-%                             end
+                                fileId = fopen('log.txt','a')
+                                fprintf(fileId,'%s','success \n');
+                                fclose(fileId);
+                            catch err
+                                fileId = fopen('log.txt','a')
+                                fprintf(fileId,'%s \n\n\n',getReport(err));
+                                fclose(fileId);
+                            end
                         end
                     end
                 end

@@ -246,8 +246,10 @@ while condition(ite) >  SETTINGS.MAX_ERROR_SNTLN &&  ite < SETTINGS.MAX_ITERATIO
 
 end
 
+SETTINGS.LOW_RANK_APPROX_REQ_ITE = ite;
+LineBreakLarge()
 fprintf([mfilename ' : ' sprintf('Required number of iterations: %i\n',ite)]);
-
+LineBreakLarge()
 PlotGraphs_STLN();
 
 

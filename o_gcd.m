@@ -59,18 +59,29 @@ addpath(...
     'Get Optimal Column',...
     'Get GCD Coefficients',...
     'Plotting',...
+    'Results',...
     'Sylvester Matrix'...
     );
 addpath(genpath('Examples'));
 addpath(genpath('Get GCD Degree'));
-addpath(genpath('Preprocess'));
+addpath(genpath('Preprocessing'));
 addpath(genpath('Low Rank Approximation'));
 
 
 problem_type = 'GCD';
 
+% % Ensure that minimum noise level is less than maximum noise level
+if emin > emax
+    temp = emin;
+    emin = emax;
+    emax = temp;
+end
+
+% Set global variables
 SetGlobalVariables(problem_type, ex_num, emin, emax, mean_method, bool_alpha_theta, low_rank_approx_method, apf_method, degree_method)
 
+% Print Parameters to screen
+fprintf('INPUTS. \n')
 fprintf('EXAMPLE NUMBER %s \n',ex_num)
 fprintf('EMIN : %s \n',emin)
 fprintf('EMAX : %s \n',emax)
@@ -207,12 +218,28 @@ function []= PrintToFile(m,n,t,t1,t2,error)
 
 global SETTINGS
 
-fullFileName = 'Results_o_gcd.txt';
+fullFileName = sprintf('Results/Results_o_gcd%s.txt',datetime('today'));
+
+% If file already exists append a line
+if exist(fullFileName, 'file')
+    
+    fileID = fopen(fullFileName,'a');
+    WriteNewLine()
+    fclose(fileID);
+    
+else % File doesnt exist so create it
+    
+    fileID = fopen( fullFileName, 'wt' );
+    WriteHeader()
+    WriteNewLine()
+    fclose(fileID);
+    
+end
 
 
-if exist('Results_o_gcd.txt', 'file')
-    fileID = fopen('Results_o_gcd.txt','a');
-    fprintf(fileID,'%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s \n',...
+
+    function WriteNewLine()
+       fprintf(fileID,'%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s \n',...
         datetime('now'),...
         SETTINGS.EX_NUM,...
         int2str(m),...
@@ -228,21 +255,15 @@ if exist('Results_o_gcd.txt', 'file')
         SETTINGS.EMIN,...
         SETTINGS.EMAX,...
         SETTINGS.LOW_RANK_APPROXIMATION_METHOD,...
+        int2str(SETTINGS.LOW_RANK_APPROX_REQ_ITE),...
         SETTINGS.APF_METHOD,...
-        SETTINGS.DEGREE_METHOD);
-    fclose(fileID);
-else
-    % File does not exist.
-    warningMessage = sprintf('Warning: file does not exist:\n%s', fullFileName);
-    uiwait(msgbox(warningMessage));
-end
+        SETTINGS.DEGREE_METHOD); 
+    end
 
 
-
-
-
-
-
+    function WriteHeader()
+        fprintf(fileID,'Date,EX_NUM,m,n,t,t1,t2,error_uxy,error_vxy,error_dxy,MEAN_METHOD,BOOL_ALPHA_THETA,EMIN,EMAX,LOW_RANK_APPROXIMATION_METHOD,ITERATIONS,APF_METHOD,DEGREE_METHOD\n');
+    end
 
 
 

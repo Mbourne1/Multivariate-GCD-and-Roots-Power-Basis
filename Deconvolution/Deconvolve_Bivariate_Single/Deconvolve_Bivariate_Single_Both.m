@@ -43,13 +43,8 @@ nNonZeros_gh = GetNumNonZeros(m1,m2,m);
 % % 
 % %
 % Build the matrix C(g)
-C1 = BuildT1(gxy_matrix,m1-n1,m2-n2);
+C1 = BuildT1_Both(gxy_matrix,n,m-n,m1-n1,m2-n2);
 
-% Remove columns of C(g) corresponding to zeros in the vector of h(x)
-C1 = C1(:,1:nNonZeros_hxy);
-
-% Remove the rows of C(g) corresponding to zeros in the vector f(x)
-C1 = C1(1:nNonZeros_gh,:);
 
 % %
 % %

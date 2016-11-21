@@ -142,16 +142,16 @@ display(test1)
 
 % Build the matrix P_{t}
 % Where P * [f;g] = c_{t}
-Pt = BuildP_BothDegree_STLN(m,m1,m2,n,n1,n2,k,k1,k2,idx_col);
-test2a = Pt * [v_fxy;v_gxy];
+Pk = BuildP_BothDegree_STLN(m,m1,m2,n,n1,n2,k,k1,k2,idx_col);
+test2a = Pk * [v_fxy;v_gxy];
 test2b = ck;
-test2 = norm(test2a-test2b)
+test2 = norm(test2a-test2b);
 display(test2)
 
 % Get initial residual (A_{t}+E_{t})x = (c_{t} + h_{t})
 xk = SolveAx_b(Ak_fg+Ak_zfzg,ck+hk);
 
-H_z = Yk - Pt;
+H_z = Yk - Pk;
 
 H_x = Ak_fg + Ak_zfzg;
 
@@ -247,7 +247,7 @@ while condition(ite) >  SETTINGS.MAX_ERROR_SNTLN &&  ite < SETTINGS.MAX_ITERATIO
     res_vec = (ck + hk) - ((Ak_fg + Ak_zfzg) * xk);
     
     % Update the matrix C
-    H_z = Yk - Pt;
+    H_z = Yk - Pk;
     H_x = Ak_fg + Ak_zfzg;
     C = [H_z H_x];
     
@@ -259,8 +259,10 @@ while condition(ite) >  SETTINGS.MAX_ERROR_SNTLN &&  ite < SETTINGS.MAX_ITERATIO
     
     
 end
-
+SETTINGS.LOW_RANK_APPROX_REQ_ITE = ite;
+LineBreakLarge()
 fprintf([mfilename ' : ' sprintf('\nRequired number of iterations: %i\n',ite)]);
+LineBreakLarge()
 
 fxy_lr = fxy_matrix + mat_zf;
 gxy_lr = gxy_matrix + mat_zg;

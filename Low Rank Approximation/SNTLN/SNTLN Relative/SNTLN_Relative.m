@@ -211,7 +211,6 @@ gxy_vec = GetAsVector(gxy);
 
 test1a = Pk*[fxy_vec;gxy_vec];
 test1b = ck;
-[test1a test1b test1a./test1b];
 test1 = (test1a - test1b);
 display(norm(test1));
 
@@ -240,7 +239,6 @@ Yk = BuildY_RelativeDegree_SNTLN(x,m1,m2,n1,n2,k1,k2,alpha(ite),th1(ite),th2(ite
 test2a = Yk * [fxy_vec;gxy_vec];
 test2b = T_fg * x;
 test2 = (test2a - test2b);
-[test2a test2b test2a./test2b];
 display(norm(test2));
 
 % Calculate the initial residual r = ck - (Ak*x)
@@ -574,6 +572,7 @@ while condition(ite) >(SETTINGS.MAX_ERROR_SNTLN) &&  ite < SETTINGS.MAX_ITERATIO
 end
 
 PlotGraphs_SNTLN()
+SETTINGS.LOW_RANK_APPROX_REQ_ITE = ite;
 
 % Once iterations are complete, assign fx output, gx output, solution X
 % output, alpha output and theta output.

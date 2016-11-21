@@ -138,6 +138,8 @@ switch SETTINGS.LOW_RANK_APPROXIMATION_METHOD
         fww_lr = fww;
         gww_lr = gww;
         
+        SETTINGS.LOW_RANK_APPROX_REQ_ITE = 0;
+        
     otherwise
         error([mfilename ' : ' 'LOW_RANK_APPROXIMATION_METHOD' ...
             'must be set to either (Standard STLN) or (Standard SNTLN) or (None)'])
