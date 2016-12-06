@@ -75,9 +75,12 @@ t = t_new;
 
 % If t = 0, then polynomials are coprime, and end function.
 if t == 0
-    uxy = fxy;
-    vxy = gxy;
-    dxy = 1;
+    fxy_o = fxy;
+    gxy_o = gxy;
+    
+    uxy_o = fxy;
+    vxy_o = gxy;
+    dxy_o = 1;
     t = 0;
     t1 = 0;
     t2 = 0;
@@ -140,7 +143,7 @@ idx_col = GetOptimalColumn(fww,alpha.*gww,m,n,t,t1,t2);
 
 
 
-[fxy_lra,gxy_lra,uxy_lra,vxy_lra,dxy_lra,alpha_lra,th1_lra,th2_lra] = APF(fxy_lr, gxy_lr, uxy_lr, vxy_lr, m, n, t, alpha_lr, th1_lr, th2_lr);
+[fxy_lra, gxy_lra, uxy_lra,vxy_lra,dxy_lra, alpha_lra,th1_lra,th2_lra] = APF(fxy_lr, gxy_lr, uxy_lr, vxy_lr, m, n, t, alpha_lr, th1_lr, th2_lr);
 
 
 

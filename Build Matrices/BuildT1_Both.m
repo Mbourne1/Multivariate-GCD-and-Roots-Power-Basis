@@ -1,4 +1,4 @@
-function T1 = BuildT1_Both(fxy,m,n_k,n1_k1,n2_k2)
+function T1 = BuildT1_Both(fxy, m, n_k, n1_k1, n2_k2)
 %
 %
 % % Inputs.

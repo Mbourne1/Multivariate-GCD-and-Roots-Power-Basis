@@ -1,4 +1,4 @@
-function [] = o_roots(ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_approx_method,degree_method)
+function [] = o_roots(ex_num, emin, emax, mean_method, bool_alpha_theta, low_rank_approx_method, apf_method, degree_method)
 % o_roots(ex_num,el,mean_method,bool_alpha_theta,low_rank_approx_method)
 %
 % Given an example number and set of parameters, obtain the roots of the
@@ -21,11 +21,21 @@ function [] = o_roots(ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_app
 %       'n' - Exclude Preprocessing
 %
 % low_rank_approx_method ('y'/'n')
-%       'Standard SNTLN' : Include SNTLN
+%       'Standard SNTLN' : Include Nonlinear SNTLN
+%       'Standard STLN' : Standard Linear STLN
 %       'None'           : Exclude SNTLN
 %
+% apf_method
+%       'Standard APF'
+%       'None'
+%
+% degree_method
+%       'Total'
+%       'Relative'
+%       'Both'
+%
 % % Examples
-% >> o_roots('1', 1e-10, 1e-12, 'Geometric Mean Matlab Method', 'y', 'None')
+% >> o_roots('1', 1e-10, 1e-12, 'Geometric Mean Matlab Method', 'y', 'Standard STLN', 'Standard APF', 'Both')
 
 
 restoredefaultpath
@@ -33,28 +43,37 @@ restoredefaultpath
 % Add subfolders
 addpath(...
     'Build Matrices',...
-    'Deconvolution',...
-    'Deconvolution/Deconvolve_Bivariate_Batch',...
-    'Deconvolution/Deconvolve_Bivariate_Single',...
-    'Examples',...
-    'Examples/Examples_Roots',...
     'Formatting',...
     'GCD Methods',...
     'Get Cofactors',...
     'Get GCD Coefficients',...
     'Get GCD Degree',...
     'Get Optimal Column',...
-    'Low Rank Approx',...
-    'Low Rank Approx/STLN',...
-    'Low Rank Approx/SNTLN',...
     'Plotting',...
-    'Preprocess',...
-    'RootFindingMethods');
+    'RootFindingMethods',...
+    'Sylvester Matrix');
+
+addpath(genpath('APF'));
+addpath(genpath('Examples'));
+addpath(genpath('Get GCD Degree'));
+addpath(genpath('Preprocessing'));
+addpath(genpath('Low Rank Approximation'));
+addpath(genpath('Deconvolution'))
+
 
 % Set the problem type, used in logging to the outputs file.
 problem_type = 'Roots';
 
-SetGlobalVariables(problem_type,ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_approx_method)
+
+if emax < emin
+   temp_min = emax;
+   emax = emin;
+   emin = temp_min;
+   
+end
+
+SetGlobalVariables(problem_type, ex_num, emin, emax, mean_method, ...
+    bool_alpha_theta, low_rank_approx_method, apf_method, degree_method)
 
 % %
 % %
@@ -65,7 +84,7 @@ SetGlobalVariables(problem_type,ex_num,emin,emax,mean_method,bool_alpha_theta,lo
 [fxy_exact, m] = Examples_Roots(ex_num);
 
 % Add noise to the coefficients of polynomial f(x,y)
-[fxy,~] = AddNoiseToPoly2(fxy_exact,emin);
+[fxy,~] = AddVariableNoiseToPoly(fxy_exact, emin, emax);
 
 
 % % 

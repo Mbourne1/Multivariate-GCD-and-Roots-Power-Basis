@@ -3,16 +3,19 @@ function hxy = Deconvolve_Bivariate_Single(fxy,gxy,m,n)
 % obtain h(x,y)
 
 global SETTINGS
-switch SETTINGS.DECONVOLUTION_STYLE
+switch SETTINGS.DEGREE_METHOD
     case 'Total'
         
-        error('err')
+        hxy = Deconvolve_Bivariate_Single_Total(fxy,gxy,m,n);
+        
     case 'Respective'
         
         hxy = Deconvolve_Bivariate_Single_Respective(fxy,gxy);
+        
     case 'Both'
         
         hxy = Deconvolve_Bivariate_Single_Both(fxy,gxy,m,n);
+        
     otherwise
         
         error('err')

@@ -35,7 +35,7 @@ end
         fprintf([mfilename sprintf(' : Roots of x, of degree : %i', i) '\n']);
         factor = wx{i};
         try
-            display(factor./factor(2));
+            display(factor);
         catch
         end
     end
@@ -44,7 +44,7 @@ end
         fprintf([mfilename sprintf(' : Roots of y, of degree : %i', i) '\n']);
         factor = wy{i};
         try
-            display(factor./factor(2));
+            display(factor);
         catch
         end
     end

@@ -13,7 +13,7 @@ function [] = o_Deconvolution(ex_num)
 
 global SETTINGS
 SETTINGS.PLOT_GRAPHS = 'y';
-SETTINGS.MAX_ERROR_DECONVOLUTIONS = 1e-16;
+SETTINGS.MAX_ERROR_DECONVOLUTIONS = 1e-13;
 SETTINGS.MAX_ITERATIONS_DECONVOLUTIONS = 50;
 
 % Add relevant paths
@@ -46,7 +46,13 @@ highest_pwr = max(vMult);
 % Generate polynomials f_{0}(x) ,..., f_{m}(x) = 1. Where each f_{i+1}(x) is
 % the f_{i+1} = GCD(f_{i},f'_{i}).
 arr_sym_fxy = cell(highest_pwr+1,1);
-vDegt_arr_fxy = zeros(highest_pwr+1,1);
+
+% Initialise a vector to store total degress of polynomials f_{i}(x,y)
+vDeg_t_arr_fxy = zeros(highest_pwr+1,1);
+
+% Initialise vectors to store degrees of f_{i}(x,y) with respect to x and y
+vDeg_x_arr_fxy = zeros(highest_pwr+1,1);
+vDeg_y_arr_fxy = zeros(highest_pwr+1,1);
 
 for i = 0:1:highest_pwr
     
@@ -57,12 +63,20 @@ for i = 0:1:highest_pwr
     arr_sym_fxy{i+1} = prod(factor.^(mults));
     
     % Get total degree of f_{i+1}(x,y)
-    vDegt_arr_fxy(i+1) = double(feval(symengine, 'degree', (arr_sym_fxy{i+1})));
+    vDeg_t_arr_fxy(i+1) = double(feval(symengine, 'degree', (arr_sym_fxy{i+1})));
+    
+    % Get the degree of f_{i+1} with respect to x
+    vDeg_x_arr_fxy(i+1) = double(feval(symengine, 'degree', (arr_sym_fxy{i+1}),x));
+    
+    % Get the degree of f_{i+1} with respect to x
+    vDeg_y_arr_fxy(i+1) = double(feval(symengine, 'degree', (arr_sym_fxy{i+1}),y));
+    
+    %m1 = double(feval(symengine, 'degree', symbolic_poly,x));
 end
 
 
 % Get the degree structure of the polynomials h_{i}
-vDegt_arr_hxy = abs(diff(vDegt_arr_fxy));
+vDegt_arr_hxy = abs(diff(vDeg_t_arr_fxy));
 
 % Get the degree structure of the polynomials w_{i}
 deg_struct_w = abs(diff([vDegt_arr_hxy; 0]));
@@ -103,7 +117,7 @@ nPolys_arr_fxy = size(arr_fxy,1);
 % Ensure that each f_{i}(x,y) is in a matrix of size m+1 x m+1
 arr_fxy_total = cell(nPolys_arr_fxy,1);
 for i = 1:1:nPolys_arr_fxy
-    m = vDegt_arr_fxy(i);
+    m = vDeg_t_arr_fxy(i);
     temp_mat = zeros(m+1,m+1);
     [nRows,nCols] = size(arr_fxy{i});
     temp_mat(1:nRows,1:nCols) = arr_fxy{i};
@@ -147,12 +161,12 @@ my_error.Separate_Relative = (norm(vErrors_Separate_Relative));
 % Intialise array
 arr_hxy_Separate_Total = cell(nPolys_arr_hxy,1);
 
-for i = 1:1:nPolys_arr_fxy - 1;
+for i = 1:1:nPolys_arr_fxy - 1
    
    fxy = arr_fxy{i};
-   m = vDegt_arr_fxy(i);
+   m = vDeg_t_arr_fxy(i);
    gxy = arr_fxy{i+1};
-   n = vDegt_arr_fxy(i+1);
+   n = vDeg_t_arr_fxy(i+1);
    
    arr_hxy_Separate_Total{i} = Deconvolve_Bivariate_Single_Total(fxy,gxy,m,n);
 end
@@ -167,12 +181,12 @@ my_error.Separate_Total = (norm(vErrors_Separate_Total));
 % Intialise array
 arr_hxy_Separate_Both = cell(nPolys_arr_hxy,1);
 
-for i = 1:1:nPolys_arr_fxy - 1;
+for i = 1:1:nPolys_arr_fxy - 1
     
     fxy = arr_fxy{i};
-    m = vDegt_arr_fxy(i);
+    m = vDeg_t_arr_fxy(i);
     gxy = arr_fxy{i+1};
-    n = vDegt_arr_fxy(i+1);
+    n = vDeg_t_arr_fxy(i+1);
     
    arr_hxy_Separate_Both{i} = Deconvolve_Bivariate_Single_Both(fxy,gxy,m,n);
 end
@@ -183,18 +197,18 @@ my_error.Separate_Both = (norm(vErrors_Separate_Both));
 %
 %   TESTING : BATCH - TOTAL
 %
-arr_hxy_Batch_Total = Deconvolve_Bivariate_Batch_Total(arr_fxy_total,vDegt_arr_fxy);
+arr_hxy_Batch_Total = Deconvolve_Bivariate_Batch_Total(arr_fxy_total,vDeg_t_arr_fxy);
 
 % Get vector of error of each h_{i}(x,y) as a vector
 vErrors_Batch_Total = GetError(arr_hxy_Batch_Total,arr_hxy_total);
-my_error.Batch_Total = (norm(vErrors_Batch_Total))
+my_error.Batch_Total = (norm(vErrors_Batch_Total));
 
 %--------------------------------------------------------------------------
 % 
 %   TESTING : BATCH - RESPECTIVE
 %
 % 
-arr_hxy_Batch_Relative = Deconvolve_Bivariate_Batch_Respective(arr_fxy,vDegt_arr_fxy);
+arr_hxy_Batch_Relative = Deconvolve_Bivariate_Batch_Respective(arr_fxy,vDeg_t_arr_fxy);
 
 % Get vector of error of each h_{i}(x,y) as a vector
 vErrors_Batch_Relative = GetError(arr_hxy_Batch_Relative,arr_hxy);
@@ -204,7 +218,7 @@ my_error.Batch_Relative = (norm(vErrors_Batch_Relative));
 %   TESTING : BATCH - BOTH  
 % 
 
-arr_hxy_Batch_Both = Deconvolve_Bivariate_Batch_Both(arr_fxy,vDegt_arr_fxy);
+arr_hxy_Batch_Both = Deconvolve_Bivariate_Batch_Both(arr_fxy, vDeg_t_arr_fxy, vDeg_x_arr_fxy, vDeg_y_arr_fxy);
 
 % Get vector of error of each h_{i}(x,y) as a vector
 vErrors_Batch_Both = GetError(arr_hxy_Batch_Both, arr_hxy);
@@ -212,12 +226,14 @@ my_error.Batch_Both = (norm(vErrors_Batch_Both));
 
 %-------------------------------------------------------------------------
 
-PrintToResultsFile(ex_num,bool_preproc,emin,my_error);
+display(my_error)
+
+PrintToResultsFile(ex_num,my_error);
 
 
 end
 
-function [] = PrintToResultsFile(ex_num, bool_preproc, emin, my_error)
+function [] = PrintToResultsFile(ex_num, my_error)
 %
 % % Inputs
 %
@@ -247,11 +263,9 @@ end
     function WriteNewLine()
         
         %
-        fprintf(fileID,'%s,%s,%s,%s,%s,%s,%s,%s,%s,%s \n',...
+        fprintf(fileID,'%s,%s,%s,%s,%s,%s,%s,%s \n',...
             datetime('now'),...
             ex_num,...
-            bool_preproc,...
-            emin,...
             my_error.Separate_Total,...
             my_error.Separate_Relative,...
             my_error.Separate_Both ,...

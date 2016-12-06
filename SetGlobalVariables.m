@@ -1,5 +1,30 @@
 function [] =  SetGlobalVariables(problem_type, ex_num, emin, emax, ...
     mean_method, bool_alpha_theta, low_rank_approx_method, apf_method, degree_method)
+% SetGlobalVariables()
+%
+%
+% % Inputs
+%
+% problem_type
+%
+% ex_num
+%
+% emin
+%
+% emax 
+%
+% mean_method
+%
+% bool_alpha_theta
+%
+% low_rank_approx_method
+%
+% apf_method
+%
+% degree_method
+%
+% % Outputs
+
 
 global SETTINGS
 
@@ -83,13 +108,6 @@ SETTINGS.APF_METHOD = apf_method;
 %
 %
 
-
-%
-% Total - Use total degree
-% Respective - Use degree with respect to x and y
-% Both - Use total and respective combined
-%
-SETTINGS.DECONVOLUTION_STYLE = 'Both';
 
 % 
 % Batch - Perform batch of deconvolutions together

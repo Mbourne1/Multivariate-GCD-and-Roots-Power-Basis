@@ -587,6 +587,7 @@ while condition(ite) >(SETTINGS.MAX_ERROR_SNTLN) &&  ite < SETTINGS.MAX_ITERATIO
 end
 
 PlotGraphs_SNTLN();
+
 SETTINGS.LOW_RANK_APPROX_REQ_ITE = ite;
 
 

@@ -53,6 +53,8 @@ switch SETTINGS.APF_METHOD
     case 'Standard Linear APF'
         
         error([mfilename ' : Method not developed']);
+    otherwise 
+        error([mfilename ' : Error'])
         
 end
 
