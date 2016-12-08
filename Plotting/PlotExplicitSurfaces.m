@@ -1,7 +1,26 @@
-function [] = PlotExplicitSurfaces(aPoly)
+function [] = PlotExplicitSurfaces(arr_Poly)
 % Given a set of Explicitly defined surfaces z=f(x,y), print the plots.
+%
+% % Inputs
+%
+% arr_Poly : Array of Bivariate Polynomials
 
-nPolys = length(aPoly);
+
+syms x y
+
+figure()
+hold on
+for i = 1:1:length(arr_Poly)
+    myPoly = sympoly(arr_Poly{i})
+    fsurf(myPoly,[-1,1,-1,1]);
+end
+hold off
+
+
+
+
+
+nPolys = length(arr_Poly);
 
 % Given an array of bivariate polynomials of the form f(x,y), plot the
 % surfaces z = f(x,y).
@@ -33,7 +52,7 @@ for k = 1:1:nPolys
         for j = 1:1:length(y_val_vec)
             % Get the z values
             z{k}(i,j) = Evaluate_PowerPoly_Bivariate(x_val_vec(i),y_val_vec(j),...
-                aPoly{k});
+                arr_Poly{k});
             
         end
     end
@@ -51,5 +70,16 @@ end
 legend(gca,'show')
 hold off
 
+
+end
+
+function symp = sympoly(fxy)
+
+syms x y;
+% Get degree
+[m1,m2] = GetDegree(fxy);
+vec_x = x.^(0:1:m1);
+vec_y = y.^(0:1:m2)';
+symp = vec_x * fxy * vec_y;
 
 end

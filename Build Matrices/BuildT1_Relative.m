@@ -1,4 +1,4 @@
-function T1 = BuildT1_Relative(fxy_matrix,n1_k1,n2_k2)
+function T1 = BuildT1_Relative(fxy_matrix, n1_k1, n2_k2)
 % Given the polynomial f(x,y) build the partition T(f) of the Sylvester
 % matrix S(f,g) = [T(f) T(g)]. 
 % T() * v = T(g) * u, so [T(f) T(g)] * [v -u] = 0

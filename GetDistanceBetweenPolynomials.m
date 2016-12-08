@@ -15,6 +15,9 @@ function [dist] = GetDistanceBetweenPolynomials(fxy_exact,fxy_computed,name)
 % total degree.
 fxy_computed = Normalise(fxy_computed);
 fxy_exact = Normalise(fxy_exact);
+
+
+
 %fxy_computed - fxy_exact
 
 try
