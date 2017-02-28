@@ -1,4 +1,4 @@
-function [] = PlotCoefficients(fxy,fww,name)
+function [] = PlotCoefficients(fxy, fww, name)
 % PlotCoefficients(fxy,fww,name)
 %
 % Plot the coefficients of the polynomial f(x,y) and f(w,w)
@@ -11,14 +11,14 @@ function [] = PlotCoefficients(fxy,fww,name)
 
 global SETTINGS
 
-switch SETTINGS.PLOT_GRAPHS
-    case 'y'
+if(SETTINGS.PLOT_GRAPHS)
+    
         
         % Get Degree of polynomial f(x,y)
-        [m1,m2] = GetDegree(fxy);
+        [m1, m2] = GetDegree_Bivariate(fxy);
         
         % Get total number of coefficients in f(x,y)
-        num_coeff_f = (m1 + 1) * (m2 + 1);
+        nCoefficients_fxy = (m1 + 1) * (m2 + 1);
         
         % Get vector of coefficients of f(x,y)
         v_fxy = GetAsVector(fxy);
@@ -31,7 +31,7 @@ switch SETTINGS.PLOT_GRAPHS
         
         title_label = sprintf('- Coefficients %s(x,y)',name);
         
-        x_axis_f = (1:1:num_coeff_f);
+        x_axis_f = (1:1:nCoefficients_fxy);
         figure('name',strcat(mfilename(),title_label))
         hold on
         plot(x_axis_f, real(log10(v_fxy)), '-s','DisplayName',label1)
@@ -42,6 +42,5 @@ switch SETTINGS.PLOT_GRAPHS
         legend(gca,'show')
         hold off
         
-    case 'n'
-end
+  
 end

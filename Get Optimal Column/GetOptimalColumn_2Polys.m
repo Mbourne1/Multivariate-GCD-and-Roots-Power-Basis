@@ -30,7 +30,7 @@ switch SETTINGS.DEGREE_METHOD
     case 'Total'
         
         % Build the kth Sylvester matrix
-        Sk = BuildSylvesterMatrix_Total_2Polys(fxy, gxy, m, n, k);
+        Sk = BuildT_Total_Bivariate_2Polys(fxy, gxy, m, n, k);
         
         % Get optimal column for removal
         idx_col = GetOptimalColumn_Total(Sk);
@@ -38,7 +38,7 @@ switch SETTINGS.DEGREE_METHOD
     case 'Relative'
         
         % Build the kth Sylvester matrix
-        Sk1k2 = BuildSylvesterMatrix_Relative_2Polys(fxy, gxy, k1, k2);
+        Sk1k2 = BuildT_Relative_Bivariate_2Polys(fxy, gxy, k1, k2);
         
         % Get optimal column for removal
         idx_col = GetOptimalColumn_Relative(Sk1k2);
@@ -46,7 +46,7 @@ switch SETTINGS.DEGREE_METHOD
     case 'Both'
         
         % Build the kth Sylvester matrix
-        Skk1k2 = BuildSylvesterMatrix_Both_2Polys(fxy, gxy, m, n, k, k1, k2);
+        Skk1k2 = BuildT_Both_Bivariate_2Polys(fxy, gxy, m, n, k, k1, k2);
         
         % Get Optimal column for removal
         idx_col = GetOptimalColumn_Both(Skk1k2);

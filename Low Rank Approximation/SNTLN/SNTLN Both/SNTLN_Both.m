@@ -7,9 +7,9 @@ function [ fxy_lr, gxy_lr, uxy_lr, vxy_lr, alpha_lr,th1_lr,th2_lr] = ...
 %
 % % Inputs:
 %
-% fxy_matrix : Coefficients of polynomial f, in standard bernstein basis.
+% fxy : Coefficients of polynomial f, in standard bernstein basis.
 %
-% gxy_matrix : Coefficients of polynomial g, in standard bernstein basis.
+% gxy : Coefficients of polynomial g, in standard bernstein basis.
 %
 % i_alpha : Initial value of alpha
 %
@@ -63,10 +63,10 @@ th2(ite) = i_th2;
 alpha(ite) = i_alpha;
 
 % Get degree of polynomials f(x,y)
-[m1,m2] = GetDegree(fxy);
+[m1, m2] = GetDegree_Bivariate(fxy);
 
 % Get degree of polynomial g(x,y)
-[n1,n2] = GetDegree(gxy);
+[n1, n2] = GetDegree_Bivariate(gxy);
 
 % Get the number of coefficients in the polynomial f(x,y)
 nCoeffs_fxy =  (m1+1) * (m2+1);

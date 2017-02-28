@@ -1,5 +1,5 @@
 
-function [sum] = Evaluate_PowerPoly_Bivariate(t1,t2,fxy)
+function [sum] = Evaluate_PowerPoly_Bivariate(t1, t2, fxy)
 % % Given a bivariate polynomial in matrix form, evaluate the polynomial
 % for a given point (t1,t2)
 
@@ -18,7 +18,7 @@ function [sum] = Evaluate_PowerPoly_Bivariate(t1,t2,fxy)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Get the degree of the polynomial with respect to x
-[m1,m2] = GetDegree(fxy);
+[m1,m2] = GetDegree_Bivariate(fxy);
 
 % Perform a summing function to evaluate the curve at the given point
 sum = 0;

@@ -1,4 +1,4 @@
-function [lambda,mu,alpha,th1,th2] = Preprocess_Relative(fxy,gxy)
+function [lambda,mu,alpha,th1,th2] = Preprocess_Relative(fxy, gxy)
 % Preprocess the polynomial f(x,y) and g(x,y), and return the geometric
 % means and optimal alphas and thetas from the preprocessing.
 %
@@ -27,10 +27,10 @@ function [lambda,mu,alpha,th1,th2] = Preprocess_Relative(fxy,gxy)
 global SETTINGS
 
 % Get degree of f(x,y)
-[m1,m2] = GetDegree(fxy);
+[m1, m2] = GetDegree_Bivariate(fxy);
 
 % Get degree of g(x,y)
-[n1,n2] = GetDegree(gxy);
+[n1, n2] = GetDegree_Bivariate(gxy);
 
 % Get mean of f(x,y) in entries of C_{}(f)
 lambda = GetMean(fxy);
@@ -90,10 +90,14 @@ switch SETTINGS.BOOL_ALPHA_THETA
         v_gxy = GetAsVector(gxy_n);
         v_gww = GetAsVector(gww);
         
-        % Plot the coefficients of f(x,y) and f(w,w)
-        PlotCoefficients(v_fxy,v_fww,'f')
-        % Plot the coefficients of g(x,y) and g(w,w)
-        PlotCoefficients(v_gxy,alpha.*v_gww,'g')
+        
+        
+        if (SETTINGS.PLOT_GRAPHS)
+            % Plot the coefficients of f(x,y) and f(w,w)
+            PlotCoefficients(v_fxy,v_fww,'f')
+            % Plot the coefficients of g(x,y) and g(w,w)
+            PlotCoefficients(v_gxy,alpha.*v_gww,'g')
+        end
         
         % Get maximum coefficient of f(x)
         max_fx = max(abs(v_fxy(v_fxy~=0)));
@@ -105,7 +109,7 @@ switch SETTINGS.BOOL_ALPHA_THETA
         % Get minimum coefficient of g(x)
         min_gx = min(abs(v_gxy(v_gxy~=0)));
         
-        PrintToFile([m1,m2],[n1,n2],max_fx,min_fx,max_gx,min_gx,1,1,1);
+        PrintToFile([m1,m2], [n1,n2], max_fx, min_fx, max_gx, min_gx, 1, 1, 1);
         
         
         % Get maximum coefficient of f(x)
@@ -125,8 +129,8 @@ switch SETTINGS.BOOL_ALPHA_THETA
         PrintToFile([m1,m2],[n1,n2],max_fw,min_fw,max_gw,min_gw,alpha,th1,th2);
         
         
-        str1 = sprintf('Condition S(f(x),g(x)) : %2.4e', cond(BuildSylvesterMatrix_Relative_2Polys(fxy,gxy,1,1)));
-        str2 = sprintf('Condition S(f(w),alpha*g(w)) : %2.4e', cond(BuildSylvesterMatrix_Relative_2Polys(fww,alpha.*gww,1,1)));
+        str1 = sprintf('Condition S(f(x),g(x)) : %2.4e', cond(BuildT_Relative_Bivariate_2Polys(fxy, gxy, 1, 1)));
+        str2 = sprintf('Condition S(f(w),alpha*g(w)) : %2.4e', cond(BuildT_Relative_Bivariate_2Polys(fww, alpha.*gww, 1, 1)));
         
         fprintf([mfilename ' : ' str1 '\n']);
         fprintf([mfilename ' : ' str2 '\n']);
@@ -196,6 +200,6 @@ end
     end
 
     function WriteHeader()
-       fprintf(fileID,'DATE,EX_NUM,m1,m2,n1,n2,max_fx,min_fx,max_gx,min_gx,alpha,th1,th2');
+        fprintf(fileID,'DATE,EX_NUM,m1,m2,n1,n2,max_fx,min_fx,max_gx,min_gx,alpha,th1,th2');
     end
 end

@@ -11,7 +11,7 @@ global SETTINGS
 rng(SETTINGS.SEED)
 
 % Get the degrees of polynomial f(x,y)
-[m1,m2] = GetDegree(fxy);
+[m1, m2] = GetDegree_Bivariate(fxy);
 
 % Obtain a matrix of randomly distributed numbers between [-1 and 1]
 rp = (2*rand(m1+1,m2+1))-ones(m1+1,m2+1);

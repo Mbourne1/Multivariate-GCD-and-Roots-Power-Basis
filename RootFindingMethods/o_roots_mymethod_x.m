@@ -14,7 +14,7 @@ arr_fxy{1} = fxy_matrix;
 vDeg_t_arr_fxy(ite,1) = M(ite);
 
 % Get the degree of f(x,y) with respect to x and y
-[m1,m2] = GetDegree(arr_fxy{ite});
+[m1, m2] = GetDegree_Bivariate(arr_fxy{ite});
 vDeg_x_arr_fxy(ite,1) = m1;
 vDeg_y_arr_fxy(ite,1) = m2;
 
@@ -68,7 +68,7 @@ while vDeg_x_arr_fxy(ite,1) > 0
     
     % GCD is only a scalar with respect to x so set equal to g(x,y).
 
-    [arr_fxy{ite,1},~,arr_fxy{ite+1,1},arr_uxy{ite,1},arr_vxy{ite,1},t,t1,t2] = o_gcd_mymethod(arr_fxy{ite},gxy,m,n,[lower_lim, upper_lim]);
+    [arr_fxy{ite,1},~,arr_fxy{ite+1,1},arr_uxy{ite,1},arr_vxy{ite,1},t,t1,t2] = o_gcd_mymethod_2Polys(arr_fxy{ite},gxy,m,n,[lower_lim, upper_lim]);
     
     % Get total degree of d(x,y) and degree with respect to x and y
     

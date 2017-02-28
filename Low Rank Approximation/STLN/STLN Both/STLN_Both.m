@@ -1,4 +1,4 @@
-function [fxy_lr,gxy_lr,uxy_lr,vxy_lr] = STLN_Both(fxy_matrix,gxy_matrix,m,n,k,k1,k2,idx_col)
+function [fxy_lr,gxy_lr,uxy_lr,vxy_lr] = STLN_Both(fxy, gxy, m, n, k, k1, k2, idx_col)
 % STLN(fxy,gxy,m,n,t1,t2,opt_col)
 %
 % Given coefficients f(x,y) and g(x,y) find the low rank approximation of
@@ -8,13 +8,9 @@ function [fxy_lr,gxy_lr,uxy_lr,vxy_lr] = STLN_Both(fxy_matrix,gxy_matrix,m,n,k,k
 %
 % % Inputs.
 %
-% fxy_matrix : Coefficients of polynomial f(x,y)
+% [fxy, gxy] : Coefficients of polynomial f(x,y) and g(x,y)
 %
-% gxy_matrix : Coefficients of polynomial g(x,y)
-%
-% m : total degree of f(x,y)
-%
-% n : total degree of g(x,y)
+% [m, n] : Total degree of f(x,y) and g(x,y)
 %
 % k : Degree of d(x,y)
 %
@@ -37,10 +33,10 @@ function [fxy_lr,gxy_lr,uxy_lr,vxy_lr] = STLN_Both(fxy_matrix,gxy_matrix,m,n,k,k
 global SETTINGS
 
 % Get degree of polynomials f(x,y)
-[m1,m2] = GetDegree(fxy_matrix);
+[m1, m2] = GetDegree_Bivariate(fxy);
 
 % Get degree of polynomial g(x,y)
-[n1,n2] = GetDegree(gxy_matrix);
+[n1, n2] = GetDegree_Bivariate(gxy);
 
 % Get the number of coefficients in the polynomial f(x,y)
 nCoeff_fxy = (m1+1) * (m2+1);
@@ -60,14 +56,14 @@ nZeros_vxy = nCoeff_vxy - nNonZeros_vxy;
 
 % Get number of zeros in u(x,y)
 nCoeff_uxy = (m1-k1+1) * (m2-k2+1);
-nNonZeros_uxy = GetNumNonZeros(m1-k1,m2-k2,m-k);
+nNonZeros_uxy = GetNumNonZeros(m1-k1, m2-k2, m-k);
 nZeros_uxy = nCoeff_uxy - nNonZeros_uxy;
 
 % Build the matrix T_{n1-k1,n2-k2}(f)
-Tf = BuildT1_Both(fxy_matrix,m,n-k,n1-k1,n2-k2);
+Tf = BuildT1_Both_Bivariate(fxy, m, n-k, n1-k1, n2-k2);
 
 % Build the matrix T_{m1-k1,m2-k2}(g)
-Tg = BuildT1_Both(gxy_matrix,n,m-k,m1-k1,m2-k2);
+Tg = BuildT1_Both_Bivariate(gxy, n, m-k, m1-k1, m2-k2);
 
 % Remove the columns of T(f) and T(g) which correspond to the zeros in u(x,y)
 % and v(x,y) which are removed from the solution vector x.
@@ -126,13 +122,13 @@ x = ...
 
 % Build the matrix Y_{t}
 % Where Y(x) * z = E(z) * x
-Yk = BuildY_BothDegree_STLN(x,m,m1,m2,n,n1,n2,k,k1,k2);
+Yk = BuildY_BothDegree_STLN(x, m, m1, m2, n, n1, n2, k, k1, k2);
 
 % Test Y_{k}
-v_fxy = GetAsVector(fxy_matrix);
+v_fxy = GetAsVector(fxy);
 v_fxy = v_fxy(1:nNonZeros_fxy,:);
 
-v_gxy = GetAsVector(gxy_matrix);
+v_gxy = GetAsVector(gxy);
 v_gxy = v_gxy(1:nNonZeros_gxy,:);
 
 test1a = Yk * [v_fxy;v_gxy];
@@ -142,7 +138,7 @@ display(test1)
 
 % Build the matrix P_{t}
 % Where P * [f;g] = c_{t}
-Pk = BuildP_BothDegree_STLN(m,m1,m2,n,n1,n2,k,k1,k2,idx_col);
+Pk = BuildP_BothDegree_STLN(m, m1, m2, n, n1, n2, k, k1, k2, idx_col);
 test2a = Pk * [v_fxy;v_gxy];
 test2b = ck;
 test2 = norm(test2a-test2b);
@@ -220,8 +216,8 @@ while condition(ite) >  SETTINGS.MAX_ERROR_SNTLN &&  ite < SETTINGS.MAX_ITERATIO
         ,n1,n2);
     
     % Build the matrix B_{t} = [E1(zf) E2(zg)]
-    T1_zf = BuildT1_Both(mat_zf,m,n-k,n1-k1,n2-k2);
-    T1_zg = BuildT1_Both(mat_zg,n,m-k,m1-k1,m2-k2);
+    T1_zf = BuildT1_Both_Bivariate(mat_zf, m, n-k, n1-k1, n2-k2);
+    T1_zg = BuildT1_Both_Bivariate(mat_zg, n, m-k, m1-k1, m2-k2);
     
     % Build the matrix B_{t} equivalent to S_{t}
     St_zfzg = [T1_zf T1_zg];
@@ -241,7 +237,7 @@ while condition(ite) >  SETTINGS.MAX_ERROR_SNTLN &&  ite < SETTINGS.MAX_ITERATIO
         xk(idx_col:end)];
     
     % Build the matrix Y_{t} where Y_{t}(x)*z = E_{t}(z) * x
-    Yk = BuildY_BothDegree_STLN(x,m,m1,m2,n,n1,n2,k,k1,k2);
+    Yk = BuildY_BothDegree_STLN(x, m, m1, m2, n, n1, n2, k, k1, k2);
     
     % Get the residual vector
     res_vec = (ck + hk) - ((Ak_fg + Ak_zfzg) * xk);
@@ -259,13 +255,14 @@ while condition(ite) >  SETTINGS.MAX_ERROR_SNTLN &&  ite < SETTINGS.MAX_ITERATIO
     
     
 end
+
 SETTINGS.LOW_RANK_APPROX_REQ_ITE = ite;
 LineBreakLarge()
 fprintf([mfilename ' : ' sprintf('\nRequired number of iterations: %i\n',ite)]);
 LineBreakLarge()
 
-fxy_lr = fxy_matrix + mat_zf;
-gxy_lr = gxy_matrix + mat_zg;
+fxy_lr = fxy + mat_zf;
+gxy_lr = gxy + mat_zg;
 
 x = [...
     xk(1:idx_col-1);...
@@ -276,8 +273,8 @@ x = [...
 vec_vxy = x(1:nNonZeros_vxy);
 vec_uxy = -1.* x(nNonZeros_vxy+1:end);
 
-vxy_lr = GetAsMatrix([vec_vxy ; zeros(nZeros_vxy,1)],n1-k1,n2-k2);
-uxy_lr = GetAsMatrix([vec_uxy ; zeros(nZeros_uxy,1)],m1-k1,m2-k2);
+vxy_lr = GetAsMatrix([vec_vxy ; zeros(nZeros_vxy,1)], n1-k1, n2-k2);
+uxy_lr = GetAsMatrix([vec_uxy ; zeros(nZeros_uxy,1)], m1-k1, m2-k2);
 
 PlotGraphs_STLN()
 

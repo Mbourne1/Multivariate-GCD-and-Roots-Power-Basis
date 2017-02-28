@@ -58,10 +58,10 @@ th2(ite) = i_th2;
 alpha(ite) = i_alpha;
 
 % Get degree of polynomials f.
-[m1,m2] = GetDegree(fxy);
+[m1, m2] = GetDegree_Bivariate(fxy);
 
 % Get degree of polynomial g.
-[n1,n2] = GetDegree(gxy);
+[n1, n2] = GetDegree_Bivariate(gxy);
 
 % Get the number of coefficients in the polynomial f(x,y)
 nCoeffs_fxy = (m1+1) * (m2+1);

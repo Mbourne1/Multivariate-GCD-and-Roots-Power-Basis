@@ -1,4 +1,4 @@
-function [alpha,theta1,theta2] = OptimalAlphaAndTheta_Relative(fxy_matrix, gxy_matrix)
+function [alpha,theta1,theta2] = OptimalAlphaAndTheta_Relative(fxy, gxy)
 % OptimalAlphaAndTheta(fxy_matrix, gxy_matrix)
 %
 % Obtain the optimal values of alpha, theta1 and theta2 for the Sylvester 
@@ -16,8 +16,8 @@ f = [1 -1 0 0 0];
 
 % get the degree of polynomial f and g
 
-[m1,m2] = GetDegree(fxy_matrix);
-[n1,n2] = GetDegree(gxy_matrix);
+[m1, m2] = GetDegree_Bivariate(fxy);
+[n1, n2] = GetDegree_Bivariate(gxy);
 
 nEntries_f = (m1 + 1) * (m2 + 1);
 nEntries_g = (n1 + 1) * (n2 + 1);
@@ -67,10 +67,10 @@ PartFour = ...
 
 
 % Now build the vector b = [\lambda ; \mu ;  \rho ;  \tau]
-lambda_vec = GetAsVector(abs(fxy_matrix));
-mu_vec = GetAsVector(abs(gxy_matrix));
-rho_vec = GetAsVector(abs(fxy_matrix));
-tau_vec = GetAsVector(abs(gxy_matrix));
+lambda_vec = GetAsVector(abs(fxy));
+mu_vec = GetAsVector(abs(gxy));
+rho_vec = GetAsVector(abs(fxy));
+tau_vec = GetAsVector(abs(gxy));
 
 
 % 

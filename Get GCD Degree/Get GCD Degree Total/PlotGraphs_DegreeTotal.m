@@ -1,8 +1,15 @@
 global SETTINGS
-switch SETTINGS.PLOT_GRAPHS
-    case 'y'
-        x = lower_lim_comp:1:upper_lim_comp;
-        
+if(SETTINGS.PLOT_GRAPHS)
+    
+    
+    plot_R_diagonals = false;
+    plot_MinSingularValues = true;
+    plot_QRMaxMinDiags = false;
+    plot_QRMaxMinRowSum = false;
+    
+    x = lower_lim_comp:1:upper_lim_comp;
+    
+    if plot_R_diagonals == true
         figure_name = sprintf('%s - R Diagonals',mfilename);
         figure('name',figure_name)
         hold on
@@ -15,8 +22,9 @@ switch SETTINGS.PLOT_GRAPHS
         vline(upper_lim,'b','');
         hold off
         MySave('TotalDegree_RDiagonals');
-        
-        
+    end
+    
+    if plot_MinSingularValues == true
         figure_name = sprintf('%s - Minimum Singular Values',mfilename);
         figure('name',figure_name)
         titleString = sprintf(['Minimal singular values of each subresultant S_{k} \n']);
@@ -30,7 +38,9 @@ switch SETTINGS.PLOT_GRAPHS
         vline(upper_lim,'b','');
         hold off
         MySave('TotalDegree_MinimumSingularValues');
-        
+    end
+    
+    if plot_QRMaxMinDiags == true
         % plot all the largest ratios for k = 1,...,min(m,n)
         figure_name = sprintf('%s - QR max:min diagonals',mfilename);
         figure('name',figure_name)
@@ -45,7 +55,9 @@ switch SETTINGS.PLOT_GRAPHS
         vline(upper_lim,'b','');
         hold off
         MySave('TotalDegree_RatioMaxMinDiagonals');
-        
+    end
+    
+    if plot_QRMaxMinRowSum == true
         figure_name = sprintf('%s - QR max:min Row Sum',mfilename);
         figure('name',figure_name)
         hold on
@@ -59,7 +71,7 @@ switch SETTINGS.PLOT_GRAPHS
         vline(upper_lim,'b','');
         hold off
         MySave('TotalDegree_RatioMaxMinRowSum');
-    case 'n'
-    otherwise
-        error('plot_graphs is either y or n')
+    end
+    
+    
 end

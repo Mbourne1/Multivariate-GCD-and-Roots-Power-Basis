@@ -8,8 +8,8 @@ f = [1 -1 0 0 0];
 
 %%
 % get the degree of polynomial f and g
-[m1,m2] = GetDegree(fxy_matrix);
-[n1,n2] = GetDegree(gxy_matrix);
+[m1, m2] = GetDegree_Bivariate(fxy_matrix);
+[n1, n2] = GetDegree_Bivariate(gxy_matrix);
 
 % Get the number of non-zeros in f(x,y) and g(x,y)
 nNonZeros_fxy = GetNumNonZeros(m1,m2,m);

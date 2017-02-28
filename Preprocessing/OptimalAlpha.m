@@ -19,10 +19,10 @@ function [alpha] = OptimalAlpha(fxy_matrix, gxy_matrix)
 f = [1 -1 0];
 
 % Get the degree of polynomial f(x,y) with respect to x and y
-[m1,m2] = GetDegree(fxy_matrix);
+[m1, m2] = GetDegree_Bivariate(fxy_matrix);
 
 % Get the degree of polynomial g(x,y) with respect to x and y.
-[n1,n2] = GetDegree(gxy_matrix);
+[n1, n2] = GetDegree_Bivariate(gxy_matrix);
 
 % Get the number of coefficients of f(x,y)
 nEntries_f = (m1 + 1) * (m2 + 1);

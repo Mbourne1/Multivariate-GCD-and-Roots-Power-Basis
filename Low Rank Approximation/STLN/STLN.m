@@ -4,13 +4,9 @@ function [fxy_lr, gxy_lr, uxy_lr, vxy_lr] = STLN(fxy,gxy,m,n,k,k1,k2,idx_col)
 %
 % % Inputs.
 %
-% fxy : Coefficients of polynomial f(x,y)
+% [fxy, gxy] : Coefficients of polynomial f(x,y) and g(x,y)
 %
-% gxy : Coefficients of polynomial g(x,y)
-%
-% m : Total degree of f(x,y)
-%
-% n : Total degree of g(x,y)
+% [m, n] : Total degree of f(x,y) and g(x,y)
 %
 % k : Total degree of d(x,y)
 %
@@ -38,7 +34,6 @@ switch SETTINGS.DEGREE_METHOD
         [fxy_lr, gxy_lr, uxy_lr, vxy_lr] = STLN_Total(fxy, gxy, m, n, k, idx_col);
         
         
-        
     case 'Relative'
         
         
@@ -46,8 +41,8 @@ switch SETTINGS.DEGREE_METHOD
         [fxy_lr, gxy_lr, uxy_lr, vxy_lr] = STLN_Relative(fxy,gxy,k1,k2,idx_col);
         
         
-        BuildSylvesterMatrix_Relative(fxy,gxy,k1,k2);
-        BuildSylvesterMatrix_Relative(fxy_lr,gxy_lr,k1,k2);
+        BuildT_Relative_Bivariate_2Polys(fxy, gxy, k1, k2);
+        BuildT_Relative_Bivariate_2Polys(fxy_lr, gxy_lr, k1, k2);
         
     case 'Both'
         

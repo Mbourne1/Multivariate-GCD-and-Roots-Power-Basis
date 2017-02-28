@@ -28,7 +28,7 @@ function [] =  SetGlobalVariables(problem_type, ex_num, emin, emax, ...
 
 global SETTINGS
 
-SETTINGS.PLOT_GRAPHS = 'y';
+SETTINGS.PLOT_GRAPHS = true;
 
 % Problem Type : 'GCD' or 'Roots'
 SETTINGS.PROBLEM_TYPE = problem_type;
@@ -68,7 +68,7 @@ SETTINGS.DEGREE_METHOD = degree_method;
 
 SETTINGS.MEAN_METHOD = mean_method;
 
-SETTINGS.BOOL_ALPHA_THETA    = bool_alpha_theta;
+SETTINGS.BOOL_ALPHA_THETA = bool_alpha_theta;
 
 
 %-------------------------------------------------------------------------
@@ -78,6 +78,15 @@ SETTINGS.BOOL_ALPHA_THETA    = bool_alpha_theta;
 %
 SETTINGS.THRESHOLD = 2;
 SETTINGS.THRESHOLD_RANK = 2;
+
+
+% Metric used to compute the degree of the GCD
+% R1 Row Norms
+% R1 Row Diagonals
+% Singular Values
+% Residuals
+
+SETTINGS.RANK_REVEALING_METRIC = 'R1 Row Diagonals';
 
 %--------------------------------------------------------------------------
 %

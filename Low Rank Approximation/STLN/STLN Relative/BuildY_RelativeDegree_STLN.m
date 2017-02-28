@@ -1,4 +1,4 @@
-function Y = BuildY_RelativeDegree_STLN(x,m1,m2,n1,n2,k1,k2)
+function Y = BuildY_RelativeDegree_STLN(x, m1, m2, n1, n2, k1, k2)
 % Build the matrix Y_{t}
 % Where Y(x) * z = E(z) * x
 %
@@ -6,17 +6,11 @@ function Y = BuildY_RelativeDegree_STLN(x,m1,m2,n1,n2,k1,k2)
 %
 % x : Vector x least squares solution with zero inserted.
 %
-% m1 : Degree of f(x,y) with respect to x
+% [m1, m2[ : Degree of f(x,y) with respect to x and y
 % 
-% m2 : Degree of f(x,y) with respect to y 
-% 
-% n1 : Degree of g(x,y) with respect to x
+% [n1, n2] : Degree of g(x,y) with respect to x and y
 %
-% n2 : Degree of g(x,y) with respect to y
-%
-% k1 : Degree of d(x,y) with respect to x
-%
-% k2 : Degree of d(x,y) with respect to y
+% [k1, k2] : Degree of d(x,y) with respect to x and y
 
 
 % Get the  number of coefficients of x_{1}, the perturbations of v(x,y)
@@ -31,12 +25,12 @@ x2 = x(nCoeffs_x1+1:nCoeffs_x1 + nCoeffs_x2);
 
 
 % Get x_{u}(x,y) and x_{v}(x,y) as a matrix
-mat_x1 = GetAsMatrix(x1,n1-k1,n2-k2);
-mat_x2 = GetAsMatrix(x2,m1-k1,m2-k2);
+mat_x1 = GetAsMatrix(x1, n1-k1, n2-k2);
+mat_x2 = GetAsMatrix(x2, m1-k1, m2-k2);
 
 % Build the matrices C(v) and C(u)
-C1 = BuildT1_Relative(mat_x1,m1,m2);
-C2 = BuildT1_Relative(mat_x2,n1,n2);
+C1 = BuildT1_Relative_Bivariate(mat_x1, m1, m2);
+C2 = BuildT1_Relative_Bivariate(mat_x2, n1, n2);
 
 % Build the Matrix Y = (C(v) C(u)
 

@@ -1,4 +1,4 @@
-function [symbolic_exp] = GetSymbolicFromCoefficients(fxy_matrix,var_x,var_y)
+function [symbolic_exp] = GetSymbolicFromCoefficients(fxy, var_x, var_y)
 % Given the matrix of coefficients, get the symbolic representation of the
 % polynomial f(x,y).
 %
@@ -20,7 +20,7 @@ y = sym(var_y);
 
 
 % Get the degree of the polynomial f(x,y)
-[m1,m2] = GetDegree(fxy_matrix);
+[m1, m2] = GetDegree_Bivariate(fxy);
 
 % % 
 % 
@@ -28,7 +28,7 @@ y = sym(var_y);
 mat_x = diag(x.^(0:1:m1));
 mat_y = diag(y.^(0:1:m2));
 
-symbolic_mat = mat_x * fxy_matrix * mat_y;
+symbolic_mat = mat_x * fxy * mat_y;
 
 symbolic_exp = sum(sum(symbolic_mat));
 

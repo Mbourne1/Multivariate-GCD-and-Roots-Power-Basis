@@ -76,14 +76,14 @@ o_roots_mymethod(f,m)
 
 
 
-[fxy,gxy,dxy,uxy, vxy, t, t1, t2] = o_gcd_mymethod(p,q,3,3,[0,min(m,n)]);
+[fxy, gxy, dxy, uxy, vxy, t, t1, t2] = o_gcd_mymethod(p,q,3,3,[0,min(m,n)]);
 
 end
 
-function h = polynomial_subtraction(f,g)
+function h = polynomial_subtraction(fxy, gxy)
 
-[m1,m2] = GetDegree(f);
-[n1,n2] = GetDegree(g);
+[m1, m2] = GetDegree_Bivariate(fxy);
+[n1, n2] = GetDegree_Bivariate(gxy);
 
 max_x_power = max(m1,n1);
 max_y_power = max(m2,n2);
@@ -91,9 +91,9 @@ max_y_power = max(m2,n2);
 temp = zeros(max_x_power+1,max_y_power+1);
 
 fxy = temp;
-fxy(1:m1+1,1:m2+1) = f;
+fxy(1:m1+1,1:m2+1) = fxy;
 gxy = temp;
-gxy(1:n1+1,1:n2+1) = g;
+gxy(1:n1+1,1:n2+1) = gxy;
 
 h = fxy - gxy;
 

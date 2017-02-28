@@ -5,8 +5,8 @@ function [theta1,theta2] = OptimalTheta(fxy_matrix, gxy_matrix)
 f = [1 -1 0 0];
 
 % get the degree of polynomial f and g
-[m1,m2] = GetDegree(fxy_matrix);
-[n1,n2] = GetDegree(gxy_matrix);
+[m1, m2] = GetDegree_Bivariate(fxy_matrix);
+[n1, n2] = GetDegree_Bivariate(gxy_matrix);
 
 nEntries_f = (m1+1) * (m2+1);
 nEntries_g = (n1+1) * (n2+1);

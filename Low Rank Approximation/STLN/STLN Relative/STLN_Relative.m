@@ -7,9 +7,7 @@ function [fxy_lr,gxy_lr,uxy_lr,vxy_lr] = STLN_Relative(fxy, gxy, k1, k2, idx_col
 %
 % % Inputs.
 %
-% fxy : Coefficients of polynomial f(x,y)
-%
-% gxy : Coefficients of polynomial g(x,y)
+% [fxy, gxy] : Coefficients of polynomial f(x,y) and g(x,y)
 %
 % k1 : Degree of d(x,y) with respect to x
 %
@@ -30,10 +28,10 @@ function [fxy_lr,gxy_lr,uxy_lr,vxy_lr] = STLN_Relative(fxy, gxy, k1, k2, idx_col
 global SETTINGS
 
 % Get degree of polynomials f(x,y)
-[m1,m2] = GetDegree(fxy);
+[m1, m2] = GetDegree_Bivariate_Bivariate(fxy);
 
 % Get degree of polynomial g(x,y)
-[n1,n2] = GetDegree(gxy);
+[n1, n2] = GetDegree_Bivariate_Bivariate(gxy);
 
 % Get the number of coefficients in the polynomial f(x,y)
 nCoeffs_fxy = (m1+1) * (m2+1);
@@ -48,15 +46,8 @@ nCoeffs_vxy = (n1-k1+1) * (n2-k2+1);
 nCoeffs_uxy = (m1-k1+1) * (m2-k2+1);
 
 % Build the Sylvester Matrix S_{k1,k2}(f,g)
+Sk_fg = BuildT_Relative_Bivariate_2Polys(fxy,gxy,k1,k2);
 
-% Build the partiton T_{n1-k1,n2-k2}(f)
-Tk_f = BuildT1_Relative(fxy,n1-k1,n2-k2);
-
-% Build the partition T_{m1-k1,m2-k2}(g)
-Tk_g = BuildT1_Relative(gxy,m1-k1,m2-k2);
-
-% Build the Sylvester subresultant matrix S_{k1,k2}(f,g)
-Sk_fg = [Tk_f Tk_g];
 
 % Remove optimal column
 Ak_fg = Sk_fg;
@@ -187,12 +178,8 @@ while condition(ite) >  SETTINGS.MAX_ERROR_SNTLN &&  ite < SETTINGS.MAX_ITERATIO
     % Get zg as a matrix
     zg_xy = GetAsMatrix(v_zg, n1, n2);
     
-    % Build the matrix B_{t} = [E1(zf) E2(zg)]
-    E1 = BuildT1_Relative(zf_xy,n1-k1,n2-k2);
-    E2 = BuildT1_Relative(zg_xy,m1-k1,m2-k2);
+    Bt = BuildT_Relative_Bivariate_2Polys(zf_xy, zg_xy, k1, k2);
     
-    % Build the matrix B_{t} equivalent to S_{t}
-    Bt = [E1 E2];
     
     % Get the matrix E_{t} with optimal column removed
     Ak_zfzg = Bt;
@@ -212,7 +199,7 @@ while condition(ite) >  SETTINGS.MAX_ERROR_SNTLN &&  ite < SETTINGS.MAX_ITERATIO
         xk(idx_col:end)];
     
     % Build the matrix Y_{t} where Y_{t}(x)*z = E_{t}(z) * x
-    Yk = BuildY_RelativeDegree_STLN(x,m1,m2,n1,n2,k1,k2);
+    Yk = BuildY_RelativeDegree_STLN(x, m1, m2, n1, n2, k1, k2);
     
     % Get the residual vector
     res_vec = (ck+hk) - ((Ak_fg + Ak_zfzg)*xk);
@@ -252,9 +239,6 @@ vec_uxy = -1.*x(nCoeffs_vxy+1:nCoeffs_vxy+nCoeffs_uxy);
 uxy_lr = GetAsMatrix(vec_uxy,m1-k1,m2-k2);
 vxy_lr = GetAsMatrix(vec_vxy,n1-k1,n2-k2);
 
-
-%display([GetAsVector(fxy_matrix) GetAsVector(matZ_fxy)]);
-%display([GetAsVector(gxy_matrix) GetAsVector(matZ_gxy)]);
 
 end
 

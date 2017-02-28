@@ -1,4 +1,4 @@
-function fxy = GetWithoutThetas(fww,th1,th2)
+function fxy = GetWithoutThetas(fww, th1, th2)
 % Given the coefficients of the polynomial f(w,w), divide the (i,j)-th 
 % entry by theta_{1}^{i}\theta_{2}^{j}.
 %
@@ -15,7 +15,7 @@ function fxy = GetWithoutThetas(fww,th1,th2)
 % fxy : Coefficients of polynomial f(x,y)
 
 % Get the degree of polynomial f(x,y)
-[m1,m2] = GetDegree(fww);
+[m1, m2] = GetDegree_Bivariate(fww);
 
 % Calculate f(x,y) from f(w,w)
 

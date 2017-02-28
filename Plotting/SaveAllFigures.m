@@ -20,17 +20,18 @@ for m = 1:length(hfigs)
     
     % Get figure name
     filename = get(figure(hfigs(m)),'name');
-    filename(regexp(filename,'[:]')) = []
+    filename(regexp(filename,'[:]')) = [];
     
     fpath = 'Figures/';
     
-    if strcmp(filename, '0')                        %Skip figure when user types 0
-        continue
-    else
+    if strcmp(filename, '')
+        filename = sprintf('figure%i',m);
+    end    
+        
+
         saveas(hfigs(m), [fpath filename '.fig']) %Matlab .FIG file
         saveas(hfigs(m), [fpath filename '.eps']) %Windows Enhanced Meta-File (best for powerpoints)
         saveas(hfigs(m), [fpath filename '.png']) %Standard PNG graphics file (best for web)
         
         %eval(['print -depsc2 ' filename])   %Enhanced Postscript (Level 2 color) (Best for LaTeX documents)
-    end
 end

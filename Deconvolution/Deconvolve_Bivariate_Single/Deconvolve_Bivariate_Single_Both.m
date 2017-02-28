@@ -1,4 +1,4 @@
-function [hxy_matrix] = Deconvolve_Bivariate_Single_Both(fxy_matrix,gxy_matrix,m,n)
+function [hxy_matrix] = Deconvolve_Bivariate_Single_Both(fxy, gxy, m, n)
 % Perform polynomial deconvolution of the bivariate polynomials f(x,y) and 
 % g(x,y) where the total degrees m and n of f and g respectively are known.
 % This method is referred to as 'both' since BOTH the total degree and
@@ -23,10 +23,10 @@ function [hxy_matrix] = Deconvolve_Bivariate_Single_Both(fxy_matrix,gxy_matrix,m
 
 
 % Get the degrees of polynomial f(x,y)
-[m1,m2] = GetDegree(fxy_matrix);
+[m1, m2] = GetDegree_Bivariate(fxy);
 
 % Get the degrees of polynomial g(x,y)
-[n1,n2] = GetDegree(gxy_matrix);
+[n1, n2] = GetDegree_Bivariate(gxy);
 
 % Get the degrees of polynomial h(x,y)
 degt_hxy = m - n;
@@ -38,12 +38,12 @@ nNonZeros_hxy = GetNumNonZeros(deg1_hxy,deg2_hxy,degt_hxy);
 nZeros_hxy = (m1-n1 + 1) * (m2-n2 + 1) - nNonZeros_hxy;
 
 % Get number of nonzeros in g*h = f(x,y)
-nNonZeros_gh = GetNumNonZeros(m1,m2,m);
+nNonZeros_gh = GetNumNonZeros(m1, m2, m);
 
 % % 
 % %
 % Build the matrix C(g)
-C1 = BuildT1_Both(gxy_matrix,n,m-n,m1-n1,m2-n2);
+C1 = BuildT1_Both(gxy, n, m-n, m1-n1, m2-n2);
 
 
 % %
@@ -51,13 +51,13 @@ C1 = BuildT1_Both(gxy_matrix,n,m-n,m1-n1,m2-n2);
 % Create Right hand side vector f(x,y)
 
 % Get the polynomial f(x,y) in vector form
-f = GetAsVector(fxy_matrix);
+f = GetAsVector(fxy);
 
 % Remove zeros from f(x,y).
-f = f(1:nNonZeros_gh,1);
+f = f(1:nNonZeros_gh, 1);
 
 % Solve the Ax=b problem.
-x_ls = SolveAx_b(C1,f);
+x_ls = SolveAx_b(C1, f);
 
 % Get set of coefficients of h(x,y), including zeros to form matrix of
 % coefficients
@@ -68,7 +68,7 @@ hxy_vec = ...
     ];
 
 % Get h(x,y) as a vector
-hxy_matrix = GetAsMatrix(hxy_vec,m1-n1,m2-n2);
+hxy_matrix = GetAsMatrix(hxy_vec, m1-n1, m2-n2);
 
 
 end

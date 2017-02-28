@@ -11,7 +11,7 @@ syms x y
 figure()
 hold on
 for i = 1:1:length(arr_Poly)
-    myPoly = sympoly(arr_Poly{i})
+    myPoly = sympoly(arr_Poly{i});
     fsurf(myPoly,[-1,1,-1,1]);
 end
 hold off
@@ -77,7 +77,7 @@ function symp = sympoly(fxy)
 
 syms x y;
 % Get degree
-[m1,m2] = GetDegree(fxy);
+[m1,m2] = GetDegree_Bivariate(fxy);
 vec_x = x.^(0:1:m1);
 vec_y = y.^(0:1:m2)';
 symp = vec_x * fxy * vec_y;

@@ -64,7 +64,7 @@ for i = 2:1:nPolys_arr_fxy
     n2 = m2_prev - m2_current;
     
     % Build the matrix T(f(x,y))
-    T1 = BuildT1_Both(fxy, m_current, n, n1, n2);
+    T1 = BuildT1_Both_Bivariate(fxy, m_current, n, n1, n2);
     
     % Add T1 to array of matrices
     arr_T1{i-1} = T1;

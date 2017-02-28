@@ -14,7 +14,7 @@ arr_fxy{1,1} = fxy_matrix;
 vDeg_t_arr_fxy(ite) = M(ite);
 
 % Get the degree of f(x,y) with respect to x and y
-[m1,m2] = GetDegree(arr_fxy{ite});
+[m1, m2] = GetDegree_Bivariate(arr_fxy{ite});
 vDeg_x_arr_fxy(ite) = m1;
 vDeg_y_arr_fxy(ite) = m2;
 

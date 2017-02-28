@@ -1,4 +1,4 @@
-function Y_kk1k2 = BuildY_BothDegree_STLN(x,m,m1,m2,n,n1,n2,k,k1,k2)
+function Y_kk1k2 = BuildY_BothDegree_STLN(x, m, m1, m2, n, n1, n2, k, k1, k2)
 % BuildY_BothDegree_STLN(x,m,m1,m2,n,n1,n2,k,k1,k2)
 %
 % Build the matrix Y_{t} Where Y(x) * z = E(z) * x
@@ -10,21 +10,15 @@ function Y_kk1k2 = BuildY_BothDegree_STLN(x,m,m1,m2,n,n1,n2,k,k1,k2)
 %
 % m : Total degree of polynomial f(x,y)
 %
-% m1 : Degree of polynomial f(x,y) with respect to x
-%
-% m2 : Degree of polynomial f(x,y) with respect to y
+% [m1, m2] : Degree of polynomial f(x,y) with respect to x and y
 %
 % n : Total degree of polynomial g(x,y)
 %
-% n1 : Degree of polynomial g(x,y) with respect to x
-%
-% n2 : Degree of polynomial g(x,y) with respect to y
+% [n1, n2] : Degree of polynomial g(x,y) with respect to x and y
 %
 % k : Total degree of polynomial d(x,y)
 %
-% k1 : Degree of polynomial d(x,y) with respect to x
-%
-% k2 : Degree of polynomial d(x,y) with respect to y
+% [k1, k2] : Degree of polynomial d(x,y) with respect to x and y
 %
 % % Outputs
 %
@@ -71,8 +65,8 @@ mat_x1 = GetAsMatrix(...
     ,n1-k1,n2-k2);
 
 % Build the matrix C1 and C2
-T_x1 = BuildT1_Both(mat_x1,n-k,m,m1,m2);
-T_x2 = BuildT1_Both(mat_x2,m-k,n,n1,n2);
+T_x1 = BuildT1_Both_Bivariate(mat_x1, n-k, m, m1, m2);
+T_x2 = BuildT1_Both_Bivariate(mat_x2, m-k, n, n1, n2);
 
 % Build the matrix Y_{k}
 Y_kk1k2 = [T_x1 T_x2];

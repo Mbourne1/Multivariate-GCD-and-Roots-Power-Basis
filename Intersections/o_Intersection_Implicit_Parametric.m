@@ -61,7 +61,7 @@ h_st = subs(S1,{x y z},{S2_fun_x_coef, S2_fun_y_coef,S2_fun_z_coeff});
 h_st = double(h_st);
 
 % Get degree of h(s,t)
-[m1,m2] = GetDegree(h_st);
+[m1, m2] = GetDegree_Bivariate(h_st);
 m = m1 + m2;
 
 % Get the roots of h(s,t).
