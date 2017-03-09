@@ -15,13 +15,14 @@ global SETTINGS
 
 % % Get coefficients of the quotients u(x,y) and v(x,y)
 switch SETTINGS.DEGREE_METHOD
+    
     case 'Total'
         [uxy, vxy, wxy] = ...
-            GetQuotients_Total_3Polys(fxy, gxy, hxy, m, n, o, t);
+            GetQuotients_Total_Bivariate_3Polys(fxy, gxy, hxy, m, n, o, t);
         
     case 'Relative'
         [uxy, vxy, wxy] = ...
-            GetQuotients_Relative_3Polys(fxy, gxy, hxy, t1, t2);
+            GetQuotients_Relative_Bivariate_3Polys(fxy, gxy, hxy, t1, t2);
         
     case 'Both'
         [uxy, vxy, wxy] = ...
@@ -29,4 +30,5 @@ switch SETTINGS.DEGREE_METHOD
         
     otherwise
         error('calc method is either total or relative')
+        
 end

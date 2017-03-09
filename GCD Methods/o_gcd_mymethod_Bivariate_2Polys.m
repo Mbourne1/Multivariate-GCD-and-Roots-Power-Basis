@@ -1,6 +1,6 @@
-function [fxy_o, gxy_o, dxy_o, uxy_o, vxy_o, t, t1, t2] = o_gcd_mymethod_Bivariate_2Polys(fxy, gxy, m, n, limits_t)
-% o_gcd_mymethod_Bivariate_2Polys(fxy, gxy, m, n, limits_t)
-
+function [fxy_o, gxy_o, dxy_o, uxy_o, vxy_o, t, t1, t2] = o_gcd_mymethod_Bivariate_2Polys(fxy, gxy, m, n, myLimits_t, myLimits_t1, myLimits_t2, limits_t, limits_t1, limits_t2)
+% o_gcd_mymethod_Bivariate_2Polys(fxy, gxy, m, n, myLimits_t, myLimits_t1, myLimits_t2, limits_t, limits_t1, limits_t2)
+%
 % Given two bivariate polynomials, return the GCD d(x,y) and the coprime
 % polynomials u(x,y) and v(x,y) where
 %
@@ -26,6 +26,10 @@ function [fxy_o, gxy_o, dxy_o, uxy_o, vxy_o, t, t1, t2] = o_gcd_mymethod_Bivaria
 %
 % [m, n] : Total degree of polynomial f(x,y) and g(x,y)
 %
+% [myLimits_t, myLimits_t1, myLimits_t2] : 
+%
+% [limits_t, limits_t1, limits_t2]
+% 
 % % Outputs
 %
 % [uxy, vxy] : Calculated coefficients of u(x,y) and v(x,y)
@@ -39,15 +43,15 @@ global SETTINGS
 
 % % Preprocessing
 
-[lambda, mu, alpha, th1, th2] = Preprocess_Relative(fxy, gxy);
+[GM_fxy, GM_gxy, alpha, th1, th2] = Preprocess_Relative(fxy, gxy);
 
 %[lambda_b, mu_b, alpha_b, th1_b th2_b] = Preprocess_Total(fxy, gxy, m, n);
 %
 %[lambda_c, mu_c, alpha_c, th1_c th2_c] = Preprocess_Both(fxy, gxy, m, n);
 
 % Normalise f(x,y) by geometric means
-fxy_n = fxy./lambda;
-gxy_n = gxy./mu;
+fxy_n = fxy./ GM_fxy;
+gxy_n = gxy./ GM_gxy;
 
 % Get f(w,w) from f(x,y)
 fww = GetWithThetas(fxy_n, th1, th2);
@@ -65,8 +69,8 @@ switch SETTINGS.DEGREE_METHOD
     case 'Total'
         
         % Compute the total degree of the GCD
-        [t] = GetGCDDegree_Total_Bivariate_2Polys(fww, alpha.*gww, m, n, limits_t);
-        [t] = GetGCDDegree_Total_Bivariate_2Polys_Fast(fww, alpha.*gww, m, n, limits_t);
+        [t] = GetGCDDegree_Total_Bivariate_2Polys(fww, alpha.*gww, m, n, myLimits_t, limits_t);
+        [t] = GetGCDDegree_Total_Bivariate_2Polys_Fast(fww, alpha.*gww, m, n, myLimits_t, limits_t);
         
         % set relative degrees of GCD to arbitrary values
         t1 = 1000;
@@ -80,32 +84,36 @@ switch SETTINGS.DEGREE_METHOD
         % Compute the relative degree of the GCD
         [m1, m2] = GetDegree_Bivariate(fxy);
         [n1, n2] = GetDegree_Bivariate(gxy);
-        limits_t1 = [0 min(m1,n1)];
-        limits_t2 = [0 min(m2,n2)];
-        tic;
-        [t1 ,t2] = GetGCDDegree_Relative_Bivariate_2Polys(fww, alpha.*gww, limits_t1, limits_t2);
-        toc;
+        
+        
+        limits_t1 = [0 min(m1, n1)];
+        limits_t2 = [0 min(m2, n2)];
+        %
+        %tic;
+        %[t1 ,t2] = GetGCDDegree_Relative_Bivariate_2Polys(fww, alpha.*gww, myLimits_t1, myLimits_t2,limits_t1, limits_t2);
+        %toc;
 %         % NEW 15/02/2017
-        tic;
-        [t1, t2] = GetGCDDegree_Relative_Bivariate_2Polys_Fast(fww, alpha.*gww, limits_t1, limits_t2);
-        toc;
+        %tic;
+        [t1, t2] = GetGCDDegree_Relative_Bivariate_2Polys_Fast(fww, alpha.*gww, myLimits_t1, myLimits_t2, limits_t1, limits_t2);
+        %toc;
       
         
     case 'Both'
         
         % Compute total degree
-        [t] = GetGCDDegree_Total_Bivariate_2Polys(fww, alpha.*gww, m, n, limits_t);
+        [t] = GetGCDDegree_Total_Bivariate_2Polys(fww, alpha.*gww, m, n, myLimits_t, limits_t);
         
         % Compute relative degree given total degree
         
         % Set degree Limits
         [m1, m2] = GetDegree_Bivariate(fxy);
         [n1, n2] = GetDegree_Bivariate(gxy);
+        
         limits_t1 = [0 min(m1,n1)];
         limits_t2 = [0 min(m2,n2)];
         
         % Compute relative degree given total degree
-        [t1,t2] = GetGCDDegree_Relative_Given_t_Bivariate_2Polys(fww, alpha*gww, m, n, t, limits_t1, limits_t2);
+        [t1,t2] = GetGCDDegree_Relative_Given_t_Bivariate_2Polys(fww, alpha*gww, m, n, t, myLimits_t1, myLimits_t2, limits_t1, limits_t2);
         
         %[t1_test,t2_test] = GetGCDDegree_Relative_Bivariate_2Polys(fww, alpha*gww, limits_t1, limits_t2);
         

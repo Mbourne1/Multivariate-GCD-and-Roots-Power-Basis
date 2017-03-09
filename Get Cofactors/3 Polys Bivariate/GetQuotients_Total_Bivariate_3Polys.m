@@ -1,4 +1,4 @@
-function [uxy, vxy, wxy] = GetQuotients_Total_3Polys(fxy, gxy, hxy, m, n, o, k)
+function [uxy, vxy, wxy] = GetQuotients_Total_Bivariate_3Polys(fxy, gxy, hxy, m, n, o, k)
 % Given two polynomials and the knowledge of the degree of the GCD. Obtain
 % the two quotient polynomials u and v.
 %
@@ -43,7 +43,7 @@ hxy = padd_matrix;
 
 
 % Build the Sylvester Subresultant matrix S
-Sk = BuildSylvesterMatrix_Total_3Polys(fxy, gxy, hxy, m, n, o, k);
+Sk = BuildT_Total_Bivariate_3Polys(fxy, gxy, hxy, m, n, o, k);
 
 % Get the optimal column for removal from S(f,g)
 opt_col = GetOptimalColumn_Total(Sk);

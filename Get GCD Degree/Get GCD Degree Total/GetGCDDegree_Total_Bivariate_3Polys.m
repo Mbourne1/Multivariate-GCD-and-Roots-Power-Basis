@@ -1,59 +1,74 @@
-function [t] = GetGCDDegree_Total_Bivariate_2Polys(fxy, gxy, m, n, myLimits_t, limits_t)
-% Calculate the degree of the GCD of two bivariate power basis polynomials.
+function [t] = GetGCDDegree_Total_Bivariate_3Polys(fxy, gxy, hxy, m, n, o, myLimits_t, limits_t)
+% Calculate the degree of the GCD of two bivariate Power Basis polynomials.
 %
 % % Inputs
 %
-% [fxy, gxy] : Coefficients of polynomial f(x,y) and g(x,y)
+% [fxy, gxy, hxy] : Coefficients of polynomial f(x,y) g(x,y) and h(x,y)
 %
-% [m, n] : Total degree of polynomial f(x,y) and g(x,y)
+% [m, n, o] : Total degree of polynomial f(x,y) g(x,y) and h(x,y)
 %
+% limits_t : Minimum and Maximum values bounding the computation of t
 %
 % % Outputs
 %
-% t : Total degree of the GCD d(x,y)
+% t : Total degree of the GCD d(x,y).
+
+% Set upper and lower bound for total degree t.
+myLowerLimit_t = myLimits_t(1);
+myUpperLimit_t = myLimits_t(2);
+
+% if the upper and lower bound are equal, and not equal to one, then set
+% the total degree to lower bound. If bound = 1, then it is possible for
+% the polynomials to be coprime.
+if (myLowerLimit_t == myUpperLimit_t && myLowerLimit_t ~= 1)
+    t = myLowerLimit_t;
+    return;
+end
 
 
-% Get my upper and lower limit
-myLowerLimit = myLimits_t(1);
-myUpperLimit = myLimits_t(2);
 
-% Get number of Sylvester subresultant matrices
-nSubresultants = myUpperLimit - myLowerLimit + 1;
+%%
+% pad the coefficients of fxy and gxy
+% this is equivalent to degree elevating so that f is of degree (m,m), and
+% g is of degree (n,n)
+fxy_matrix_padd = zeros(m+1,m+1);
+gxy_matrix_padd = zeros(n+1,n+1);
+hxy_matrix_padd = zeros(o+1,o+1);
+
+[m1, m2] = GetDegree_Bivariate(fxy);
+fxy_matrix_padd(1:m1+1,1:m2+1) = fxy;
+
+[n1, n2] = GetDegree_Bivariate(gxy);
+gxy_matrix_padd(1:n1+1,1:n2+1) = gxy;
+
+[o1, o2] = GetDegree_Bivariate(hxy);
+hxy_matrix_padd(1:o1+1,1:o2+1) = hxy;
+
+% Get the number of subresultants
+nSubresultants = myUpperLimit_t - myLowerLimit_t + 1;
 
 % Initialise some cell arrays
 arr_R1_RowNorm = cell(nSubresultants, 1);
 arr_R1_Diag = cell(nSubresultants, 1);
 arr_SingularValues = cell(nSubresultants, 1);
 
-% Pad the coefficients of f(x,y) and g(x,y0
-% this is equivalent to degree elevating so that f is of degree (m,m), and
-% g is of degree (n,n)
-fxy_matrix_padd = zeros(m+1, m+1);
-gxy_matrix_padd = zeros(n+1, n+1);
 
-
-[m1, m2] = GetDegree_Bivariate(fxy);
-fxy_matrix_padd(1:m1+1 , 1:m2+1) = fxy;
-
-[n1, n2] = GetDegree_Bivariate(gxy);
-gxy_matrix_padd(1:n1+1 , 1:n2+1) = gxy;
-
-
-
-% let k represent the total degree of the common divisor d_{k}(x,y)
+% let k represent the total degree of the common divisor
 for i = 1 : 1 : nSubresultants
     
-    k = myLowerLimit + (i-1) ;
+    k = myLowerLimit_t + (i-1);
     
-
-    % Build the partitions of the Sylvester matrix
-    T_f = BuildT1_Total_Bivariate(fxy_matrix_padd, m, n-k);
-    T_g = BuildT1_Total_Bivariate(gxy_matrix_padd, n, m-k);
-
-
+    % Build the partitions T1 and T2 of the Sylvester matrix
+    T1 = BuildT1_Total_Bivariate(fxy_matrix_padd, m, n-k);
+    T2 = BuildT1_Total_Bivariate(fxy_matrix_padd, m, o-k);
+    T3 = BuildT1_Total_Bivariate(gxy_matrix_padd, n, m-k);
+    T4 = BuildT1_Total_Bivariate(hxy_matrix_padd, o, m-k);
+    
+    diagonal = blkdiag(T1,T2);
+    column = [T3;T4];
+    
     % Build the sylvester matrix
-    Sk = [T_f T_g];
-        
+    Sk = [diagonal column];
     
     % Using QR Decomposition of the sylvester matrix
     [~,R] = qr(Sk);
@@ -61,11 +76,13 @@ for i = 1 : 1 : nSubresultants
     % Take absolute values.
     R = abs(R);
     
+   
     % Get number of rows in R1
     [R1_rows,~] = size(diag(R));
     
     % Obtain R1 the top square of the R matrix.
     R1 = R(1:R1_rows,1:R1_rows);
+    
     
     % Get Norms of each row in the matrix R1
     arr_R1_RowNorm{i} = sqrt(sum(R1.^2,2))./norm(R1);
@@ -75,8 +92,10 @@ for i = 1 : 1 : nSubresultants
     
     % Get singular values of S_{k}
     arr_SingularValues{i} = svd(Sk);
-    
+   
+   
 end
+
 
 
 
@@ -163,14 +182,17 @@ end
 
 
 % if only one subresultant exists.
-if myLowerLimit == myUpperLimit
+if myLowerLimit_t == myUpperLimit_t
     t = GetGCDDegree_OneSubresultant(Sk);
     return;
 else
-    t = GetGCDDegree_MultipleSubresultants(metric, myLimits_t );
+    t = GetGCDDegree_MultipleSubresultants(metric, myLimits_t);
 end
 
-% Plot graphs
-%PlotGraphs()
+
+
+
 
 end
+
+

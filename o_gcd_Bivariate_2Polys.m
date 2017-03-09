@@ -17,8 +17,8 @@ function [] = o_gcd_Bivariate_2Polys(ex_num, emin, emax, mean_method, bool_alpha
 %       'None'
 %
 % bool_alpha_theta ('y'/'n')
-%       'y' - Include Preprocessing
-%       'n' - Exclude Preprocessing
+%       true - Include Preprocessing
+%       false - Exclude Preprocessing
 %
 % low_rank_approx_method ('y'/'n')
 %       'Standard SNTLN'
@@ -41,8 +41,8 @@ function [] = o_gcd_Bivariate_2Polys(ex_num, emin, emax, mean_method, bool_alpha
 %                   results.
 %
 % % Example
-% >> o_gcd_Bivariate_2Polys('1',1e-10,1e-12, 'Geometric Mean Matlab Method', 'y','None','None','Both')
-% >> o_gcd_Bivariate_2Polys('1',1e-10,1e-12, 'Geometric Mean Matlab Method', 'y','Standard STLN','Standard Nonlinear APF','Relative')
+% >> o_gcd_Bivariate_2Polys('1',1e-10,1e-12, 'Geometric Mean Matlab Method', true, 'None', 'None', 'Both')
+% >> o_gcd_Bivariate_2Polys('1',1e-10,1e-12, 'Geometric Mean Matlab Method', true, 'Standard STLN', 'Standard Nonlinear APF', 'Relative')
 
 
 % Set the Global Variables
@@ -87,7 +87,7 @@ fprintf('EXAMPLE NUMBER %s \n',ex_num)
 fprintf('EMIN : %s \n',emin)
 fprintf('EMAX : %s \n',emax)
 fprintf('MEAN METHOD : %s \n', mean_method)
-fprintf('PREPROCESSING : %s \n',bool_alpha_theta)
+fprintf('PREPROCESSING : %s \n',int2str(bool_alpha_theta))
 fprintf('LOW RANK METHOD : %s \n',low_rank_approx_method)
 fprintf('APF METHOD : %s \n', apf_method)
 fprintf('DEGREE METHOD : %s \n', degree_method)
@@ -118,12 +118,6 @@ DisplayDegreeStructure();
 %[u,v,w] = o_gcd_zeng(fxy,gxy);
 
 
-% Get GCD d(x,y) and quotient polynomials u(x,y) and v(x,y)
-lower_limit = 1;
-upper_limit = min(m,n);
-t_limits = [lower_limit,upper_limit];
-
-
 
 switch SETTINGS.DEGREE_METHOD
     case 'Total'
@@ -148,9 +142,23 @@ switch SETTINGS.DEGREE_METHOD
         error('err')
 end
 
+
+
+% Set Limits for the values of k 
+% Difference between myLimits and 'limits'. My Limits can be redefined,
+% limits should always be computed by number of distinct roots rule.
+% Since this is a GCD problem, set 'limits' to default 0,...,min(m,n)
+
+limits_t = [0 min(m, n)];
+limits_t1 = [0 min(m1, n1)];
+limits_t2 = [0 min(m2, n2)];
+
+myLimits_t = [0 min(m, n)];
+myLimits_t1 = [0 min(m1, n1)];
+myLimits_t2 = [0 min(m2, n2)];
+
 % Get the GCD by my method
-[fxy_calc, gxy_calc, dxy_calc, uxy_calc, vxy_calc, t, t1, t2] = ...
-    o_gcd_mymethod_Bivariate_2Polys(fxy, gxy, m, n, t_limits);
+[fxy_calc, gxy_calc, dxy_calc, uxy_calc, vxy_calc, t, t1, t2] = o_gcd_mymethod_Bivariate_2Polys(fxy, gxy, m, n, myLimits_t, myLimits_t1, myLimits_t2, limits_t, limits_t1, limits_t2 );
 
 
 

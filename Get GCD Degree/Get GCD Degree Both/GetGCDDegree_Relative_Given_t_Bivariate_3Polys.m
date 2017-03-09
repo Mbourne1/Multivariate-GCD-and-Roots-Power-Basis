@@ -1,4 +1,4 @@
-function [t1,t2] = GetGCDDegree_Relative_Given_t_Bivariate_3Polys(fxy, gxy, hxy, m, n, o, t)
+function [t1,t2] = GetGCDDegree_Relative_Given_t_Bivariate_3Polys(fxy, gxy, hxy, m, n, o, t, myLimits_t1, myLimits_t2, limits_t1, limits_t2)
 % Get the degree structure (t_{1} and t_{2}) of the GCD d(x,y) of the two
 % polynomials f(x,y) and g(x,y)
 %
@@ -23,120 +23,89 @@ function [t1,t2] = GetGCDDegree_Relative_Given_t_Bivariate_3Polys(fxy, gxy, hxy,
 % polynomials u(x,y) and v(x,y). We remove the corresponding columns of
 % S(f,g)
 
-% Get the degree structure of polynomial f(x,y)
-[m1, m2] = GetDegree_Bivariate(fxy);
+lowerLimit_t1 = myLimits_t1(1);
+upperLimit_t1 = myLimits_t1(2);
+lowerLimit_t2 = myLimits_t2(1);
+upperLimit_t2 = myLimits_t2(2);
 
-% Get the degree structure of polynomial g(x,y)
-[n1, n2] = GetDegree_Bivariate(gxy);
+nSubresultants_k1 = upperLimit_t1 - lowerLimit_t1 + 1;
+nSubresultants_k2 = upperLimit_t2 - lowerLimit_t2 + 1;
 
-% Get the degree structure of polynomial h(x,y0
-[o1, o2] = GetDegree_Bivariate(hxy);
+arr_SingularValues = cell( nSubresultants_k1, nSubresultants_k2);
+arr_R = cell(nSubresultants_k1, nSubresultants_k2);
+arr_R1 = cell( nSubresultants_k1, nSubresultants_k2);
+arr_Diagonals_R1 = cell( nSubresultants_k1, nSubresultants_k2);
 
-% Get the set of all pairs of (k1,k2) combinations
-%k1k2Pairs = GetPairs_Refined(m,m1,m2,n,n1,n2,t);
-k1k2Pairs = GetPairs_All_3Polys(m1, m2, n1, n2, o1, o2);
-
-% Get number of pairs in the list
-[nPairs,~] = size(k1k2Pairs);
-
-% if only one (k1,k2) pair exists, then (t1,t2) = (k1,k2)
-if nPairs == 1
-    fprintf([mfilename ' : ' sprintf('Only one possible combination of (t1,t2) \n')])
-    t1 = k1k2Pairs(1,1);
-    t2 = k1k2Pairs(1,2);
-    return
-end
-
-vMinimumSingularValues_all = zeros(nPairs,1);
 
 % For each of the pairs [k1,k2]
-for i = 1:1:nPairs
+for i1 = 1:1: nSubresultants_k1
+    for i2 = 1:1: nSubresultants_k2
+        
+        
+        k1 = lowerLimit_t1 + (i1 - 1);
+        k2 = lowerLimit_t2 + (i2 - 1);
+        
+        
+        % Build the Sylvester matrix S_{k,k1,k2}
+        Skk1k2 = BuildT_Both_Bivariate_3Polys(fxy, gxy, hxy, m, n, o, t, k1, k2);
 
-    % Get the ith pair of (k1,k2)
-    k1 = k1k2Pairs(i,1);
-    k2 = k1k2Pairs(i,2);
-    
-    % Build the Sylvester matrix S_{k,k1,k2}
-    Skk1k2 = BuildT_Both_Bivariate_3Polys(fxy, gxy, hxy, m, n, o, t, k1, k2);
-    
-    % Get the singular values of S_{k_{1},k_{2}}
-    vSingularValues = svd(Skk1k2);
-    
-    % Get the minimal singular value
-    vMinimumSingularValues_all(i) = min(vSingularValues);
+        % Get the singular values of S_{k_{1},k_{2}}
+        arr_SingularValues{i1,i2} = svd(Skk1k2);
 
+    end
 end
 
 
-% Sort all k1 k2 pairs by their total k_{total} =  k1 + k2. Get the minimum of the 
-% minimum singular values for each total.
-
-% Get the sum of k1 + k2 for all (k1,k2) pairs
-sumk1k2 = sum(k1k2Pairs,2);
-
-% Create a matrix of data
-data = [k1k2Pairs sumk1k2 vMinimumSingularValues_all];
-
-% Get the minimum sum
-min_val = min(sumk1k2);
-
-% Get the maximum sum
-max_val = max(sumk1k2);
-
-% Get the number of possible sum values.
-nValues = max_val - min_val + 1;
-
-k1 = zeros(nValues,1);
-k2 = zeros(nValues,1);
-vMinimumSingularValues = zeros(nValues,1);
-
-for i = min_val:1:max_val
-    
-    k = i - min_val + 1;
-    
-    data_filtered = data(data(:, 3) == i, :);
-    
-    % Get the minimum singular value of all the [k1,k2] pairs
-    [~,index] = min(data_filtered(:,4));
-    
-    k1(k) = data_filtered(index,1);
-    k2(k) = data_filtered(index,2);
-    vMinimumSingularValues(k) = data_filtered(index,4);
-    
-    
-end
-
-% Plot the minimum singular values
-PlotGraphs_DegreeRelative();
-
-% If only one value (t1+t2)
-if (nValues == 1)
-   t1 = k1;
-   t2 = k2;
-   return
-end
-
-
-
-
-% Get maximum change in Singular values
-[maxChange,index] = max(diff(log10(vMinimumSingularValues)));
-
-[t] = GetGCDDegree_MultipleSubresultants(vMinimumSingularValues,[min_val,max_val]);
 
 global SETTINGS
+% R1 Row Norms
+% R1 Row Diagonals
+% Singular Values
+% Residuals
 
-if (maxChange < SETTINGS.THRESHOLD_RANK)
-    fprintf([mfilename 'Insignificant Change\n'])
-    fprintf([mfilename 'All subresultants are either full rank or rank deficient\n'])
-    fprintf([mfilename 'All subresultants are full rank\n'])
-    t1 = k1(end);
-    t2 = k2(end);
-else
-    fprintf([mfilename ' : ' 'Significant Change in Singular Values\n'])
-    t1 = k1(index);
-    t2 = k2(index);
+switch SETTINGS.RANK_REVEALING_METRIC
+    case 'Singular Values'
+        mat_MinimumSingularValues = zeros( nSubresultants_k1, nSubresultants_k2);
+        
+        for i1 = 1:1: nSubresultants_k1
+            for i2 = 1:1: nSubresultants_k2
+                
+                %k1 = lowerLimit_k1 + (i1 - 1);
+                %k2 = lowerLimit_k2 + (i2 - 1);
+                
+                mat_MinimumSingularValues(i1,i2) = min(arr_SingularValues{i1,i2});
+                
+            end
+        end
+        
+        mat_metric = mat_MinimumSingularValues;
+        
+        plotSingularValues_degreeRelative(arr_SingularValues, myLimits_t1, myLimits_t2, limits_t1, limits_t2);
+        plotMinimumSingularValues_degreeRelative(mat_MinimumSingularValues, myLimits_t1, myLimits_t2, limits_t1, limits_t2);
+        
+        
+    case 'R1 Row Norms'
+        error('Not Completed')
+    case 'R1 Row Diagonals'
+        error('Not Completed')
+    case 'Residuals'
+        error('Not Completed')
+    otherwise 
+        error('Error : Not a valid rank revealing metric')
 end
+
+
+% Compute the degree of the GCD
+delta_x = diff(log10(mat_metric),1,1);
+vec_delta_x = sum(delta_x,2);
+[~, idx] = max(vec_delta_x);
+t1 = lowerLimit_t1 + idx - 1;
+
+delta_y = diff(log10(mat_metric),1,2);
+vec_delta_y = sum(delta_y,1);
+[~, idx] = max(vec_delta_y);
+t2 = lowerLimit_t2 + idx - 1;
+
 
 fprintf([mfilename ' : ' 'The Calculated Degree of the GCD is given by \n'])
 fprintf([mfilename ' : ' sprintf('Degree of GCD wrt x : t1 = %i\n',t1)])

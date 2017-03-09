@@ -1,5 +1,5 @@
-function [] = o_roots_batch_Bivariate()
-% o_roots_batch()
+function [] = o_roots_Bivariate_batch()
+% o_roots_Bivariate_batch()
 % 
 %
 
@@ -25,8 +25,10 @@ for i1 = 1:1:length(ex_num_arr)
                     low_rank_approx_method = low_rank_approx_method_arr{i5};
                     
                     for i6 = 1:1:length(degree_method_arr)
+
                         degree_method = degree_method_arr{i6};
                         o_roots_Bivariate(ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_approx_method,degree_method);
+
                     end
                 end
             end

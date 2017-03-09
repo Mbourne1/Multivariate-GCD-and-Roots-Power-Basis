@@ -1,4 +1,4 @@
-function [uxy, vxy, wxy] = GetQuotients_Relative_3Polys(fxy, gxy, hxy, k1, k2)
+function [uxy, vxy, wxy] = GetQuotients_Relative_Bivariate_3Polys(fxy, gxy, hxy, k1, k2)
 % GetQuotients(fxy,gxy,k1,k2)
 %
 % Given two polynomials and the knowledge of the degree of the GCD. Obtain
@@ -27,7 +27,7 @@ function [uxy, vxy, wxy] = GetQuotients_Relative_3Polys(fxy, gxy, hxy, k1, k2)
 % Get the degree of polynomial h(x,y)
 [o1, o2] = GetDegree_Bivariate(hxy);
 
-Sk = BuildSylvesterMatrix_Relative_3Polys(fxy, gxy, hxy, k1, k2);
+Sk = BuildT_Relative_Bivariate_3Polys(fxy, gxy, hxy, k1, k2);
 
 % % Get the optimal column for removal
 opt_col = GetOptimalColumn_Relative(Sk);

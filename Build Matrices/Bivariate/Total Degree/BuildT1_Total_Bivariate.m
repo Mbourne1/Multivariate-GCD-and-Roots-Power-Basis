@@ -16,29 +16,29 @@ function T1 = BuildT1_Total_Bivariate(fxy_matrix, m, n_k)
 
 
 % Get size of f(x,y)
-[nRows_f,nCols_f] = size(fxy_matrix);
+[nRows_f, nCols_f] = size(fxy_matrix);
 
 % Initalise a zero matrix
 zero_matrix = zeros(m+n_k+1, m+n_k+1);
 
 % Get number of elements in v(x,y)
 nElements_v = nchoosek( n_k+1 + 1 , 2);
-nColsT = nElements_v;
+nColumnsT = nElements_v;
 
 % Get the number of elements in f*v
 nRowsT = nchoosek((m+n_k+1) + 1,2);
 
 % Initialise a zero matrix.
-T1 = zeros(nRowsT,nColsT);
+T1 = zeros(nRowsT, nColumnsT);
 
 % Get number of diagonals in the matrix v(x,y)
-num_diags_v = (n_k+1);
+nDiags_v = (n_k+1);
 
 % Initialise a counter
 count = 1;
 
 % for each diagonal in M(v)
-for tot = 0 : 1 : num_diags_v -1
+for tot = 0 : 1 : nDiags_v -1
     for i = tot:-1:0
         
         % Initialise a temporary zero matrix

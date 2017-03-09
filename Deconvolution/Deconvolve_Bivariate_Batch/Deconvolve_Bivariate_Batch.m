@@ -19,7 +19,7 @@ switch SETTINGS.DEGREE_METHOD
         
         arr_hxy = Deconvolve_Bivariate_Batch_Total(arr_fxy,vDeg_t_fxy);
                 
-    case 'Respective'
+    case 'Relative'
         
         arr_hxy = Deconvolve_Bivariate_Batch_Respective(arr_fxy);
         

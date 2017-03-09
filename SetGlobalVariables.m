@@ -86,7 +86,7 @@ SETTINGS.THRESHOLD_RANK = 2;
 % Singular Values
 % Residuals
 
-SETTINGS.RANK_REVEALING_METRIC = 'R1 Row Diagonals';
+SETTINGS.RANK_REVEALING_METRIC = 'Singular Values';
 
 %--------------------------------------------------------------------------
 %

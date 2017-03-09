@@ -1,4 +1,4 @@
-function [t] = GetGCDDegree_Total_Bivariate_2Polys(fxy, gxy, m, n, limits)
+function [t] = GetGCDDegree_Total_Bivariate_2Polys_Fast(fxy, gxy, m, n, myLimits_t, limits_t)
 % Calculate the degree of the GCD of two bivariate power basis polynomials.
 %
 % % Inputs
@@ -7,6 +7,10 @@ function [t] = GetGCDDegree_Total_Bivariate_2Polys(fxy, gxy, m, n, limits)
 %
 % [m, n] : Total degree of polynomial f(x,y) and g(x,y)
 %
+% myLimits_t :
+%
+% limits_t :
+%
 % % Outputs
 %
 % t : Total degree of the GCD d(x,y)
@@ -14,11 +18,11 @@ function [t] = GetGCDDegree_Total_Bivariate_2Polys(fxy, gxy, m, n, limits)
 % %
 % Calculate the Degree of the GCD
 
-lowerLimit = limits(1);
-upperLimit = limits(2);
+myLowerLimit = myLimits_t(1);
+myUpperLimit = myLimits_t(2);
 
-
-nSubresultants = upperLimit - lowerLimit + 1;
+% Get the number of Sylvesters subresultant matrices to be built
+nSubresultants = myUpperLimit - myLowerLimit + 1;
 
 % Initialise some cell arrays
 arr_R1_RowNorm = cell(nSubresultants,1);
@@ -32,21 +36,22 @@ arr_SingularValues = cell(nSubresultants,1);
 % pad the coefficients of fxy and gxy
 % this is equivalent to degree elevating so that f is of degree (m,m), and
 % g is of degree (n,n)
-fxy_matrix_padd = zeros(m+1,m+1);
-gxy_matrix_padd = zeros(n+1,n+1);
+fxy_matrix_padd = zeros(m+1, m+1);
+gxy_matrix_padd = zeros(n+1, n+1);
 
-[r,c] = size(fxy);
-fxy_matrix_padd(1:r,1:c) = fxy;
+[m1, m2] = GetDegree_Bivariate(fxy);
+fxy_matrix_padd(1:m1+1, 1:m2+1) = fxy;
 
-[r,c] = size(gxy);
-gxy_matrix_padd(1:r,1:c) = gxy;
+[n1, n2] = GetDegree_Bivariate(gxy);
+gxy_matrix_padd(1:n1+1, 1:n2+1) = gxy;
 
+% Initialise array
 arr_Sk = cell(nSubresultants,1);
 
 % let k represent the total degree of the common divisor d_{k}(x,y)
 for i = 1 : 1 : nSubresultants
     
-    k = lowerLimit + (i-1) ;
+    k = myLowerLimit + (i-1) ;
     
     if (i == 1)
         
@@ -59,20 +64,20 @@ for i = 1 : 1 : nSubresultants
     
     else
         
-        nCols_T1_prev = nchoosek(n-(k-1)+2,2);
-        nCols_T1_Removed = n-(k-1) + 1;
-        idx_firstColumnRemoved_T1 = nCols_T1_prev - nCols_T1_Removed + 1;
-        idx_lastColumnRemoved_T1 = nCols_T1_prev;
+        nColumns_T1_prev = nchoosek(n-(k-1)+2,2);
+        nColumns_T1_Removed = n-(k-1) + 1;
+        idx_firstColumnRemoved_T1 = nColumns_T1_prev - nColumns_T1_Removed + 1;
+        idx_lastColumnRemoved_T1 = nColumns_T1_prev;
         
         % Get vector of column index to be removed from T(f)
         vIndexColsRemoved_T1 = [idx_firstColumnRemoved_T1 : 1 : idx_lastColumnRemoved_T1];
         
-        nCols_T2_prev = nchoosek(m-(k-1)+2,2); 
-        nCols_Sk_prev = nCols_T1_prev + nCols_T2_prev;
+        nColumns_T2_prev = nchoosek(m-(k-1)+2,2); 
+        nColumns_Sk_prev = nColumns_T1_prev + nColumns_T2_prev;
        
-        nCols_T2_Removed = m - (k-1) + 1;
-        idx_firstColumnRemoved_T2 = nCols_Sk_prev - nCols_T2_Removed + 1;
-        idx_lastColumnRemoved_T2 = nCols_Sk_prev;
+        nColumns_T2_Removed = m - (k-1) + 1;
+        idx_firstColumnRemoved_T2 = nColumns_Sk_prev - nColumns_T2_Removed + 1;
+        idx_lastColumnRemoved_T2 = nColumns_Sk_prev;
         
         % Get vector of column index to be removed from T(g)
         vIndexColsRemoved_T2 = [idx_firstColumnRemoved_T2 : 1 : idx_lastColumnRemoved_T2];
@@ -141,8 +146,8 @@ switch SETTINGS.RANK_REVEALING_METRIC
         end
         
         if(SETTINGS.PLOT_GRAPHS)
-            plotMinimumSingularValues_degreeTotal(vMinimumSingularValue, limits);
-            plotSingularValues_degreeTotal(arr_SingularValues, limits);
+            plotMinimumSingularValues_degreeTotal(vMinimumSingularValue, myLimits_t, limits_t);
+            plotSingularValues_degreeTotal(arr_SingularValues, myLimits_t, limits_t);
         end
         metric = vMinimumSingularValue;
         
@@ -164,8 +169,8 @@ switch SETTINGS.RANK_REVEALING_METRIC
         metric = vRatio_MaxMin_RowNorm_R1;
         
         if(SETTINGS.PLOT_GRAPHS)
-            plotRowNorm_degreeTotal(arr_R1_RowNorm, limits)
-            plotMaxMinRowNorm_degreeTotal(vRatio_MaxMin_RowNorm_R1, limits);
+            plotRowNorm_degreeTotal(arr_R1_RowNorm, myLimits_t, limits_t)
+            plotMaxMinRowNorm_degreeTotal(vRatio_MaxMin_RowNorm_R1, myLimits_t, limits_t);
         end
         
     case 'R1 Row Diagonals'
@@ -187,8 +192,8 @@ switch SETTINGS.RANK_REVEALING_METRIC
         metric = vRatio_MaxMin_Diags_R1;
         
         if(SETTINGS.PLOT_GRAPHS)
-            plotRowDiag_degreeTotal(arr_R1_Diag, limits);
-            plotMaxMinRowDiag_degreeTotal(vRatio_MaxMin_Diags_R1, limits);
+            plotRowDiag_degreeTotal(arr_R1_Diag, myLimits_t, limits_t);
+            plotMaxMinRowDiag_degreeTotal(vRatio_MaxMin_Diags_R1, myLimits_t, limits_t);
         end
         
     case 'Residuals'
@@ -202,14 +207,12 @@ end
 
 
 % if only one subresultant exists.
-if lowerLimit == upperLimit
+if myLowerLimit == myUpperLimit
     t = GetGCDDegree_OneSubresultant(arr_Sk);
     return;
 else
-    t = GetGCDDegree_MultipleSubresultants(metric, limits );
+    t = GetGCDDegree_MultipleSubresultants(metric, limits_t );
 end
 
-% Plot graphs
-%PlotGraphs()
 
 end

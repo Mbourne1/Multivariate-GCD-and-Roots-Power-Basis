@@ -44,7 +44,7 @@ fxy_n = fxy ./ lambda;
 gxy_n = gxy ./ mu;
 
 switch SETTINGS.BOOL_ALPHA_THETA
-    case 'y'
+    case true
         
         
         optimization_method = 'Together';
@@ -120,6 +120,7 @@ switch SETTINGS.BOOL_ALPHA_THETA
         
         
         a_gw = alpha.*v_gww;
+        
         % Get maximum coefficient of g(x)
         max_gw = max(abs(a_gw(a_gw~=0)));
         
@@ -136,7 +137,7 @@ switch SETTINGS.BOOL_ALPHA_THETA
         fprintf([mfilename ' : ' str2 '\n']);
         
         
-    case 'n'
+    case false
         
         % Set linprog outputs to be 1
         th1 = 1;
@@ -144,7 +145,7 @@ switch SETTINGS.BOOL_ALPHA_THETA
         alpha = 1;
         
     otherwise
-        error('bool_preproc is either y or n')
+        error('BOOL_ALPHA_THETA is either true or false')
 end
 end
 

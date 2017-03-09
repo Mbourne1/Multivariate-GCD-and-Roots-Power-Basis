@@ -74,7 +74,7 @@ while vDeg_x_arr_fxy(ite,1) > 0 || vDeg_y_arr_fxy(ite,1) > 0
             limits_t = [1,m-1];
             
             [fxy_o, ~, dxy_o, uxy_o, vxy_o, t, t1, t2] = ...
-                o_gcd_mymethod_2Polys(fxy,gxy,m,n,limits_t);
+                o_gcd_mymethod_2Polys(fxy, gxy, m, n, limits_t);
             
             arr_fxy{ite,1} = fxy_o;
             arr_fxy{ite+1,1} = dxy_o;
@@ -179,35 +179,60 @@ while vDeg_x_arr_fxy(ite,1) > 0 || vDeg_y_arr_fxy(ite,1) > 0
     % Get the derivative of f(x,y) with respect to y
     hxy = Differentiate_wrt_y(arr_fxy{ite},vDeg_t_arr_fxy(ite));
     
-    % Get the total degree of f(x,y)
-    m =  vDeg_t_arr_fxy(ite);
-    
-    % Get the total degree of g(x,y)
+    % Get the total degree of f(x,y), g(x,y) and h(x,y)
+    m = vDeg_t_arr_fxy(ite);
     n = m - 1;
-    
-    % Get the total degree of h(x,y)
     o = m - 1;
+    
+    [m1, m2] = GetDegree_Bivariate(fxy);
+    [n1, n2] = GetDegree_Bivariate(gxy);
+    [o1, o2] = GetDegree_Bivariate(hxy);
+    
     
     % Get the upper and lower limit of the degree of the GCD(f, f')
     if ite > 1
-        lower_lim = vDeg_t_arr_fxy(ite)-vNumDistinctRoots(ite-1);
-        upper_lim = m-1;
+        
+        lowerLimit_t = vDeg_t_arr_fxy(ite) - vNumDistinctRoots(ite-1);
+        lowerLimit_t1 = vDeg_x_arr_fxy(ite) - vNumDistinctFactors_x(ite-1);
+        lowerLimit_t2 = vDeg_y_arr_fxy(ite) - vNumDistinctFactors_y(ite-1);
+        
+        upperLimit_t =  min([m, n, o]);
+        upperLimit_t1 = min([m1,n1,o1]);
+        upperLimit_t2 = min([m2,n2,o2]);
+        
     else
-        lower_lim = 1;
-        upper_lim = m-1;
+        
+        lowerLimit_t = 1;
+        lowerLimit_t1 = 1;
+        lowerLimit_t2 = 1;
+        
+        upperLimit_t = min([m,n,o]);
+        upperLimit_t1 = min([m1,n1,o1]);
+        upperLimit_t2 = min([m2,n2,o2]);
+        
     end
     
-    fprintf([mfilename ' : ' sprintf('Minimum degree of f_{%i}: %i \n', ite, lower_lim)]);
-    fprintf([mfilename ' : ' sprintf('Maximum degree of f_{%i}: %i \n', ite, upper_lim)]);
+    LineBreakLarge();
+
+    fprintf([mfilename ' : ' sprintf('Minimum total degree of f_{%i}: %i \n', ite, lowerLimit_t)]);
+    fprintf([mfilename ' : ' sprintf('Maximum total degree of f_{%i}: %i \n', ite, upperLimit_t)]);
+    
+    fprintf([mfilename ' : ' sprintf('Minimum degree of f_{%i} with respect to x: %i \n', ite, lowerLimit_t1)]);
+    fprintf([mfilename ' : ' sprintf('Maximum degree of f_{%i} with respect to x: %i \n', ite, upperLimit_t1)]);
+    
+    fprintf([mfilename ' : ' sprintf('Minimum degree of f_{%i} with respect to y: %i \n', ite, lowerLimit_t2)]);
+    fprintf([mfilename ' : ' sprintf('Maximum degree of f_{%i} with respect to y: %i \n', ite, upperLimit_t2)]);
+    
     LineBreakLarge();
     
     % GCD is only a scalar with respect to x so set equal to g(x,y).
     
-    limits_t = [lower_lim, upper_lim];
-    
+    limits_t = [lowerLimit_t, upperLimit_t];
+    limits_t1 = [lowerLimit_t1, upperLimit_t1];
+    limits_t2 = [lowerLimit_t2, upperLimit_t2];
     
     [fxy_o, ~, ~, dxy_o, uxy_o, vxy_o, ~, t, t1, t2 ] = ...
-        o_gcd_mymethod_3Polys(fxy, gxy, hxy, m, n, o, limits_t);
+        o_gcd_mymethod_Bivariate_3Polys(fxy, gxy, hxy, m, n, o, limits_t, limits_t1, limits_t2);
     
     %[arr_fxy{ite,1},~,arr_fxy{ite+1,1},arr_uxy{ite,1},arr_vxy{ite,1},t,t1,t2] = o_gcd_mymethod(arr_fxy{ite},gxy,m,n,);
     arr_fxy{ite,1} = fxy_o;
@@ -223,13 +248,15 @@ while vDeg_x_arr_fxy(ite,1) > 0 || vDeg_y_arr_fxy(ite,1) > 0
     
     % Get number of distinct roots of f(ite)
     vNumDistinctRoots(ite,1) = vDeg_t_arr_fxy(ite) - vDeg_t_arr_fxy(ite+1);
+    vNumDistinctFactors_x(ite,1) = vDeg_x_arr_fxy(ite) - vDeg_x_arr_fxy(ite+1);
+    vNumDistinctFactors_y(ite,1) = vDeg_y_arr_fxy(ite) - vDeg_y_arr_fxy(ite+1);
     
-    fprintf([mfilename ' : ' sprintf('The computed deg(GCD(f_{%i},f_{%i}) is : %i \n',ite,ite,vDeg_t_arr_fxy(ite+1))]);
-    fprintf([mfilename ' : ' sprintf('Number of distinct roots in f_{%i} : %i \n',ite,vNumDistinctRoots(ite))]);
-    fprintf([mfilename ' : ' sprintf('Total degree of f_{%i} : %i \n',ite , vDeg_t_arr_fxy(ite+1))])
+    
+    LineBreakLarge();
+    fprintf([mfilename ' : ' sprintf('Degree of f_{%i} : %i \n',ite , vDeg_t_arr_fxy(ite+1))])
     fprintf([mfilename ' : ' sprintf('Degree of f_{%i} with respect to x : %i \n',ite , vDeg_x_arr_fxy(ite+1))])
     fprintf([mfilename ' : ' sprintf('Degree of f_{%i} with respect to y : %i \n',ite , vDeg_y_arr_fxy(ite+1))])
-    LineBreakLarge()
+    LineBreakLarge();
     
     % Increment the iteration number
     ite = ite + 1;

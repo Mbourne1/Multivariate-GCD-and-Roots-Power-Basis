@@ -42,7 +42,7 @@ for i = 2:1:nPolys_arr_fxy
     vNumCoefficients_hxy(i-1) = (v_n1(i-1)+1) * (v_n2(i-1)+1);
     
     % Build the matrix T(f(x,y))
-    T1 = BuildT1_Relative(fxy, prev_m1-m1, prev_m2-m2);
+    T1 = BuildT1_Relative_Bivariate(fxy, prev_m1-m1, prev_m2-m2);
      
     arr_T1{i-1} = T1;
 end

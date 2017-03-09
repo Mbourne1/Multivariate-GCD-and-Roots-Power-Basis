@@ -1,4 +1,4 @@
-function [t1,t2] = GetGCDDegree_Relative_Bivariate_2Polys_Fast(fxy, gxy, limits_t1, limits_t2)
+function [t1,t2] = GetGCDDegree_Relative_Bivariate_2Polys_Fast(fxy, gxy, myLimits_t1, myLimits_t2, limits_t1, limits_t2)
 % GetGCDDegree_Relative_2Polys(fxy,gxy)
 %
 % Get the degree structure (t_{1} and t_{2}) of the GCD d(x,y) of the two
@@ -14,11 +14,13 @@ function [t1,t2] = GetGCDDegree_Relative_Bivariate_2Polys_Fast(fxy, gxy, limits_
 %
 % t2 : degree of d(x,y) with respect to y
 
-lowerLimit_t1 = limits_t1(1);
-upperLimit_t1 = limits_t1(2);
-lowerLimit_t2 = limits_t2(1);
-upperLimit_t2 = limits_t2(2);
+% Get my limits
+lowerLimit_t1 = myLimits_t1(1);
+upperLimit_t1 = myLimits_t1(2);
+lowerLimit_t2 = myLimits_t2(1);
+upperLimit_t2 = myLimits_t2(2);
 
+% Get degree of f(x,y) and g(x,y)
 [m1, m2] = GetDegree_Bivariate(fxy);
 [n1, n2] = GetDegree_Bivariate(gxy);
 
@@ -72,10 +74,10 @@ for i1 = 1:1:nSubresultants_k1
         % Each section has
         nColumnsPerSection_T1 = (n1-k1+1);
         
-        nCols_T1_prev = nColumnPartitions_T1_prev * nColumnsPerSection_T1;
-        nCols_T1_new = nColumnPartitions_T1_new * nColumnsPerSection_T1;
+        nColumns_T1_prev = nColumnPartitions_T1_prev * nColumnsPerSection_T1;
+        nColumns_T1_new = nColumnPartitions_T1_new * nColumnsPerSection_T1;
         
-        nColsToBeRemoved_T1 = nCols_T1_prev - nCols_T1_new;
+        nColsToBeRemoved_T1 = nColumns_T1_prev - nColumns_T1_new;
         
         % %
         %
@@ -85,14 +87,13 @@ for i1 = 1:1:nSubresultants_k1
         
         nColumnsPerSection_T2 = (m1-k1+1);
         
-        nCols_T2_prev = nColumnPartitions_T2_prev * nColumnsPerSection_T2;
-        nCols_T2_new = nColumnPartitions_T2_new * nColumnsPerSection_T2;
+        nColumns_T2_prev = nColumnPartitions_T2_prev * nColumnsPerSection_T2;
+        nColumns_T2_new = nColumnPartitions_T2_new * nColumnsPerSection_T2;
         
-        nColsToBeRemoved_T2 = nCols_T2_prev - nCols_T2_new;
+        nColsToBeRemoved_T2 = nColumns_T2_prev - nColumns_T2_new;
         
-        nCols_Sk1k2_prev = nCols_T1_prev + nCols_T2_prev;
-        nCols_Sk1k2_new = nCols_T1_new + nCols_T2_new;
-        
+        nColumns_Sk1k2_prev = nColumns_T1_prev + nColumns_T2_prev;
+                
         nColsToBeRemoved = nColsToBeRemoved_T1 + nColsToBeRemoved_T2;
         
         % %
@@ -109,12 +110,12 @@ for i1 = 1:1:nSubresultants_k1
         
         % %
         % Get index of columns to be removed
-        idx_lastColDelete_T1 = nCols_T1_prev;
+        idx_lastColDelete_T1 = nColumns_T1_prev;
         idx_firstColDelete_T1 = idx_lastColDelete_T1 - nColsToBeRemoved_T1 + 1;
         
         idx_vec_T1 = idx_firstColDelete_T1 : 1 : idx_lastColDelete_T1;
         
-        idx_lastColDelete_T2 = nCols_Sk1k2_prev;
+        idx_lastColDelete_T2 = nColumns_Sk1k2_prev;
         idx_firstColDelete_T2 = idx_lastColDelete_T2 - nColsToBeRemoved_T2 + 1;
         
         idx_vec_T2 = idx_firstColDelete_T2 : 1 : idx_lastColDelete_T2;
@@ -210,8 +211,8 @@ switch SETTINGS.RANK_REVEALING_METRIC
         mat_metric = mat_MinimumSingularValues;
         
         if (SETTINGS.PLOT_GRAPHS)
-            plotSingularValues_degreeRelative(arr_SingularValues, limits_t1, limits_t2)
-            plotMinimumSingularValues_degreeRelative(mat_MinimumSingularValues, limits_t1, limits_t2);
+            plotSingularValues_degreeRelative(arr_SingularValues, myLimits_t1, myLimits_t2, limits_t1, limits_t2)
+            plotMinimumSingularValues_degreeRelative(mat_MinimumSingularValues, myLimits_t1, myLimits_t2, limits_t1, limits_t2);
         end
         
     case 'R1 Row Norms'
@@ -229,8 +230,8 @@ switch SETTINGS.RANK_REVEALING_METRIC
         end
         
         if (SETTINGS.PLOT_GRAPHS)
-            plotRowNormsR1_degreeRelative(arr_R1_RowNorms, limits_t1, limits_t2);
-            plotMaxMinRowNormsR1_degreeRelative(matMaxRowNorm, matMinRowNorm, limits_t1, limits_t2);
+            plotRowNormsR1_degreeRelative(arr_R1_RowNorms, myLimits_t1, myLimits_t2, limits_t1, limits_t2);
+            plotMaxMinRowNormsR1_degreeRelative(matMaxRowNorm, matMinRowNorm, myLimits_t1, myLimits_t2, limits_t1, limits_t2);
         end
         mat_metric = matMaxRowNorm ./ matMinRowNorm;
         
@@ -260,8 +261,8 @@ switch SETTINGS.RANK_REVEALING_METRIC
         mat_metric = mat_Ratio;
         
         if (SETTINGS.PLOT_GRAPHS)
-            plotMaxMinDiagonals_degreeRelative(mat_MaxR1Diagonal, mat_MinR1Diagonal, limits_t1, limits_t2);
-            plotDiagonalsR1_degreeRelative(arr_DiagR1, limits_t1, limits_t2);
+            plotMaxMinDiagonals_degreeRelative(mat_MaxR1Diagonal, mat_MinR1Diagonal, myLimits_t1, myLimits_t2, limits_t1, limits_t2);
+            plotDiagonalsR1_degreeRelative(arr_DiagR1, myLimits_t1, myLimits_t2, limits_t1, limits_t2);
         end
     case 'Residuals'
         

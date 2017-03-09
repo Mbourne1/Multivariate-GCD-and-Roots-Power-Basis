@@ -286,10 +286,26 @@ end
 end
 
 
-function v_errors =  GetError(arr_hxy_comp,arr_hxy)
+function v_errors =  GetError(arr_hxy_comp, arr_hxy)
+%
+% % Inputs
+%
+% arr_hxy : (Array of Vectors) Vectors containing coefficients of
+% polynomials h_{i}(x,y) as given exactly.
+%
+% arr_hxy_comp : (Array of Vectors) Vectors containing coefficients of
+% polynomials h_{i}(x,y) as computed by deconvolution method.
+%
+% % Outputs
+%
+% v_errors : (Vector) Error measure for each h_{i}(x,y)
+
 
 % Get number of polynomials h_{i}(x,y) in array
-nPolys_arr_hxy = size(arr_hxy_comp,1);
+nPolys_arr_hxy = size(arr_hxy_comp, 1);
+
+% Initialise vector of errors
+v_errors = zeros(nPolys_arr_hxy, 1);
 
 for i = 1:1:nPolys_arr_hxy
     

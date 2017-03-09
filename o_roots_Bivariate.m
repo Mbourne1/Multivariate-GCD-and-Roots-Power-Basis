@@ -1,4 +1,4 @@
-function [] = o_roots_bivar(ex_num, emin, emax, mean_method, bool_alpha_theta, ...
+function [] = o_roots_Bivariate(ex_num, emin, emax, mean_method, bool_alpha_theta, ...
     low_rank_approx_method, apf_method, degree_method)
 % o_roots_bivar(ex_num,el,mean_method,bool_alpha_theta,low_rank_approx_method)
 %
@@ -18,8 +18,8 @@ function [] = o_roots_bivar(ex_num, emin, emax, mean_method, bool_alpha_theta, .
 %       'None'
 %
 % bool_alpha_theta ('y'/'n')
-%       'y' - Include Preprocessing
-%       'n' - Exclude Preprocessing
+%       true - Include Preprocessing
+%       false - Exclude Preprocessing
 %
 % low_rank_approx_method ('y'/'n')
 %       'Standard SNTLN' : Include Nonlinear SNTLN
@@ -36,8 +36,8 @@ function [] = o_roots_bivar(ex_num, emin, emax, mean_method, bool_alpha_theta, .
 %       'Both'
 %
 % % Examples
-% >> o_roots_Bivariate('1', 1e-10, 1e-12, 'None', 'n', 'None', 'None', 'Both')
-% >> o_roots_Bivariate('1', 1e-10, 1e-12, 'Geometric Mean Matlab Method', 'y', 'Standard STLN', 'Standard APF', 'Both')
+% >> o_roots_Bivariate('1', 1e-10, 1e-12, 'None', false, 'None', 'None', 'Both')
+% >> o_roots_Bivariate('1', 1e-10, 1e-12, 'Geometric Mean Matlab Method', true , 'Standard STLN', 'Standard APF', 'Both')
 
 
 restoredefaultpath
@@ -98,11 +98,11 @@ root_finding_method = '3 Poly GCD';
 switch root_finding_method 
     case '2 Poly GCD'
         
-        o_roots_mymethod_Bivariate(fxy,m);        
+        o_roots_mymethod_Bivariate(fxy, m);        
         
     case '3 Poly GCD'
 
-        o_roots_mymethod_newmethod_Bivariate(fxy,m);
+        o_roots_mymethod_newmethod_Bivariate(fxy, m);
         
     otherwise
         
