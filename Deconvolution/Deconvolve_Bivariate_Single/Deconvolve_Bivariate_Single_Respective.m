@@ -10,7 +10,7 @@ function [hxy_matrix] = Deconvolve_Bivariate_Single_Respective(fxy, gxy)
 [n1, n2] = GetDegree_Bivariate(gxy);
 
 % Build the matrix C(g)
-C1 = BuildT1_Relative(gxy, m1-n1, m2-n2);
+C1 = BuildT1_Relative_Bivariate(gxy, m1-n1, m2-n2);
 
 % Get the polynomial f(x,y) in vector form
 f = GetAsVector(fxy);

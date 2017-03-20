@@ -48,25 +48,14 @@ function [] = o_gcd_Bivariate_2Polys(ex_num, emin, emax, mean_method, bool_alpha
 % Set the Global Variables
 global SETTINGS
 
-% add path
+% Add subfolders
 restoredefaultpath
 
-addpath(...
-    'Formatting',...
-    'GCD Methods',...
-    'Get Optimal Column',...
-    'Get GCD Coefficients',...
-    'Plotting',...
-    'Results',...
-    'Sylvester Matrix'...
-    );
-addpath(genpath('APF'));
-addpath(genpath('Build Matrices'));
-addpath(genpath('Examples'));
-addpath(genpath('Get Cofactors'));
-addpath(genpath('Get GCD Degree'));
-addpath(genpath('Preprocessing'));
-addpath(genpath('Low Rank Approximation'));
+% Determine where your m-file's folder is.
+folder = fileparts(which(mfilename)); 
+
+% Add that folder plus all subfolders to the path.
+addpath(genpath(folder));
 
 
 problem_type = 'GCD';

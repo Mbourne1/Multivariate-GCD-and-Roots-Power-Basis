@@ -3,7 +3,7 @@ function [] = o_Deconvolution(ex_num)
 %
 % % Inputs
 %
-% ex_num : Example Number
+% ex_num : (String) Example Number
 %
 % % Examples
 %
@@ -12,19 +12,21 @@ function [] = o_Deconvolution(ex_num)
 % Set settings pertaining to this test
 
 global SETTINGS
-SETTINGS.PLOT_GRAPHS = 'y';
+SETTINGS.PLOT_GRAPHS = true;
 SETTINGS.MAX_ERROR_DECONVOLUTIONS = 1e-13;
 SETTINGS.MAX_ITERATIONS_DECONVOLUTIONS = 50;
 
 % Add relevant paths
 restoredefaultpath();
+
+% Add examples folder
 addpath(genpath('../Examples'));
-addpath(genpath('Deconvolution'));
-addpath(...
-    'Build Matrices',...
-    'Formatting',...
-    'Preprocessing'...
-    );
+
+% Determine where your m-file's folder is.
+folder = fileparts(which(mfilename)); 
+
+% Add that folder plus all subfolders to the path.
+addpath(genpath(folder));
 
 
 % Input f_{i} polynomials
@@ -32,7 +34,7 @@ x = sym('x');
 y = sym('y');
 
 % Get example
-[factor_mult_arr_f] = Bivariate_Deconvolution_Examples(ex_num);
+[factor_mult_arr_f] = Deconvolution_Examples_Bivariate(ex_num);
 
 % Get vector of factors
 factor = factor_mult_arr_f(:,1);
@@ -208,7 +210,7 @@ my_error.Batch_Total = (norm(vErrors_Batch_Total));
 %   TESTING : BATCH - RESPECTIVE
 %
 % 
-arr_hxy_Batch_Relative = Deconvolve_Bivariate_Batch_Respective(arr_fxy,vDeg_t_arr_fxy);
+arr_hxy_Batch_Relative = Deconvolve_Bivariate_Batch_Respective(arr_fxy);
 
 % Get vector of error of each h_{i}(x,y) as a vector
 vErrors_Batch_Relative = GetError(arr_hxy_Batch_Relative,arr_hxy);

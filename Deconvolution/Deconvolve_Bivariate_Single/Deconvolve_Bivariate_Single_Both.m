@@ -43,7 +43,7 @@ nNonZeros_gh = GetNumNonZeros(m1, m2, m);
 % % 
 % %
 % Build the matrix C(g)
-C1 = BuildT1_Both(gxy, n, m-n, m1-n1, m2-n2);
+C1 = BuildT1_Both_Bivariate(gxy, n, m-n, m1-n1, m2-n2);
 
 
 % %

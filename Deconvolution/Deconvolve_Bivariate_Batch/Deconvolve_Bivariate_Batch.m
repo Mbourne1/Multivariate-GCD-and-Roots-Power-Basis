@@ -4,20 +4,25 @@ function arr_hxy = Deconvolve_Bivariate_Batch(arr_fxy, vDeg_t_fxy, vDeg_x_fxy, v
 %
 % % Inputs
 %
-% arr_fxy : Array of polynomials f_{i}(x,y)
+% arr_fxy : (Array of Matrices) Array of polynomials f_{i}(x,y)
 %
-% vDeg_t_fxy : Total degree of polynomials f_{i}(x,y)
+% vDeg_t_fxy : (Vector) Total degree of polynomials f_{i}(x,y)
 %
-% vDeg_x_fxy : Degree of polynomials f_{i}(x,y) with respect to x
+% vDeg_x_fxy : (Vector) Degree of polynomials f_{i}(x,y) with respect to x
 %
-% vDeg_y_fxy : Degree of polynomials f_{i}(x,y) with respect to y
-
+% vDeg_y_fxy : (Vector) Degree of polynomials f_{i}(x,y) with respect to y
+%
+% % Outputs
+%
+% arr_hxy : (Array of Matrices) Each array cell contains matrix of 
+% coefficients of a polynomial h_{i}(x,y)
 
 global SETTINGS
+
 switch SETTINGS.DEGREE_METHOD
     case 'Total'
         
-        arr_hxy = Deconvolve_Bivariate_Batch_Total(arr_fxy,vDeg_t_fxy);
+        arr_hxy = Deconvolve_Bivariate_Batch_Total(arr_fxy, vDeg_t_fxy);
                 
     case 'Relative'
         

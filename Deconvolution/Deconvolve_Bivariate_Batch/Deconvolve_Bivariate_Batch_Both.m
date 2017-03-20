@@ -6,24 +6,20 @@ function arr_hxy = Deconvolve_Bivariate_Batch_Both(arr_fxy, vDeg_t_arr_fxy, vDeg
 %
 % arr_fxy : Array of polynomials f(x,y)
 %
-% vDegt_arr_fxy : Vector containing the total degree of the polynomials f_{i}
+% vDegt_arr_fxy : (Vector) Vector containing the total degree of the
+% polynomials f_{i}(x,y)
 %
-% vDegx_arr_fxy : Vector containing the degree of polynomials f_{i} with
-% respect to x
+% vDegx_arr_fxy : (Vector) Vector containing the degree of polynomials
+% f_{i}(x,y) with respect to x
 %
-% vDegy_arr_fxy : Vector containing the degree of polynomials f_{i} with
-% respect to y
+% vDegy_arr_fxy : (Vector) Vector containing the degree of polynomials
+% f_{i}(x,y) with respect to y
 
 
-% %
-% %
 % Form the left hand side matrix
 
 % Get the number of polynomials in the array arr_f_{i}(x,y)
 nPolys_arr_fxy = size(arr_fxy,1);
-
-% Get the number of polynomials in the array arr_h_{i}(x,y)
-nPolys_arr_hxy = nPolys_arr_fxy - 1;
 
 % Get the total degree of polynomials in the array h_{i}(x,y)
 vDeg_t_arr_hxy = vDeg_t_arr_fxy(1:end-1) - vDeg_t_arr_fxy(2:end);
@@ -73,36 +69,8 @@ end
 % Build a block diagonal of the matrices
 C_fww = blkdiag(arr_T1{:});
 
-% %
-% %
-% Form the Right hand side vector
-arr_rhs = cell(nPolys_arr_fxy - 1,1);
+vRHS = BuildRHS_Vector(arr_fxy, vDeg_t_arr_fxy, vDeg_x_arr_fxy, vDeg_y_arr_fxy);
 
-for i = 1:1:nPolys_arr_fxy - 1
-    
-    % temporarily label the ith entry of the array as fxy
-    v_fxy = GetAsVector(arr_fxy{i});
-    
-    % Get degree structure of fxy
-    m = vDeg_t_arr_fxy(i);
-    
-    % Get degree of f_{i} with respect to x
-    m1 = vDeg_x_arr_fxy(i);
-    
-    % Get degree of f_{i} with respect to y
-    m2 = vDeg_y_arr_fxy(i);
-    
-    % Remove zeros from the end of the vector
-    nNonZeros_fxy = GetNumNonZeros(m1,m2,m);
-    
-    % Remove the zero entries 
-    v_fxy = v_fxy(1:nNonZeros_fxy,1);
-    
-    % Add the vector to the array
-    arr_rhs{i} = v_fxy;
-end
-
-vRHS = cell2mat(arr_rhs);
 
 % %
 % %
@@ -120,7 +88,7 @@ for i = 1:nPolys_arr_hxy
     % Get coefficients as a matrix
     % error('To do')
     
-    % Ge the total degree of h_{i}(x,y) 
+    % Ge the total degree of h_{i}(x,y)
     n = vDeg_t_arr_hxy(i);
     
     % Get degree of h_{i}(x,y) with respect to x
@@ -146,4 +114,62 @@ for i = 1:nPolys_arr_hxy
     
     
 end
+end
+
+
+function vRHS = BuildRHS_Vector(arr_fxy, vDeg_t_arr_fxy, vDeg_x_arr_fxy, vDeg_y_arr_fxy)
+% Form the Right hand side vector
+% 
+% % Inputs
+%
+% arr_fxy : (Array of Matrices) Each cell in the array contains
+% coefficients of a polynomial f_{i}(x,y)
+%
+% vDeg_t_arr_fxy : (Vector) Contains total degree of each polynomial
+% f_{i}(x,y)
+%
+% vDeg_x_arr_fxy : (Vector) Contains degree of each polynomial f_{i}(x,y)
+% with respect to x
+%
+% vDeg_y_arr_fxy : (Vector) Contains degree of each polynomial f_{i}(x,y)
+% with respect to y
+%
+% % Outputs
+%
+% vRHS : (Vector) Right hand side vector containing coefficients of
+% f_{0},..., f_{n-1}
+
+% Get the number of polynomials in the array
+nPolys_arr_fxy = length(arr_fxy);
+
+% Initialise an array to store coefficients of the polynomials f_{i}(x,y)
+% as vectors.
+arr_rhs = cell(nPolys_arr_fxy - 1,1);
+
+for i = 1:1:nPolys_arr_fxy - 1
+    
+    % temporarily label the ith entry of the array as fxy
+    v_fxy = GetAsVector(arr_fxy{i});
+    
+    % Get degree structure of fxy
+    m = vDeg_t_arr_fxy(i);
+    
+    % Get degree of f_{i} with respect to x
+    m1 = vDeg_x_arr_fxy(i);
+    
+    % Get degree of f_{i} with respect to y
+    m2 = vDeg_y_arr_fxy(i);
+    
+    % Remove zeros from the end of the vector
+    nNonZeros_fxy = GetNumNonZeros(m1,m2,m);
+    
+    % Remove the zero entries
+    v_fxy = v_fxy(1:nNonZeros_fxy,1);
+    
+    % Add the vector to the array
+    arr_rhs{i} = v_fxy;
+end
+
+% Get RHS Vector
+vRHS = cell2mat(arr_rhs);
 end
