@@ -1,5 +1,14 @@
-
-function [fxy_matrix, m] = Examples_Roots_FromRoots(ex_num)
+function [fxy, m] = Examples_Roots_FromRoots_Bivariate(ex_num)
+%
+% % Inputs
+%
+% ex_num : (String) Example Number
+%
+% % Outputs
+%
+% fxy : (Matrix) Coefficients of polynomial f(x,y)
+%
+% m : (Int) Total degree of f(x,y)
 
 root_mult_array_f_x = [];
 root_mult_array_f_y = [];
@@ -151,7 +160,7 @@ polys_f = [polys_x; polys_y; polys_xy];
 
 %PrintRoots_Bivariate(roots_f_x,roots_f_y,polys_xy);
 
-fxy_matrix = BuildPoly_NonSeparable(polys_f);
+fxy = BuildPoly_NonSeparable(polys_f);
 
 
 end

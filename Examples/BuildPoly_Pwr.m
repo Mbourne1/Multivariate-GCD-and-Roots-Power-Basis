@@ -1,56 +1,65 @@
-function [f]=BuildPoly_Pwr(A)
+function [fx] = BuildPoly_Pwr(root_mult_mat)
 % Obtain polynomial coefficients in the power form, given a set of roots 
 % and multiplicities. Coefficients are given in order of descending power.
 %
-%       Inputs
+% % Inputs
 %
-%   A 
+% root_mult_mat : (Matrix) Each row contains a root and its multiplicity
+%
+% % Outputs
+%
+% fx : (Vector) : Coefficients of polynomial f(x)
 
-% Calculate the number of distinct roots of the polynomial.
-r = size(A,1);
+% Get the number of distinct factors of the polynomial.
+nFactors = size(root_mult_mat,1);
 
 % Convolve each factor, which is defined by a row of A, separately.
 % A(k,1) stores the value of the root, and A(k,2) stores its multiplicity.
 
-f = 1;
+% Initialise polynomial
+fx = 1;
+
 % for each unique root 1,...,r
-for k = 1:1:r
+for k = 1 : 1 : nFactors
     
-    w = pwr_conv(A(k,1),A(k,2));
-    f = conv(f,w) ;
+    % Get temporary polynomial w(x) (x-r)^m
+    wx = pwr_conv(root_mult_mat(k,1),root_mult_mat(k,2));
+    
+    % Multiply f(x) by polynomial w(x)
+    fx = conv(fx,wx) ;
+    
 end
 
 % Obtain coefficients so that the leading coefficient has the highest
 % power.
-f = fliplr(f);
+fx = fliplr(fx);
 
-f = f';
+fx = fx';
 end
 
-function [poly] = pwr_conv(root,mult)
+function [poly] = pwr_conv(root, mult)
 % This function convolves the vector [-r 1] with itself m times, and
 % returns the corresponding polynomial.
 % 
 %
-%                           Inputs:
+% % Inputs:
+%
+% root : (Float) Root
+%
+% mult : (Int) Multiplicity of root
 %
 %
-% root :   Root
+% Outputs:
 %
-% mult :   Multiplicity of root
-%
-%
-%                           Outputs:
-%
-%
-% t :   Vector which stores the result from this convolution.
+% poly : (Vector)  Vector of coefficients of polynomial which is the result 
+% from this convolution.
 %
 
 
 
 % If the multiplicity of the root is only 1, then output the polynomial 
 % [ -r , 1]
-if mult==1
+if mult == 1
     poly = [-root,1];
 else
     % Perform polynomial multiplication m times where m is the multiplicity
@@ -64,7 +73,7 @@ else
     
     for k = 2 : 1 : mult
         % Multiply the polynomial by the factor. (x-r)
-        poly = conv(poly,q);
+        poly = conv(poly, q);
     end
 end
 

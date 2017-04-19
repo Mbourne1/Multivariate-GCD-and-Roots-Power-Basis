@@ -4,32 +4,32 @@ function [t1,t2] = GetGCDDegree_Relative_Bivariate_3Polys(fxy, gxy, hxy, myLimit
 %
 % Inputs.
 %
-% fxy : Coefficient matrix of polynomial f(x,y)
+% fxy : (Matrix) Coefficient matrix of polynomial f(x,y)
 %
-% gxy : Coefficient matrix of polynomial g(x,y)
+% gxy : (Matrix) Coefficient matrix of polynomial g(x,y)
 %
-% hxy : Coefficient matrix of polynomial h(x,y)
+% hxy : (Matrix) Coefficient matrix of polynomial h(x,y)
 %
-% myLimits_t1 :
+% myLimits_t1 : (Int) (Int)
 %
-% myLimits_t2 :
+% myLimits_t2 : (Int) (Int)
 %
-% limits_t1 :
+% limits_t1 : (Int) (Int)
 % 
-% limits_t2 :
+% limits_t2 : (Int) (Int)
 %
 % Outputs
 %
-% t1 : degree of d(x,y) with respect to x
+% t1 : (Int) Degree of d(x,y) with respect to x
 % 
-% t2 : degree of d(x,y) with respect to y
+% t2 : (Int) degree of d(x,y) with respect to y
 
 % Get the degree structure of polynomial f(x,y), g(x,y) and h(x,y)
 [m1, m2] = GetDegree_Bivariate(fxy);
 [n1, n2] = GetDegree_Bivariate(gxy);
 [o1, o2] = GetDegree_Bivariate(hxy);
 
-
+% Get limits
 lowerLimit_k1 = myLimits_t1(1);
 upperLimit_k1 = myLimits_t1(2);
 lowerLimit_k2 = myLimits_t2(1);

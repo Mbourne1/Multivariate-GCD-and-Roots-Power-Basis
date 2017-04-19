@@ -1,24 +1,28 @@
-function [t] = GetGCDDegree_Total_Bivariate_2Polys(fxy, gxy, m, n, myLimits_t, limits_t)
+function [t] = GetGCDDegree_Total_Bivariate_2Polys(fxy, gxy, m, n, limits_t)
 % Calculate the degree of the GCD of two bivariate power basis polynomials.
 %
 % % Inputs
 %
-% [fxy, gxy] : Coefficients of polynomial f(x,y) and g(x,y)
+% fxy : (Matrix) Coefficients of polynomial f(x,y)  
 %
-% [m, n] : Total degree of polynomial f(x,y) and g(x,y)
+% gxy : (Matrix) Coefficients of polynomial g(x,y)
+%
+% m : (Int) Total degree of polynomial f(x,y) 
+% 
+% n : (Int) Total degree of polynomial g(x,y)
 %
 %
 % % Outputs
 %
-% t : Total degree of the GCD d(x,y)
+% t : (Int) Total degree of the GCD d(x,y)
 
-
-% Get my upper and lower limit
-myLowerLimit = myLimits_t(1);
-myUpperLimit = myLimits_t(2);
+% Set upper and lower limits
+limits_k = [1, min(m,n)];
+lowerLimit_k = limits_k(1);
+upperLimit_k = limits_k(2);
 
 % Get number of Sylvester subresultant matrices
-nSubresultants = myUpperLimit - myLowerLimit + 1;
+nSubresultants = upperLimit_k - lowerLimit_k + 1;
 
 % Initialise some cell arrays
 arr_R1_RowNorm = cell(nSubresultants, 1);
@@ -43,7 +47,7 @@ gxy_matrix_padd(1:n1+1 , 1:n2+1) = gxy;
 % let k represent the total degree of the common divisor d_{k}(x,y)
 for i = 1 : 1 : nSubresultants
     
-    k = myLowerLimit + (i-1) ;
+    k = lowerLimit_k + (i-1) ;
     
 
     % Build the partitions of the Sylvester matrix
@@ -98,8 +102,10 @@ switch SETTINGS.RANK_REVEALING_METRIC
         end
         
         if (SETTINGS.PLOT_GRAPHS)
-            plotMinimumSingularValues_degreeTotal(vMinimumSingularValue, myLimits_t, limits_t);
-            plotSingularValues_degreeTotal(arr_SingularValues, myLimits_t, limits_t);
+            
+            plotMinimumSingularValues_degreeTotal(vMinimumSingularValue, limits_k, limits_t);
+            plotSingularValues_degreeTotal(arr_SingularValues, limits_k, limits_t);
+            
         end
         
         metric = vMinimumSingularValue;
@@ -124,8 +130,10 @@ switch SETTINGS.RANK_REVEALING_METRIC
         metric = vRatio_MaxMin_RowNorm_R1;
         
         if (SETTINGS.PLOT_GRAPHS)
-            plotRowNorm_degreeTotal(arr_R1_RowNorm, myLimits_t, limits_t)
-            plotMaxMinRowNorm_degreeTotal(vRatio_MaxMin_RowNorm_R1, myLimits_t, limits_t);
+            
+            plotRowNorm_degreeTotal(arr_R1_RowNorm, limits_k, limits_t)
+            plotMaxMinRowNorm_degreeTotal(vRatio_MaxMin_RowNorm_R1, limits_k, limits_t);
+            
         end
         
     case 'R1 Row Diagonals'
@@ -148,8 +156,8 @@ switch SETTINGS.RANK_REVEALING_METRIC
         metric = vRatio_MaxMin_Diags_R1;
         
         if(SETTINGS.PLOT_GRAPHS)
-            plotRowDiag_degreeTotal(arr_R1_Diag, myLimits_t, limits_t);
-            plotMaxMinRowDiag_degreeTotal(vRatio_MaxMin_Diags_R1, myLimits_t, limits_t);
+            plotRowDiag_degreeTotal(arr_R1_Diag, limits_k, limits_t);
+            plotMaxMinRowDiag_degreeTotal(vRatio_MaxMin_Diags_R1, limits_k, limits_t);
         end
         
     case 'Residuals'
@@ -163,11 +171,11 @@ end
 
 
 % if only one subresultant exists.
-if myLowerLimit == myUpperLimit
+if lowerLimit_k == upperLimit_k
     t = GetGCDDegree_OneSubresultant(Sk);
     return;
 else
-    t = GetGCDDegree_MultipleSubresultants(metric, myLimits_t );
+    t = GetGCDDegree_MultipleSubresultants(metric, limits_k );
 end
 
 % Plot graphs

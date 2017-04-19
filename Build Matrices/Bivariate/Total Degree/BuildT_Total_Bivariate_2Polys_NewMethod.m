@@ -5,16 +5,20 @@ function Sk = BuildT_Total_Bivariate_2Polys_NewMethod(fxy, gxy, m, n, k)
 %
 % % Inputs
 %
-% [fxy, gxy] : Coefficients of polynomial f(x,y) and g(x,y)
+% fxy : (Matrix) Coefficients of polynomial f(x,y)
 %
-% [m, n] : Total degree of f(x,y) and g(x,y)
+% gxy : (Matrix) Coefficients of polynomial g(x,y)
 %
-% k : Total degree of d(x,y) and index of the kth Sylvester subresultant
+% m : (Int) Total degree of f(x,y) 
+%
+% n : (Int) Total degree of g(x,y)
+%
+% k : (Int) Total degree of d(x,y) and index of the kth Sylvester subresultant
 % matrix to be built.
 %
 % % Outputs.
 %
-% Sk : The kth Sylvester matrix S_{k}
+% Sk : (Matrix) The kth Sylvester matrix S_{k}
 
 % Build the partition T_{n-k}(f)
 Tf = BuildT1_Total_Bivariate_NewMethod(fxy, m, n-k);

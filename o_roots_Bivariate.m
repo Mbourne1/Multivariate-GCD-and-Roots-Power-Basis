@@ -7,23 +7,23 @@ function [] = o_roots_Bivariate(ex_num, emin, emax, mean_method, bool_alpha_thet
 %
 % Inputs
 %
-% ex_num - Example Number
+% ex_num : (String) Example Number
 %
-% emin : Lower noise level
+% emin : (Float) Lower noise level
 %
-% emax : Upper noise level
+% emax : (Float) Upper noise level
 %
 % mean_method : 
 %       'Geometric Mean Matlab Method'
 %       'None'
 %
-% bool_alpha_theta ('y'/'n')
+% bool_alpha_theta (Bool)
 %       true - Include Preprocessing
 %       false - Exclude Preprocessing
 %
-% low_rank_approx_method ('y'/'n')
+% low_rank_approx_method 
 %       'Standard SNTLN' : Include Nonlinear SNTLN
-%       'Standard STLN' : Standard Linear STLN
+%       'Standard STLN'  : Standard Linear STLN
 %       'None'           : Exclude SNTLN
 %
 % apf_method

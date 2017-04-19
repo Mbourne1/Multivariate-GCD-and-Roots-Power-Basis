@@ -5,36 +5,36 @@ function dxy = GetGCDCoefficients_Total_Bivariate_3Polys(fxy, gxy, hxy, uxy, vxy
 %
 % % Inputs
 %
-% [fxy, gxy, hxy] : Coefficients of polynomial f(x,y), g(x,y) and h(x,y)
+% fxy : (Matrix) Coefficients of the polynomial f(x,y)
 %
-% [uxy, vxy, wxy] : Coefficients of polynomial u(x,y), v(x,y) and w(x,y)
+% gxy : (Matrix) Coefficients of the polynomial g(x,y)
 %
-% [m, n, o] : Total degree of polynomial f(x,y), g(x,y) and h(x,y)
+% hxy : (Matrix) Coefficients of the polynomial h(x,y)
 %
-% t : Total degree of polynomial d(x,y)
-
+% uxy : (Matrix) Coefficients of the cofactor polynomial u(x,y)
+%
+% vxy : (Matrix) Coefficients of the cofactor polynomial v(x,y)
+%
+% wxy : (Matrix) Coefficients of the cofactor polynomial w(x,y)
+%
+% m n o : (Int) (Int) (Int) : Total degree of f(x,y), g(x,y) and h(x,y)
+%
+% t : (Int) Total degree of polynomial d(x,y)
 
 % % Build Matrix C
-% Build the Cauchy matrix of coefficients of u(w,w)
+% Build the Cauchy matrix of coefficients of u(x,y), v(x,y) and w(x,y)
 C1 = BuildT1_Total(uxy,m-t,t);
-
-% Build the Cauchy matrix of coefficients of v(w,w)
 C2 = BuildT1_Total(vxy,n-t,t);
-
-% Build the matrix of coefficients of w(\omega_{1},\omega_{2})
 C3 = BuildT1_Total(wxy,o-t,t);
 
 % Build the RHS vector of coefficients of f and g
 C = [C1 ; C2 ;  C3];
 
-% Get number of coefficients in f(x,y) in terms of total degree.
-nCoeffs_fxy = nchoosek(m+2,2);
-
-% Get number of coefficietns in g(x,y) in terms of total degree
-nCoeffs_gxy = nchoosek(n+2,2);
-
-% Get number of coefficietns in h(x,y) in terms of total degree
-nCoeffs_hxy = nchoosek(o+2,2);
+% Get number of coefficients in f(x,y), g(x,y) and h(x,y) when expressed 
+% in terms of total degree.
+nCoefficients_fxy = nchoosek(m+2,2);
+nCoefficients_gxy = nchoosek(n+2,2);
+nCoefficients_hxy = nchoosek(o+2,2);
 
 
 % % Build vector f(x,y)
@@ -61,17 +61,17 @@ hxy = padd;
 % Get fxy_matrix as a vector
 fxy_vec = GetAsVector(fxy);
 % Remove the zeros associated with the polynomial by total degree
-fxy_vec = fxy_vec(1:nCoeffs_fxy);
+fxy_vec = fxy_vec(1:nCoefficients_fxy);
 
 % Get gww_matrix as a vector
 gxy_vec = GetAsVector(gxy);
 % Remove the zeros associated with the polynomial by total degree
-gxy_vec = gxy_vec(1:nCoeffs_gxy);
+gxy_vec = gxy_vec(1:nCoefficients_gxy);
 
 % Get gxy_matrix as a vector
 hxy_vec = GetAsVector(hxy);
 % Remove the zeros
-hxy_vec = hxy_vec(1:nCoeffs_hxy);
+hxy_vec = hxy_vec(1:nCoefficients_hxy);
 
 % % Build the RHS vector
 rhs_vec = [...

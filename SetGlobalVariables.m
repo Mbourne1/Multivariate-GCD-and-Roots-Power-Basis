@@ -5,25 +5,39 @@ function [] =  SetGlobalVariables(problem_type, ex_num, emin, emax, ...
 %
 % % Inputs
 %
-% problem_type
+% problem_type : (String) Either GCD or Roots
 %
-% ex_num
+% ex_num : (String)
 %
-% emin
+% emin : (Float)
 %
-% emax 
+% emax : (Float) 
 %
-% mean_method
+% mean_method : (String)
+%   * Geometric Mean Matlab Method
+%   * None
 %
-% bool_alpha_theta
+% bool_alpha_theta : (Boolean)
+%   * true
+%   * false
 %
-% low_rank_approx_method
+%
+% low_rank_approx_method : (String)
+%   * None
+%   * Standard STLN
+%   * Standard SNTLN
 %
 % apf_method
+%   * None
+%   * Linear APF
+%   * Nonlinear APF
 %
 % degree_method
+%   * Total
+%   * Relative
+%   * Both
 %
-% % Outputs
+%
 
 
 global SETTINGS
@@ -90,7 +104,7 @@ SETTINGS.RANK_REVEALING_METRIC = 'Singular Values';
 
 %--------------------------------------------------------------------------
 %
-%       SETTINGS : LOW RANK APPROXIMATION
+% % SETTINGS : LOW RANK APPROXIMATION
 %
 %
 
@@ -106,14 +120,14 @@ SETTINGS.MAX_ERROR_SNTLN = 1e-10;
 
 %--------------------------------------------------------------------------
 %
-%       SETTINGS : APPROXIMATE FACTORISATION SETTINGS
+% SETTINGS : APPROXIMATE FACTORISATION SETTINGS
 %
 %
 SETTINGS.APF_METHOD = apf_method;
 
 %--------------------------------------------------------------------------
 %
-%       SETTINGS : DECONVOLUTION
+% SETTINGS : DECONVOLUTION
 %
 %
 

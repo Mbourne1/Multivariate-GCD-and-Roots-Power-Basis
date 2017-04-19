@@ -1,19 +1,34 @@
-function dxy_matrix = GetGCDCoefficients_Both_Bivariate_3Polys(fxy, gxy, hxy, uxy, vxy, wxy, m, n, o, k)
+function dxy = GetGCDCoefficients_Both_Bivariate_3Polys(fxy, gxy, hxy, uxy, vxy, wxy, m, n, o, k)
 % Given the matrices of coefficients of f(x,y) and g(x,y), the quotient
 % polynomials u(x,y) and v(x,y), and optimal values for alpha, theta_{1}
 % and theta_{2}, calculate the coefficients of the GCD d(x,y).
 %
 % % Inputs
 %
-% [fxy, gxy] : Coefficients of polynomial f(x,y) and g(x,y)
+% fxy : (Matrix) Coefficients of polynomial f(x,y)
 %
-% [uxy, vxy] : Coefficients of polynomial u(x,y) and v(x,y)
+% gxy : (Matrix) Coefficients of polynomial g(x,y)
+%
+% hxy : (Matrix) Coefficients of polynomial h(x,y)
+% 
+% uxy : (Matrix) Coefficients of polynomial u(x,y)
+%
+% vxy : (Matrix) Coefficients of polynomial v(x,y)
+%
+% wxy : (Matrix) Coefficients of polynomial w(x,y)
 %
 % m : Total degree of f(x,y)
 % 
 % n : Total degree of g(x,y)
 % 
+% o : Total degree of w(x,y)
+% 
 % k : Total degree of d(x,y)
+%
+% % Outputs
+%
+% dxy : (Matrix) Coefficients of polynomial d(x,y)
+
 
 % Calculate the GCD of two bivariate polynomials f(x,y) and g(x,y)
 
@@ -21,13 +36,9 @@ function dxy_matrix = GetGCDCoefficients_Both_Bivariate_3Polys(fxy, gxy, hxy, ux
 % %
 % Get Degree structures
 
-% Get degrees of polynomial f(x,y)
+% Get degrees of polynomial f(x,y), g(x,y) and h(x,y)
 [m1, m2] = GetDegree_Bivariate(fxy);
-
-% Get degree of polynomial g(x,y)
 [n1, n2] = GetDegree_Bivariate(gxy);
-
-% Get degree of polynomial h(x,y)
 [o1, o2] = GetDegree_Bivariate(hxy);
 
 % Get degrees of polynomial u(x,y)
@@ -93,7 +104,7 @@ dxy_vec = ...
         ];
 
 % Arrange d(x,y) into a matrix form based on its dimensions.
-dxy_matrix = GetAsMatrix(dxy_vec, t1, t2);
+dxy = GetAsMatrix(dxy_vec, t1, t2);
 
 
 

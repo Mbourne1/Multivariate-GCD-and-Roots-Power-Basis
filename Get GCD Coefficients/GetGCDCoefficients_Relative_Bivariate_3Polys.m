@@ -1,4 +1,4 @@
-function dxy_matrix = GetGCDCoefficients_Relative_Bivariate_3Polys(fxy, gxy, hxy, uxy, vxy, wxy)
+function dxy = GetGCDCoefficients_Relative_Bivariate_3Polys(fxy, gxy, hxy, uxy, vxy, wxy)
 % Given the matrices of coefficients of f(x,y) and g(x,y), the quotient
 % polynomials u(x,y) and v(x,y), and optimal values for alpha, theta_{1}
 % and theta_{2}, calculate the coefficients of the GCD d(x,y), by forming
@@ -6,24 +6,30 @@ function dxy_matrix = GetGCDCoefficients_Relative_Bivariate_3Polys(fxy, gxy, hxy
 %
 % % Inputs
 %
-% [fxy, gxy, hxy] : Matrix of coefficients of polynomial f(x,y), g(x,y) and
-% h(x,y)
+% fxy : (Matrix) Coefficients of the polynomial f(x,y)
 %
-% [uxy, vxy, wxy] : Matrix of coefficients of polynomial u(x,y), v(x,y) and
-% w(x,y)
+% gxy : (Matrix) Coefficients of the polynomial g(x,y)
+%
+% hxy : (Matrix) Coefficients of the polynomial h(x,y)
+%
+% uxy : (Matrix) Coefficients of the polynomial u(x,y)
+%
+% vxy : (Matrix) Coefficients of the polynomial v(x,y)
+% 
+% wxy : (Matrix) Coefficients of the polynomial w(x,y)
 %
 % % Outputs
 %
-% dxy : Coefficients of polynomial d(x,y)
+% dxy :(Matrix) Coefficients of the polynomial d(x,y)
 
 
 
 % Calculate the GCD of two bivariate polynomials f(x,y) and g(x,y)
 
-% Get degrees of polynomial f(x,y)
+% Get degree of polynomial f(x,y) with respect to x and y
 [m1, m2] = GetDegree_Bivariate(fxy);
 
-% Get degrees of polynomial u(x,y)
+% Get degree of polynomial u(x,y) with respect to x and y
 [m1_t1, m2_t2] = GetDegree_Bivariate(uxy);
 
 % Get degrees of polynomial d(x,y)
@@ -72,7 +78,7 @@ x = SolveAx_b(C,rhs_vec);
 dxy_vec = x;
 
 % Arrange dw into a matrix form based on its dimensions.
-dxy_matrix = GetAsMatrix(dxy_vec,t1,t2);
+dxy = GetAsMatrix(dxy_vec,t1,t2);
 
 
 end

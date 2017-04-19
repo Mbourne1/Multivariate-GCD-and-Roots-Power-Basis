@@ -1,4 +1,4 @@
-function [t1,t2] = GetGCDDegree_Relative_Bivariate_2Polys_Fast(fxy, gxy, myLimits_t1, myLimits_t2, limits_t1, limits_t2)
+function [t1,t2] = GetGCDDegree_Relative_Bivariate_2Polys_Fast(fxy, gxy, limits_t1, limits_t2)
 % GetGCDDegree_Relative_2Polys(fxy,gxy)
 %
 % Get the degree structure (t_{1} and t_{2}) of the GCD d(x,y) of the two
@@ -6,24 +6,35 @@ function [t1,t2] = GetGCDDegree_Relative_Bivariate_2Polys_Fast(fxy, gxy, myLimit
 %
 % Inputs.
 %
-% [fxy, gxy] : Coefficient matrix of polynomial f(x,y)
+% fxy : (Matrix) Coefficients of the polynomial f(x,y)
 %
-% Outputs
+% gxy : (Matrix) Coefficients of the polynomial g(x,y)
 %
-% t1 : degree of d(x,y) with respect to x
+% limits_t1 : (Int Int) 
 %
-% t2 : degree of d(x,y) with respect to y
+% limits_t2 : (Int Int)
+%
+% % Outputs
+%
+% t1 : (Int) Degree of d(x,y) with respect to x
+%
+% t2 : (Int) Degree of d(x,y) with respect to y
 
-% Get my limits
-lowerLimit_t1 = myLimits_t1(1);
-upperLimit_t1 = myLimits_t1(2);
-lowerLimit_t2 = myLimits_t2(1);
-upperLimit_t2 = myLimits_t2(2);
 
 % Get degree of f(x,y) and g(x,y)
 [m1, m2] = GetDegree_Bivariate(fxy);
 [n1, n2] = GetDegree_Bivariate(gxy);
 
+% Get my limits
+limits_k1 = [0 min(m1, n1)];
+limits_k2 = [0 min(m2, n2)];
+
+lowerLimit_t1 = limits_k1(1);
+upperLimit_t1 = limits_k1(2);
+lowerLimit_t2 = limits_k2(1);
+upperLimit_t2 = limits_k2(2);
+
+% Get number of Sylvester subresultants to be constructed
 nSubresultants_k1 = upperLimit_t1 - lowerLimit_t1 + 1;
 nSubresultants_k2 = upperLimit_t2 - lowerLimit_t2 + 1;
 
@@ -204,15 +215,15 @@ switch SETTINGS.RANK_REVEALING_METRIC
                 %k1 = lowerLimit_k1 + (i1-1);
                 %k2 = lowerLimit_k2 + (i2-1);
                 
-                mat_MinimumSingularValues(i1,i2) = min(arr_SingularValues{i1,i2});
+                mat_MinimumSingularValues(i1, i2) = min(arr_SingularValues{i1,i2});
             end
         end
         
         mat_metric = mat_MinimumSingularValues;
         
         if (SETTINGS.PLOT_GRAPHS)
-            plotSingularValues_degreeRelative(arr_SingularValues, myLimits_t1, myLimits_t2, limits_t1, limits_t2)
-            plotMinimumSingularValues_degreeRelative(mat_MinimumSingularValues, myLimits_t1, myLimits_t2, limits_t1, limits_t2);
+            plotSingularValues_degreeRelative(arr_SingularValues, limits_k1, limits_k2, limits_t1, limits_t2)
+            plotMinimumSingularValues_degreeRelative(mat_MinimumSingularValues, limits_k1, limits_k2, limits_t1, limits_t2);
         end
         
     case 'R1 Row Norms'
@@ -230,8 +241,10 @@ switch SETTINGS.RANK_REVEALING_METRIC
         end
         
         if (SETTINGS.PLOT_GRAPHS)
-            plotRowNormsR1_degreeRelative(arr_R1_RowNorms, myLimits_t1, myLimits_t2, limits_t1, limits_t2);
-            plotMaxMinRowNormsR1_degreeRelative(matMaxRowNorm, matMinRowNorm, myLimits_t1, myLimits_t2, limits_t1, limits_t2);
+            
+            plotRowNormsR1_degreeRelative(arr_R1_RowNorms, limits_k1, limits_k2, limits_t1, limits_t2);
+            plotMaxMinRowNormsR1_degreeRelative(matMaxRowNorm, matMinRowNorm, limits_k1, limits_k2, limits_t1, limits_t2);
+            
         end
         mat_metric = matMaxRowNorm ./ matMinRowNorm;
         
@@ -261,8 +274,8 @@ switch SETTINGS.RANK_REVEALING_METRIC
         mat_metric = mat_Ratio;
         
         if (SETTINGS.PLOT_GRAPHS)
-            plotMaxMinDiagonals_degreeRelative(mat_MaxR1Diagonal, mat_MinR1Diagonal, myLimits_t1, myLimits_t2, limits_t1, limits_t2);
-            plotDiagonalsR1_degreeRelative(arr_DiagR1, myLimits_t1, myLimits_t2, limits_t1, limits_t2);
+            plotMaxMinDiagonals_degreeRelative(mat_MaxR1Diagonal, mat_MinR1Diagonal, limits_k1, limits_k2, limits_t1, limits_t2);
+            plotDiagonalsR1_degreeRelative(arr_DiagR1, limits_k1, limits_k2, limits_t1, limits_t2);
         end
     case 'Residuals'
         

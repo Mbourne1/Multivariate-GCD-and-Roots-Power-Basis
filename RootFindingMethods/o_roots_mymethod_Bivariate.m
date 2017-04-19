@@ -1,13 +1,13 @@
-function [] = o_roots_mymethod_Bivariate(fxy,M)
+function [] = o_roots_mymethod_Bivariate(fxy, M)
 % o_roots_mymethod_Bivariate(fxy,M)
 %
 % Get the factorization of a bivariate polynomial f(x,y)
 %
 % Inputs.
 %
-% fxy : Coefficients of the polynomial f(x,y)
+% fxy : (Matrix) Coefficients of the polynomial f(x,y)
 %
-% M : Total degree of f(x,y)
+% M : (Int) Total degree of f(x,y)
 
 
 
@@ -17,14 +17,14 @@ function [] = o_roots_mymethod_Bivariate(fxy,M)
 
 % Get factorization with respect to x
 if m1 > 0
-    [wx,vDegt_wx] = o_roots_mymethod_x(fxy,M);
+    [wx, ~] = o_roots_mymethod_x(fxy,M);
 else
     fprintf([mfilename ' : ''No roots with respect to x \n'])
 end
 
 % Get factorization with respect to y
 if m2 > 0
-    [wy, vDegt_wy] = o_roots_mymethod_y(fxy,M);
+    [wy, ~] = o_roots_mymethod_y(fxy,M);
 else
     % No roots wrt y
     fprintf([mfilename ' : ''No roots with respect to y \n'])
@@ -42,6 +42,7 @@ end
         catch
         end
     end
+    
     LineBreakLarge()
     for i = 1:1:length(wy)
         fprintf([mfilename sprintf(' : Roots of y, of degree : %i', i) '\n']);
@@ -51,6 +52,7 @@ end
         catch
         end
     end
+    
     %LineBreakLarge()
     %for i = 1:1:length(wxy)
     %    fprintf([mfilename sprintf(' : Roots of x and y, of degree : %i', i) '\n']);

@@ -1,5 +1,4 @@
-function [uxy_calc_matrix,vxy_calc_matrix] = ...
-    GetQuotients_Both_Bivariate_2Polys(fxy, gxy, m, n, k, k1, k2)
+function [uxy, vxy] = GetQuotients_Both_Bivariate_2Polys(fxy, gxy, m, n, k, k1, k2)
 % GetQuotients(fxy_matrix,gxy_matrix,t1,t2,opt_alpha,th1,th2)
 %
 % Given two polynomials and the knowledge of the degree of the GCD. Obtain
@@ -7,30 +6,30 @@ function [uxy_calc_matrix,vxy_calc_matrix] = ...
 %
 % % Inputs.
 %
-% [fxy, gxy] : Coefficients of the polynomial f(x,y) and g(x,y)
+% fxy : (Matrix) Coefficients of the polynomial f(x,y)
 %
-% k : Total degree of d(x,y)
+% gxy : (Matrix) Coefficients of the polynomial g(x,y)
 %
-% k1 : Degree of GCD d(x,y).
+% k : (Int) Total degree of d(x,y)
 %
-% k2 : Degree of GCD d(x,y).
+% k1 : (Int) Degree of GCD d(x,y).
+%
+% k2 : (Int) Degree of GCD d(x,y).
 
-% Get the degree of polynomial f(x,y).
-[m1,m2] = GetDegree_Bivariate(fxy);
-
-% Get the degree of polynomial g(x,y).
-[n1,n2] = GetDegree_Bivariate(gxy);
+% Get the degree of polynomial f(x,y) and g(x,y)
+[m1, m2] = GetDegree_Bivariate(fxy);
+[n1, n2] = GetDegree_Bivariate(gxy);
 
 % Build the Sylvester matrix S_{k,k1,k2}
 Skk1k2 = BuildT_Both_Bivariate_2Polys(fxy, gxy, m, n, k, k1, k2);
 
 % % Get the optimal column for removal.
-idx_col = GetOptimalColumn_Both(Skk1k2);
+idx_optColumn = GetOptimalColumn_Both(Skk1k2);
 
 % Having found the optimal column, obtain u and v the quotient polynomials.
 Atj = Skk1k2;
-cki = Skk1k2(:,idx_col);
-Atj(:,idx_col) = [];
+cki = Skk1k2(:,idx_optColumn);
+Atj(:,idx_optColumn) = [];
 
 % Get the solution vector.
 x_ls = SolveAx_b(Atj,cki);
@@ -45,31 +44,28 @@ nZeros_vxy = (n1-k1+1) * (n2-k2+1) - nNoneZeros_vxy;
 
 % Obtain the solution vector x = [-v;u]
 vecx =[
-    x_ls(1:(idx_col)-1);
+    x_ls(1:(idx_optColumn)-1);
     -1;
-    x_ls(idx_col:end);
+    x_ls(idx_optColumn:end);
     ]  ;
 
 % Get the vector of coefficients of v(x,y)
-vxy_calc = [...
+vxy_vec = [...
             vecx(1:(nNoneZeros_vxy));
             zeros(nZeros_vxy,1)
           ];
       
 % Get the vector of coefficients of u(x,y)
-uxy_calc = [...
+uxy_vec = [...
             (-1).*vecx( nNoneZeros_vxy + 1 :end);
             zeros(nZeros_uxy,1);
             ];
         
-
-
-
 % Arrange u(x,y) as a matrix.
-uxy_calc_matrix = GetAsMatrix(uxy_calc, m1-k1, m2-k2);
+uxy = GetAsMatrix(uxy_vec, m1-k1, m2-k2);
 
 % Arrange v(x,y) as a matrix.
-vxy_calc_matrix = GetAsMatrix(vxy_calc, n1-k1, n2-k2);
+vxy = GetAsMatrix(vxy_vec, n1-k1, n2-k2);
 
 
 

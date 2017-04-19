@@ -1,4 +1,11 @@
 function [t] = GetGCDDegree_OneSubresultant(Sk)
+% % Inputs
+%
+% Sk : (Matrix) kth Sylvester subresultant matrix
+%
+% % Outputs
+%
+% t : (Int) Degree of GCD
 
 global SETTINGS
 

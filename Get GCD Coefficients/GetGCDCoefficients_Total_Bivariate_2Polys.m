@@ -5,14 +5,23 @@ function dxy = GetGCDCoefficients_Total_Bivariate_2Polys(fxy, gxy, uxy, vxy, m, 
 %
 % % Inputs
 %
-% [fxy, gxy] : Coefficients of polynomial f(x,y) and g(x,y)
+% fxy : (Matrix) Coefficients of the polynomial f(x,y)
 %
-% [uxy, vxy] : Coefficients of polynomial u(x,y) and v(x,y)
+% gxy : (Matrix) Coefficients of the polynomial g(x,y)
 %
-% [m, n] : Total degree of polynomial f(x,y) and g(x,y)
+% uxy : (Matrix) Coefficients of the polynomial u(x,y)
+%
+% vxy : (Matrix) Coefficients of the polynomial h(x,y)
+%
+% m : Total degree of polynomial f(x,y)
+%
+% n : Total degree of polynomial g(x,y)
 %
 % t : Total degree of polynomial d(x,y)
-
+%
+% % Outputs
+%
+% dxy : (Matrix) Coefficients of the polynomial d(x,y)
 
 % % Build Matrix C
 % Build the Cauchy matrix of coefficients of u(w,w)
@@ -25,10 +34,10 @@ C2 = BuildT1_Total_Bivariate(vxy, n-t, t);
 C = [C1 ; C2];
 
 % Get number of coefficients in f(x,y) in terms of total degree.
-nCoeffs_fxy = nchoosek(m+2,2);
+nCoefficients_fxy = nchoosek(m+2,2);
 
 % Get number of coefficietns in g(x,y) in terms of total degree
-nCoeffs_gxy = nchoosek(n+2,2);
+nCoefficients_gxy = nchoosek(n+2,2);
 
 % % Build vector f(x,y)
 % Pad f so that it is in terms of its total degree.
@@ -48,13 +57,13 @@ gxy = padd;
 fxy_vec = GetAsVector(fxy);
 
 % Remove the zeros associated with the polynomial by total degree
-fxy_vec = fxy_vec(1:nCoeffs_fxy);
+fxy_vec = fxy_vec(1:nCoefficients_fxy);
 
 % get gww_matrix as a vector
 gxy_vec = GetAsVector(gxy);
 
 % Remove the zeros associated with the polynomial by total degree
-gxy_vec = gxy_vec(1:nCoeffs_gxy);
+gxy_vec = gxy_vec(1:nCoefficients_gxy);
 
 % % Build the RHS vector
 rhs_vec = [...

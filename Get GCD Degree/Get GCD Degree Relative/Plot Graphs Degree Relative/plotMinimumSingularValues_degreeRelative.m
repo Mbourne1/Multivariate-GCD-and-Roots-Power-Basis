@@ -1,21 +1,21 @@
-function [] = plotMinimumSingularValues_degreeRelative(mat_MinimumSingularValues, myLimits_t1, myLimits_t2, limits_t1, limits_t2)
+function [] = plotMinimumSingularValues_degreeRelative(mat_MinimumSingularValues, limits_k1, limits_k2, limits_t1, limits_t2)
 %
 % % Inputs
 %
-% mat_MinimumSingularValues :
+% mat_MinimumSingularValues : (Matrix)
 %
-% myLimits_t1 :
+% limits_k1 : (Int Int)
 %
-% myLimits_t2 :
+% limits_k2 : (Int Int)
 %
-% limits_t1 :
+% limits_t1 : (Int Int)
 % 
-% limits_t2 :
+% limits_t2 : (Int Int)
 
-lowerLimit_k1 = myLimits_t1(1);
-upperLimit_k1 = myLimits_t1(2);
-lowerLimit_k2 = myLimits_t2(1);
-upperLimit_k2 = myLimits_t2(2);
+lowerLimit_k1 = limits_k1(1);
+upperLimit_k1 = limits_k1(2);
+lowerLimit_k2 = limits_k2(1);
+upperLimit_k2 = limits_k2(2);
 
 figure_name = sprintf([ mfilename ' : ' 'Minimum Singular Values']);
 figure('name', figure_name)

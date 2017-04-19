@@ -95,10 +95,9 @@ switch SETTINGS.DEGREE_METHOD
     case 'Both'
         
         [t] = GetGCDDegree_Total_Bivariate_3Polys(fww, alpha.*gww, hww,...
-            m, n, o, myLimits_t, limits_t);
+            m, n, o, limits_t);
         
-        [t1,t2] = GetGCDDegree_Relative_Given_t_Bivariate_3Polys(fww, alpha*gww, hww,...
-            m, n, o, t, myLimits_t1, myLimits_t2, limits_t1, limits_t2);
+        [t1,t2] = GetGCDDegree_Relative_Given_t_Bivariate_3Polys(fww, alpha*gww, hww, m , n, o, t, limits_t1, limits_t2);
         
     otherwise
         error('err')

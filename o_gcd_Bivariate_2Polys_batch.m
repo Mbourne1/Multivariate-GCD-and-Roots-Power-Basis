@@ -1,16 +1,16 @@
 function [] = o_gcd_Bivariate_2Polys_batch
 % Performs a batch of GCD computations for a variety of settings
 
-ex_num_arr = {'1','2','3','4','5','6','7','8','9','10','11'};
-%ex_num_arr = {'1','2'};
-emin_arr = {1e-7,1e-8,1e-9,1e-10,1e-11,1e-12};
+%ex_num_arr = {'1','2','3','4','5','6','7','8','9','10','11'};
+ex_num_arr = {'1','2'};
+emin_arr = {1e-7, 1e-8, 1e-9, 1e-10, 1e-11, 1e-12};
 emin_arr = {1e-8,1e-10};
 emax_arr = {1e-12};
 mean_method_arr = {'Geometric Mean Matlab Method','None'};
-bool_alpha_theta_arr = {'y','n'};
-low_rank_approx_method_arr = {'None','Standard STLN','Standard SNTLN'};
+bool_alpha_theta_arr = {true, false};
+low_rank_approx_method_arr = {'None', 'Standard STLN', 'Standard SNTLN'};
 apf_method_arr = {'None'};
-degree_method_arr = {'Relative','Total','Both'};
+degree_method_arr = {'Relative', 'Total', 'Both'};
 
 for i1 = 1:1:length(ex_num_arr)
     

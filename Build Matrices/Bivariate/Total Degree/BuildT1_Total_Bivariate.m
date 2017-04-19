@@ -6,13 +6,13 @@ function T1 = BuildT1_Total_Bivariate(fxy_matrix, m, n_k)
 % Constructed in terms of total degree. 
 % T(f)*v = T(g)*u.
 %
-% Inputs
+% % Inputs
 %
-% fxy_matrix : Matrix of coefficients of the polynomial f(x,y)
+% fxy : (Matrix) Coefficients of the polynomial f(x,y)
 %
-% m   : Total degree of polynomial f(x,y).
+% m : (Int) Total degree of polynomial f(x,y).
 %
-% n_k : Total degree of polynomial v(x,y).
+% n_k : (Int) Total degree of polynomial v(x,y).
 
 
 % Get size of f(x,y)

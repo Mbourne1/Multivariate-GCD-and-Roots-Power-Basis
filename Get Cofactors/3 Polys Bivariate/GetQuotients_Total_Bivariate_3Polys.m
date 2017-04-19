@@ -4,15 +4,23 @@ function [uxy, vxy, wxy] = GetQuotients_Total_Bivariate_3Polys(fxy, gxy, hxy, m,
 %
 % % Inputs.
 %
-% [fxy, gxy, hxy] : Coefficients of polynomail f(x,y) g(x,y) and h(x,y)
+% fxy : (Matrix) Coefficients of the polynomial f(x,y)
+% 
+% gxy : (Matrix) Coefficients of the polynomial g(x,y)
 %
-% [m, n, o] : Total degree of f(x,y), g(x,y) and h(x,y)
+% hxy : (Matrix) Coefficients of the polynomail h(x,y)
 %
-% k : Degree of GCD
+% m n o : (Int) (Int) (Int) Total degree of f(x,y), g(x,y) and h(x,y)
+%
+% k : (Int) Total degree of GCD d(x,y)
 %
 % % Outputs
 % 
-% [uxy, vxy, wxy] : Coefficients of polynomial u(x,y), v(x,y) and w(x,y)
+% uxy : (Matrix) Coefficients of polynomial u(x,y)
+%
+% vxy : (Matrix) Coefficients of polynomial v(x,y)
+%
+% wxy : (Matrix) Coefficients of polynomial w(x,y)
 
 
 % %
@@ -42,25 +50,25 @@ padd_matrix(1:o1+1,1:o2+1) = hxy;
 hxy = padd_matrix;
 
 
-% Build the Sylvester Subresultant matrix S
+% Build the kth Sylvester Subresultant matrix S_{k}(f,g,h)
 Sk = BuildT_Total_Bivariate_3Polys(fxy, gxy, hxy, m, n, o, k);
 
 % Get the optimal column for removal from S(f,g)
-opt_col = GetOptimalColumn_Total(Sk);
+idx_optColumn = GetOptimalColumn_Total(Sk);
 
 
 % % Having found the optimal column, obtain u and v the quotient polynomials.
 Akj = Sk;
-cki = Sk(:,opt_col);
-Akj(:,opt_col) = [];
+cki = Sk(:,idx_optColumn);
+Akj(:,idx_optColumn) = [];
 
 x_ls = SolveAx_b(Akj,cki);
 
 % Obtain the solution vector x = [-v;u]
 vecx =[
-    x_ls(1:(opt_col)-1);
+    x_ls(1:(idx_optColumn)-1);
     -1;
-    x_ls(opt_col:end);
+    x_ls(idx_optColumn:end);
     ]  ;
 
 % Get number of coefficients in u(x,y) and v(x,y)
@@ -85,6 +93,7 @@ zeros_vww = zeros(nchoosek(n-k-1+2,2), 1);
 zeros_uww = zeros(nchoosek(m-k-1+2,2), 1);
 zeros_www = zeros(nchoosek(o-k-1+2,2), 1);
 
+% Get coefficients of u(x,y), v(x,y) and w(x,y) as matrices
 uxy = GetAsMatrix([uxy_calc;zeros_uww], m-k, m-k);
 wxy = GetAsMatrix([wxy_calc;zeros_www], o-k, o-k);
 vxy = GetAsMatrix([vxy_calc;zeros_vww], n-k, n-k);

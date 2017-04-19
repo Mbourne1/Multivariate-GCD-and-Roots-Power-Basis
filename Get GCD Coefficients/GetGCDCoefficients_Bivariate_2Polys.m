@@ -3,13 +3,17 @@ function [dxy] = GetGCDCoefficients_Bivariate_2Polys(fxy, gxy, uxy, vxy, m, n, k
 %
 % % Inputs
 %
-% [fxy, gxy] : Coefficients of the polynomial f(x,y) and g(x,y)
+% fxy : (Matrix) Coefficients of the polynomial f(x,y)
 %
-% [uxy, vxy] : Coefficients of the polynomial u(x,y) and v(x,y)
+% gxy : (Matrix) Coefficients of the polynomial g(x,y)
 %
-% [m, n] : Total degree of polynomial f(x,y) and g(x,y)
+% uxy : (Matrix) Coefficients of the polynomial u(x,y)
 %
-% t : Total degree of polynomial d(x,y)
+% vxy : (Matrix) Coefficients of the polynomial v(x,y)
+%
+% m n : (Int) (Int) : Total degree of polynomial f(x,y) and g(x,y)
+%
+% t : (Int) Total degree of polynomial d(x,y)
 
 global SETTINGS
 

@@ -6,45 +6,49 @@ function [uxy, vxy, wxy] = GetQuotients_Relative_Bivariate_3Polys(fxy, gxy, hxy,
 %
 % % Inputs.
 %
-% [fxy, gxy, hxy] : Coefficients of the polynomial f(x,y), g(x,y) and
-% h(x,y)
+% fxy : (Matrix) Coefficients of polynomial f(x,y)
 %
-% t1 : Degree of GCD d(x,y) with respect to x
+% gxy : (Matrix) Coefficients of polynomial g(x,y)
 %
-% t2 : Degree of GCD d(x,y) with respect to y
+% hxy : (Matrix) Coefficients of the polynomial h(x,y)
+%
+% t1 : (Int) Degree of GCD d(x,y) with respect to x
+%
+% t2 : (Int) Degree of GCD d(x,y) with respect to y
 %
 % % Outputs
 %
-% [uxy, vxy, wxy]
+% uxy : (Matrix) Coefficients of polynomial u(x,y)
+%
+% vxy : (Matrix) Coefficients of polynomial v(x,y)
+%
+% wxy : (Matrix) Coefficients of polynomial w(x,y)
 %
 
-% Get the degree of polynomial f(x,y).
+% Get the degree of polynomial f(x,y), g(x,y) and w(x,y)
 [m1, m2] = GetDegree_Bivariate(fxy);
-
-% Get the degree of polynomial g(x,y).
 [n1, n2] = GetDegree_Bivariate(gxy);
-
-% Get the degree of polynomial h(x,y)
 [o1, o2] = GetDegree_Bivariate(hxy);
 
+% Build the (k1,k2)th Sylvester matrix
 Sk = BuildT_Relative_Bivariate_3Polys(fxy, gxy, hxy, k1, k2);
 
-% % Get the optimal column for removal
-opt_col = GetOptimalColumn_Relative(Sk);
+% % Get the index of the optimal column for removal
+idx_optColumn = GetOptimalColumn_Relative(Sk);
 
 % Having found the optimal column, obtain u and v the quotient polynomials.
 Atj = Sk;
-cki = Sk(:,opt_col);
-Atj(:,opt_col) = [];
+cki = Sk(:,idx_optColumn);
+Atj(:,idx_optColumn) = [];
 
 % Get the solution vector.
 x_ls = SolveAx_b(Atj,cki);
 
 % Obtain the solution vector x = [-v;u]
 vecx =[
-    x_ls(1:(opt_col)-1);
+    x_ls(1:(idx_optColumn)-1);
     -1;
-    x_ls(opt_col:end);
+    x_ls(idx_optColumn:end);
     ]  ;
 
 % Get number of coefficients in u(x,y) and v(x,y) and w(x,y)
@@ -59,9 +63,7 @@ wxy_calc = vecx(nCoeffs_vxy + 1 : nCoeffs_vxy + nCoeffs_wxy);
 % Get the vector of coefficients of u
 uxy_calc = (-1).*vecx(nCoeffs_vxy + nCoeffs_wxy +1 : end);
         
-
-% % Get u and v in matrix form
-% Arrange uw into a matrix form based on their dimensions.
+% % Get u(x,y) and v(x,y) and w(x,y) in matrix form
 uxy = GetAsMatrix(uxy_calc, m1-k1, m2-k2);
 wxy = GetAsMatrix(wxy_calc, o1-k1, o2-k2);
 vxy = GetAsMatrix(vxy_calc, n1-k1, n2-k2);

@@ -1,4 +1,4 @@
-function dxy_matrix = GetGCDCoefficients_Relative_Bivariate_2Polys(fxy, gxy, uxy, vxy)
+function dxy = GetGCDCoefficients_Relative_Bivariate_2Polys(fxy, gxy, uxy, vxy)
 % Given the matrices of coefficients of f(x,y) and g(x,y), the quotient
 % polynomials u(x,y) and v(x,y), and optimal values for alpha, theta_{1}
 % and theta_{2}, calculate the coefficients of the GCD d(x,y), by forming
@@ -6,13 +6,17 @@ function dxy_matrix = GetGCDCoefficients_Relative_Bivariate_2Polys(fxy, gxy, uxy
 %
 % % Inputs
 %
-% [fxy, gxy] : Matrix of coefficients of polynomial f(x,y) and g(x,y)
+% fxy : (Matrix) Coefficients of polynomial f(x,y) 
 %
-% [uxy, vxy] : Matrix of coefficients of polynomial u(x,y) and v(x,y)
+% gxy : (Matrix) Coefficients of polynomial g(x,y)
+%
+% uxy : (Matrix) Coefficients of polynomial u(x,y)
+%
+% vxy : (Matrix) of coefficients of polynomial v(x,y)
 %
 % % Outputs
 %
-% dxy : Coefficients of polynomial d(x,y)
+% dxy : (Matrix) Coefficients of polynomial d(x,y)
 
 
 
@@ -63,7 +67,7 @@ x = SolveAx_b(C,rhs_vec);
 dxy_vec = x;
 
 % Arrange dw into a matrix form based on its dimensions.
-dxy_matrix = GetAsMatrix(dxy_vec,t1,t2);
+dxy = GetAsMatrix(dxy_vec,t1,t2);
 
 
 end

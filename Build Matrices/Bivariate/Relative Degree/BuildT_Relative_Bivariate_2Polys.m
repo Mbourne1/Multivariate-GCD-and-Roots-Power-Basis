@@ -1,18 +1,20 @@
-function Sk = BuildT_Relative_Bivariate_2Polys(fxy, gxy, k1,k2)
+function Sk = BuildT_Relative_Bivariate_2Polys(fxy, gxy, k1, k2)
 % Given two input polynomials f(x,y) and g(x,y), build the (k1,k2)-th
 % Sylvester subresultant.
 %
 % Inputs
 %
-% [fxy, gxy] : Coefficients of input polynomial f(x,y) and g(x,y)
+% fxy : (Matrix) : Coefficients of input polynomial f(x,y)
 %
-% k1 : Degree with respect to x.
+% gxy : (Matrix) : Coefficients of input polynomial g(x,y)
 %
-% k2 : Degree with respect to y.
+% k1 : (Int)Degree with respect to x.
+%
+% k2 : (Int) Degree with respect to y.
 %
 % Outputs.
 %
-% Sk : The Sylvester Subresultant S_{k_{1},k_{2}}
+% Sk : (Matrix) The Sylvester Subresultant S_{k_{1},k_{2}}
 
 
 % Get degrees m1 and m2 of polynomial f(x,y)

@@ -6,9 +6,13 @@ function k1k2_pair_mat = GetPairs_All_2Polys(m1,m2,n1,n2)
 %
 % % Inputs.
 %
-% [m1, m2] : Degree of f(x,y) with respect to x and y
+% m1 : (Int) Degree of f(x,y) with respect to x
 %
-% [n1, n2] : Degree of g(x,y) with respect to x and y
+% m2 : (Int) Degree of f(x,y) with respect to y
+%
+% n1 : (Int) Degree of g(x,y) with respect to x
+%
+% n2 : (Int) Degree of g(x,y) with respect to y
 %
 % % Outputs.
 %

@@ -2,13 +2,27 @@ function Sk = BuildT_Bivariate_3Polys(fxy, gxy, hxy, m, n, o, k, k1, k2)
 %
 % % Inputs
 %
-% [fxy, gxy, hxy] : Coefficients of polynomials f(x,y), g(x,y) and h(x,y)
+% fxy : (Matrix) Coefficients of polynomial f(x,y)
+% 
+% gxy : (Matrix) Coefficients of polynomial g(x,y) 
 %
-% [m, n, o] : Total degrees of polynomials f(x,y), g(x,y) and h(x,y)
+% hxy : (Matrix) Coefficients of polynomial h(x,y)
 %
-% k : Total degree of d(x,y)
+% m : (Int) Total degree of f(x,y) 
 %
-% [k1, k2] : Relative degrees of d(x,y)
+% n : (Int) Total degree of g(x,y)
+%
+% o : (Int) Total degree of h(x,y)
+%
+% k : (Int) Total degree of d(x,y)
+%
+% k1 : Relative degree of d(x,y) with respect to x
+%
+% k2 : Relative degree of d(x,y) with respect to y
+%
+% % Outputs
+%
+% Sk : (Matrix) kth Sylvester subresultant matrix of polynomials f, g and h
 
 global SETTINGS
 

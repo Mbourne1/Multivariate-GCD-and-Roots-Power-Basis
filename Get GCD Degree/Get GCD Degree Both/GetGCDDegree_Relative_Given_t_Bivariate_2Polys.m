@@ -1,18 +1,18 @@
-function [t1,t2] = GetGCDDegree_Relative_Given_t_Bivariate_2Polys(fxy, gxy, m, n, t, myLimits_t1, myLimits_t2, limits_t1, limits_t2)
+function [t1,t2] = GetGCDDegree_Relative_Given_t_Bivariate_2Polys(fxy, gxy, m, n, t, limits_t1, limits_t2)
 % Get the degree structure (t_{1} and t_{2}) of the GCD d(x,y) of the two
 % polynomials f(x,y) and g(x,y)
 %
 % % Inputs.
 %
-% fxy : Coefficient matrix of polynomial f(x,y)
+% fxy : (Matrix) Coefficient matrix of polynomial f(x,y)
 %
-% gxy : Coefficient matrix of polynomial g(x,y)
+% gxy : (Matrix) Coefficient matrix of polynomial g(x,y)
 %
-% m : Total degree of polynomial f(x,y)
+% m : (Int) Total degree of polynomial f(x,y)
 %
-% n : Total degree of polynomial g(x,y)
+% n : (Int) Total degree of polynomial g(x,y)
 %
-% t : Total degree of GCD d(x,y)
+% t : (Int) Total degree of GCD d(x,y)
 %
 % limits_t1 : [lowerLimit upperLimit]
 %
@@ -20,9 +20,9 @@ function [t1,t2] = GetGCDDegree_Relative_Given_t_Bivariate_2Polys(fxy, gxy, m, n
 %
 % % Outputs
 %
-% t1 : degree of d(x,y) with respect to x
+% t1 : (Int) Degree of d(x,y) with respect to x
 %
-% t2 : degree of d(x,y) with respect to y
+% t2 : (Int) Degree of d(x,y) with respect to y
 
 % Note this file differs from 'GetGCDDegreeRelative' since we make use of
 % the computed value of 't' given t, for any k1,k2 pair, we know the
@@ -34,15 +34,23 @@ function [t1,t2] = GetGCDDegree_Relative_Given_t_Bivariate_2Polys(fxy, gxy, m, n
 % be set to include all subresultant matrices, or a subset defined by the
 % computed limits passed in to this function.
 
+
+[m1, m2] = GetDegree_Bivariate(fxy);
+[n1, n2] = GetDegree_Bivariate(gxy);
+
+limits_k1 = [0 min(m1, n1)];
+limits_k2 = [0 min(m2, n2)];
+
+
 % Set upper and lower limits based on my limits.
-lowerLimit_t1 = myLimits_t1(1);
-upperLimit_t1 = myLimits_t1(2);
-lowerLimit_t2 = myLimits_t2(1);
-upperLimit_t2 = myLimits_t2(2);
+lowerLimit_k1 = limits_k1(1);
+upperLimit_k1 = limits_k1(2);
+lowerLimit_k2 = limits_k2(1);
+upperLimit_k2 = limits_k2(2);
 
 % Get the number of Sylvester subresultant matrices to be computed
-nSubresultants_k1 = upperLimit_t1 - lowerLimit_t1 + 1;
-nSubresultants_k2 = upperLimit_t2 - lowerLimit_t2 + 1;
+nSubresultants_k1 = upperLimit_k1 - lowerLimit_k1 + 1;
+nSubresultants_k2 = upperLimit_k2 - lowerLimit_k2 + 1;
 
 % Initialise arrays
 arr_SingularValues = cell( nSubresultants_k1 , nSubresultants_k2);
@@ -56,8 +64,8 @@ arr_DiagonalsR1 = cell( nSubresultants_k1 , nSubresultants_k2);
 for i1 = 1 : 1: nSubresultants_k1
     for i2 = 1 : 1: nSubresultants_k2
         
-        k1 = lowerLimit_t1 + (i1 - 1);
-        k2 = lowerLimit_t2 + (i2 - 1);
+        k1 = lowerLimit_k1 + (i1 - 1);
+        k2 = lowerLimit_k2 + (i2 - 1);
         
         % Build the Sylvester matrix S_{k,k1,k2}
         Skk1k2 = BuildT_Both_Bivariate_2Polys(fxy, gxy, m, n, t, k1, k2);
@@ -104,8 +112,8 @@ switch SETTINGS.RANK_REVEALING_METRIC
         
         mat_metric = mat_MinimumSingularValues;
         
-        plotSingularValues_degreeRelative(arr_SingularValues, myLimits_t1, myLimits_t2, limits_t1, limits_t2);
-        plotMinimumSingularValues_degreeRelative(mat_MinimumSingularValues, myLimits_t1, myLimits_t2, limits_t1, limits_t2);
+        plotSingularValues_degreeRelative(arr_SingularValues, limits_k1, limits_k2, limits_t1, limits_t2);
+        plotMinimumSingularValues_degreeRelative(mat_MinimumSingularValues, limits_k1, limits_k2, limits_t1, limits_t2);
         
     case 'R1 Row Norms'
         
@@ -119,9 +127,7 @@ switch SETTINGS.RANK_REVEALING_METRIC
         for i1 = 1:1: nSubresultants_k1
             for i2 = 1:1: nSubresultants_k2
                 
-                %k1 = lowerLimit_k1 + (i1-1);
-                %k2 = lowerLimit_k2 + (i2-1);
-                
+
                 max_matrix(i1,i2) = max(abs(arr_DiagonalsR1{i1, i2}));
                 min_matrix(i1,i2) = min(abs(arr_DiagonalsR1{i1, i2}));
                 
@@ -130,8 +136,8 @@ switch SETTINGS.RANK_REVEALING_METRIC
         end
         
         
-        plotDiagonalsR1_degreeRelative(arr_DiagonalsR1, myLimits_t1, myLimits_t2, limits_t1, limits_t2);
-        plotMaxMinDiagonals_degreeRelative(max_matrix,min_matrix, myLimits_t1, myLimits_t2, limits_t1, limits_t2);
+        plotDiagonalsR1_degreeRelative(arr_DiagonalsR1, limits_k1, limits_k2, limits_t1, limits_t2);
+        plotMaxMinDiagonals_degreeRelative(max_matrix,min_matrix, limits_k1, limits_k2, limits_t1, limits_t2);
         
         mat_metric = min_matrix./max_matrix;
         
@@ -149,12 +155,12 @@ end
 delta_x = diff(log10(mat_metric),1,1);
 vec_delta_x = sum(delta_x,2);
 [~, idx] = max(vec_delta_x);
-t1 = lowerLimit_t1 + idx - 1;
+t1 = lowerLimit_k1 + idx - 1;
 
 delta_y = diff(log10(mat_metric),1,2);
 vec_delta_y = sum(delta_y,1);
 [~, idx] = max(vec_delta_y);
-t2 = lowerLimit_t2 + idx - 1;
+t2 = lowerLimit_k2 + idx - 1;
 
 
 fprintf([mfilename ' : ' 'The Calculated Degree of the GCD is given by \n'])

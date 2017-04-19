@@ -8,29 +8,29 @@ function P1 = BuildP1_BothDegree_SNTLN(m,m1,m2,n,n1,n2,k,k1,k2,idx_col)
 %
 % % Inputs
 %
-% m : Total degree of f(x,y)
+% m : (Int) Total degree of f(x,y)
 %
-% m1 :    Degree of polynomial f(x,y) with respect to x
+% m1 : (Int) Degree of polynomial f(x,y) with respect to x
 %
-% m2 :    Degree of polynomial f(x,y) with respect to y
+% m2 : (Int) Degree of polynomial f(x,y) with respect to y
 %
-% n : Total degree of g(x,y)
+% n : (Int) Total degree of g(x,y)
 %
-% n1 :    Degree of polynomial g(x,y) with respect to x
+% n1 : (Int) Degree of polynomial g(x,y) with respect to x
 %
-% n2 :    Degree of polynomial g(x,y) with respect to y
+% n2 : (Int) Degree of polynomial g(x,y) with respect to y
 %
-% k : Total degree of d(x,y)
+% k : (Int) Total degree of d(x,y)
 %
-% k1 : Degree of GCD d(x,y) with respect to x
+% k1 : (Int) Degree of GCD d(x,y) with respect to x
 %
-% k2 : Degree of GCD d(x,y) with respect to y
+% k2 : (Int) Degree of GCD d(x,y) with respect to y
 %
-% th1 : Optimal value of theta_{1}
+% th1 : (Float) Optimal value of theta_{1}
 %
-% th2 : Optimal value of theta_{2}
+% th2 : (Float) Optimal value of theta_{2}
 %
-% idx_col : Optimal column for removal from S(f,g)
+% idx_col : (Int) Optimal column for removal from S(f,g)
 
 
 % Get number of nonzeros of f(x,y).

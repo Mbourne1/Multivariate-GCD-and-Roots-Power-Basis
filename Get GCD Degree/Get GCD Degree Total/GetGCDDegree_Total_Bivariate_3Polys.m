@@ -1,28 +1,38 @@
-function [t] = GetGCDDegree_Total_Bivariate_3Polys(fxy, gxy, hxy, m, n, o, myLimits_t, limits_t)
+function [t] = GetGCDDegree_Total_Bivariate_3Polys(fxy, gxy, hxy, m, n, o, limits_t)
 % Calculate the degree of the GCD of two bivariate Power Basis polynomials.
 %
 % % Inputs
 %
-% [fxy, gxy, hxy] : Coefficients of polynomial f(x,y) g(x,y) and h(x,y)
+% fxy : (Matrix) Coefficients of the polynomial f(x,y)
 %
-% [m, n, o] : Total degree of polynomial f(x,y) g(x,y) and h(x,y)
+% gxy : (Matrix) Coefficients of the polynomial g(x,y)
 %
-% limits_t : Minimum and Maximum values bounding the computation of t
+% hxy : (Matrix) Coefficients of the polynomial h(x,y)
+%
+% m n o : (Int) (Int) (Int) Total degree of f(x,y) g(x,y) and h(x,y)
+%
+% limits_t : (Int Int) Minimum and Maximum values bounding the computation of t
 %
 % % Outputs
 %
-% t : Total degree of the GCD d(x,y).
+% t : (Int) Total degree of the GCD d(x,y).
+
+
+limits_k = [0 min([m n o])];
+
 
 % Set upper and lower bound for total degree t.
-myLowerLimit_t = myLimits_t(1);
-myUpperLimit_t = myLimits_t(2);
+myLowerLimit_t = limits_k(1);
+myUpperLimit_t = limits_k(2);
 
 % if the upper and lower bound are equal, and not equal to one, then set
 % the total degree to lower bound. If bound = 1, then it is possible for
 % the polynomials to be coprime.
 if (myLowerLimit_t == myUpperLimit_t && myLowerLimit_t ~= 1)
+    
     t = myLowerLimit_t;
     return;
+    
 end
 
 
@@ -31,18 +41,19 @@ end
 % pad the coefficients of fxy and gxy
 % this is equivalent to degree elevating so that f is of degree (m,m), and
 % g is of degree (n,n)
-fxy_matrix_padd = zeros(m+1,m+1);
-gxy_matrix_padd = zeros(n+1,n+1);
-hxy_matrix_padd = zeros(o+1,o+1);
+fxy_matrix_padd = zeros(m+1, m+1);
+gxy_matrix_padd = zeros(n+1, n+1);
+hxy_matrix_padd = zeros(o+1, o+1);
 
+% Get the degree of f(x,y), g(x,y) and h(x,y) with respect to x and y
 [m1, m2] = GetDegree_Bivariate(fxy);
-fxy_matrix_padd(1:m1+1,1:m2+1) = fxy;
-
 [n1, n2] = GetDegree_Bivariate(gxy);
-gxy_matrix_padd(1:n1+1,1:n2+1) = gxy;
-
 [o1, o2] = GetDegree_Bivariate(hxy);
-hxy_matrix_padd(1:o1+1,1:o2+1) = hxy;
+
+%
+fxy_matrix_padd(1:m1+1, 1:m2+1) = fxy;
+gxy_matrix_padd(1:n1+1, 1:n2+1) = gxy;
+hxy_matrix_padd(1:o1+1, 1:o2+1) = hxy;
 
 % Get the number of subresultants
 nSubresultants = myUpperLimit_t - myLowerLimit_t + 1;
@@ -117,8 +128,8 @@ switch SETTINGS.RANK_REVEALING_METRIC
         end
         
         if (SETTINGS.PLOT_GRAPHS)
-            plotMinimumSingularValues_degreeTotal(vMinimumSingularValue, myLimits_t, limits_t);
-            plotSingularValues_degreeTotal(arr_SingularValues, myLimits_t, limits_t);
+            plotMinimumSingularValues_degreeTotal(vMinimumSingularValue, limits_k, limits_t);
+            plotSingularValues_degreeTotal(arr_SingularValues, limits_k, limits_t);
         end
         
         metric = vMinimumSingularValue;
@@ -143,8 +154,8 @@ switch SETTINGS.RANK_REVEALING_METRIC
         metric = vRatio_MaxMin_RowNorm_R1;
         
         if (SETTINGS.PLOT_GRAPHS)
-            plotRowNorm_degreeTotal(arr_R1_RowNorm, myLimits_t, limits_t)
-            plotMaxMinRowNorm_degreeTotal(vRatio_MaxMin_RowNorm_R1, myLimits_t, limits_t);
+            plotRowNorm_degreeTotal(arr_R1_RowNorm, limits_k, limits_t)
+            plotMaxMinRowNorm_degreeTotal(vRatio_MaxMin_RowNorm_R1, limits_k, limits_t);
         end
         
     case 'R1 Row Diagonals'
@@ -167,8 +178,8 @@ switch SETTINGS.RANK_REVEALING_METRIC
         metric = vRatio_MaxMin_Diags_R1;
         
         if(SETTINGS.PLOT_GRAPHS)
-            plotRowDiag_degreeTotal(arr_R1_Diag, myLimits_t, limits_t);
-            plotMaxMinRowDiag_degreeTotal(vRatio_MaxMin_Diags_R1, myLimits_t, limits_t);
+            plotRowDiag_degreeTotal(arr_R1_Diag, limits_k, limits_t);
+            plotMaxMinRowDiag_degreeTotal(vRatio_MaxMin_Diags_R1, limits_k, limits_t);
         end
         
     case 'Residuals'
@@ -186,7 +197,7 @@ if myLowerLimit_t == myUpperLimit_t
     t = GetGCDDegree_OneSubresultant(Sk);
     return;
 else
-    t = GetGCDDegree_MultipleSubresultants(metric, myLimits_t);
+    t = GetGCDDegree_MultipleSubresultants(metric, limits_k);
 end
 
 

@@ -1,12 +1,16 @@
 function [hxy_matrix] = Deconvolve_Bivariate_Single_Respective(fxy, gxy)
 % Return the matrix of coefficients of the polynomial h, where h = f/g
-
 %
+% % Inputs
+%
+% fxy : (Matrix) Coefficients of polynomial f(x,y)
+% 
+% gxy : (Matrix) Coefficients of polynomail g(x,y)
 
-% Get degrees of polynomial f(x,y)
+
+
+% Get degrees of polynomial f(x,y) and g(x,y)
 [m1, m2] = GetDegree_Bivariate(fxy);
-
-% Get the degrees of polynomial g(x,y)
 [n1, n2] = GetDegree_Bivariate(gxy);
 
 % Build the matrix C(g)

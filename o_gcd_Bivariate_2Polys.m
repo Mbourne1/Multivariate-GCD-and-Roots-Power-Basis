@@ -6,31 +6,31 @@ function [] = o_gcd_Bivariate_2Polys(ex_num, emin, emax, mean_method, bool_alpha
 %
 % % Inputs.
 %
-% ex_num  : Example Number (String)
+% ex_num  : (String) Example Number (String)
 %
-% emin    : Minimum Noise level
+% emin : (Float) Minimum Noise level
 %
-% emax : Maximum signal to noise ratio
+% emax : (Float) Maximum signal to noise ratio
 %
-% mean_method :
+% mean_method : (String)
 %       'Geometric Mean Matlab Method'
 %       'None'
 %
-% bool_alpha_theta ('y'/'n')
-%       true - Include Preprocessing
-%       false - Exclude Preprocessing
+% bool_alpha_theta (Boolean)
+%       true : Include Preprocessing
+%       false : Exclude Preprocessing
 %
-% low_rank_approx_method ('y'/'n')
+% low_rank_approx_method (String)
 %       'Standard SNTLN'
 %       'None'
 %
-% apf_method
+% apf_method (String)
 %       'None'
 %       'Standard APF Linear'
 %       'Standard APF Nonlinear'
 %
 %
-% degree_method
+% degree_method (String)
 %       'Relative' : Define polynomials in terms of degree with respect to
 %                    x and y, so matrices of coefficients are rectangular.
 %       'Total' :   Define polynomials in terms of total degree, so matrices
@@ -111,8 +111,8 @@ DisplayDegreeStructure();
 switch SETTINGS.DEGREE_METHOD
     case 'Total'
         
-        fxy_matrix_padd = zeros(m+1,m+1);
-        gxy_matrix_padd = zeros(n+1,n+1);
+        fxy_matrix_padd = zeros(m+1, m+1);
+        gxy_matrix_padd = zeros(n+1, n+1);
         
         [r,c] = size(fxy);
         fxy_matrix_padd(1:r,1:c) = fxy;
@@ -137,17 +137,12 @@ end
 % Difference between myLimits and 'limits'. My Limits can be redefined,
 % limits should always be computed by number of distinct roots rule.
 % Since this is a GCD problem, set 'limits' to default 0,...,min(m,n)
-
 limits_t = [0 min(m, n)];
 limits_t1 = [0 min(m1, n1)];
 limits_t2 = [0 min(m2, n2)];
 
-myLimits_t = [0 min(m, n)];
-myLimits_t1 = [0 min(m1, n1)];
-myLimits_t2 = [0 min(m2, n2)];
-
 % Get the GCD by my method
-[fxy_calc, gxy_calc, dxy_calc, uxy_calc, vxy_calc, t, t1, t2] = o_gcd_mymethod_Bivariate_2Polys(fxy, gxy, m, n, myLimits_t, myLimits_t1, myLimits_t2, limits_t, limits_t1, limits_t2 );
+[fxy_calc, gxy_calc, dxy_calc, uxy_calc, vxy_calc, t, t1, t2] = o_gcd_mymethod_Bivariate_2Polys(fxy, gxy, m, n, limits_t, limits_t1, limits_t2 );
 
 
 
@@ -158,9 +153,9 @@ myLimits_t2 = [0 min(m2, n2)];
 switch SETTINGS.DEGREE_METHOD
     case 'Relative'
         
-        my_error.dxy = GetDistanceBetweenPolynomials(dxy_exact,dxy_calc,'d(x,y)');
-        my_error.uxy = GetDistanceBetweenPolynomials(uxy_exact,uxy_calc,'u(x,y)');
-        my_error.vxy = GetDistanceBetweenPolynomials(vxy_exact,vxy_calc,'v(x,y)');
+        my_error.dxy = GetDistanceBetweenPolynomials(dxy_exact, dxy_calc,'d(x,y)');
+        my_error.uxy = GetDistanceBetweenPolynomials(uxy_exact, uxy_calc,'u(x,y)');
+        my_error.vxy = GetDistanceBetweenPolynomials(vxy_exact, vxy_calc,'v(x,y)');
         
     case 'Total'
         
@@ -180,9 +175,9 @@ switch SETTINGS.DEGREE_METHOD
         
     case 'Both'
 
-        my_error.dxy = GetDistanceBetweenPolynomials(dxy_exact,dxy_calc,'d(x,y)');
-        my_error.uxy = GetDistanceBetweenPolynomials(uxy_exact,uxy_calc,'u(x,y)');
-        my_error.vxy = GetDistanceBetweenPolynomials(vxy_exact,vxy_calc,'v(x,y)');
+        my_error.dxy = GetDistanceBetweenPolynomials(dxy_exact, dxy_calc,'d(x,y)');
+        my_error.uxy = GetDistanceBetweenPolynomials(uxy_exact, uxy_calc,'u(x,y)');
+        my_error.vxy = GetDistanceBetweenPolynomials(vxy_exact, vxy_calc,'v(x,y)');
         
 end
 

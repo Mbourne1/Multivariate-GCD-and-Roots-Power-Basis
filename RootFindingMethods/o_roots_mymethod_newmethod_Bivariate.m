@@ -1,6 +1,22 @@
-function [arr_wxy,vDeg_t_wxy] = o_roots_mymethod_newmethod_Bivariate(fxy, M)
+function [arr_wxy, vDeg_t_wxy] = o_roots_mymethod_newmethod_Bivariate(fxy, M)
 % Given a bivariate polynomial compute the roots by differentiating with
 % respect to x.
+%
+%
+% % Inputs
+%
+% fxy : (Matrix) Coefficients of the polynomial f(x,y)
+%
+% M : (Int) Total degree of polynomial f(x,y)
+%
+% % Outputs
+%
+% arr_wxy : (Array of Matrices) Array of matrices containing coefficients
+% of the polynomials w_{i}(x,y)
+%
+% vDeg_t_wxy : (Vector) Total degree of each polynomial w_{i}(x,y)
+
+
 
 global SETTINGS
 
@@ -15,19 +31,21 @@ vDeg_t_arr_fxy(ite,1) = M(ite);
 
 % Get the degree of f(x,y) with respect to x and y
 [m1, m2] = GetDegree_Bivariate(arr_fxy{ite});
-vDeg_x_arr_fxy(ite,1) = m1;
-vDeg_y_arr_fxy(ite,1) = m2;
+vDeg_x_arr_fxy(ite, 1) = m1;
+vDeg_y_arr_fxy(ite, 1) = m2;
 
 % Whilst the most recently calculated GCD has a degree greater than
 % zero. ie is not a constant, perform a gcd calculation on it and its
 % derivative.
 while vDeg_x_arr_fxy(ite,1) > 0 || vDeg_y_arr_fxy(ite,1) > 0
     
+    %
     fprintf(sprintf('Iteration Number : %i \n',ite))
     fprintf(sprintf('Computing f_{%i} : The GCD of f_{%i} and its derivatives \n', ite, ite-1))
-    %
+    
     
     if (vDeg_x_arr_fxy(ite,1) == 1) && (vDeg_y_arr_fxy(ite,1) == 1)
+    
         % Derivative with respect to x or y is constant (1), so polynomials
         % will be coprime.
         LineBreakLarge();
@@ -66,12 +84,13 @@ while vDeg_x_arr_fxy(ite,1) > 0 || vDeg_y_arr_fxy(ite,1) > 0
             % Get the derivative of f(x,y) with respect to x
             gxy = Differentiate_wrt_y(arr_fxy{ite}, vDeg_t_arr_fxy(ite));
             
-            % Get the total degree of f(x,y)
+            % Get the total degree of f(x,y) and g(x,y)
             m =  vDeg_t_arr_fxy(ite);
-            
             n = m-1;
             
-            limits_t = [1,m-1];
+            % Set limits of total degree of GCD
+            
+            limits_t = [1, n];
             
             [fxy_o, ~, dxy_o, uxy_o, vxy_o, t, t1, t2] = ...
                 o_gcd_mymethod_2Polys(fxy, gxy, m, n, limits_t);
@@ -108,7 +127,7 @@ while vDeg_x_arr_fxy(ite,1) > 0 || vDeg_y_arr_fxy(ite,1) > 0
             % Get the derivative of f(x,y) with respect to x
             gxy = Differentiate_wrt_x(arr_fxy{ite}, vDeg_t_arr_fxy(ite));
             
-            % Get the total degree of f(x,y)
+            % Get the total degree of f(x,y) and g(x,y
             m = vDeg_t_arr_fxy(ite);
             
             n = m - 1;

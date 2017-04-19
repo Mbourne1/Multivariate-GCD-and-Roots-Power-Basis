@@ -2,15 +2,23 @@ function Sk = BuildT_Bivariate_2Polys(fxy, gxy, m, n, k, k1, k2)
 %
 % % Inputs
 %
-% [fxy, gxy] : Coefficients of the polynomials f(x,y) and g(x,y) 
+% fxy : (Matrix) Coefficients of the polynomials f(x,y)  
 %
-% [m, n] : Degree of f(x,y) and g(x,y)
+% gxy : (Matrix) Coefficients of the polynomials g(x,y) 
 %
-% k :
+% m : (Int) Total degree of f(x,y)
 %
-% [k1, k2] :
+% n : (Int) Total degree of g(x,y)
+%
+% k : (Int) Total degree of common divisor d(x,y)
+%
+% k1 : (Int) Degree of d(x,y) with respect to x
+%
+% k2 : (Int) Degree of d(x,y) with respect to y
 %
 % % Outputs
+%
+% Sk : (Matrix) kth Sylvester subresultant matrix
 
 
 

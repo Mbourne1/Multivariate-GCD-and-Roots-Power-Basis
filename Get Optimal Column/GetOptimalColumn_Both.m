@@ -1,4 +1,4 @@
-function [idx_col] = GetOptimalColumn_Both(S_kk1k2)
+function [idx_optColumn] = GetOptimalColumn_Both(S_kk1k2)
 % Given two polynomials f(x,y) and g(x,y), and the degree structure of
 % their GCD t (t1,t2), pick the optimal column for removal from the 
 % Sylvester matrix S_{t_{1},t_{2}}(f,g), where some columns are removed
@@ -7,19 +7,21 @@ function [idx_col] = GetOptimalColumn_Both(S_kk1k2)
 %
 % Inputs.
 %
-% Skk1k2 : Sylvester subresultant S_{k,k_{1},k_{2}}(f,g)
+% Skk1k2 : (Matrix) Sylvester subresultant S_{k,k_{1},k_{2}}(f,g)
 %
 % Outputs.
 %
-% idx_col : Index of optimal column for removal 
+% idx_optColumn : (Int) Index of optimal column for removal 
+
+
 
 % From the given subresultant find the optimal column for removal.
-[~,nCols_S] = size(S_kk1k2);
+[~,nColumns_S] = size(S_kk1k2);
 
 % Initialise a vector to store residuals by QR decomposition
-vResiduals = zeros(nCols_S,1);
+vResiduals = zeros(nColumns_S,1);
 
-for i = 1:1:nCols_S
+for i = 1:1:nColumns_S
     
     % Get the matrix Ak, which is S_{k} with column c_{k} removed
     Ak = S_kk1k2;
@@ -37,7 +39,7 @@ for i = 1:1:nCols_S
 end
 
 % Obtain the column for which the residual is minimal.
-[~,idx_col] = min(log10(vResiduals));
+[~,idx_optColumn] = min(log10(vResiduals));
 
 
 

@@ -1,6 +1,19 @@
 function fxy_matrix = GetAsMatrix (f_vec,m1,m2)
 % Given the vector of coefficients of f(x,y), format the coefficients as a
 % matrix, so that there are (m_{1}+1) rows and (m_{2}+1) columns.
+%
+% % Inputs
+%
+% f_vec : (Vector) Contains coefficients of polynomial f(x,y)
+%
+% m1 : (Int) Degree of f(x,y) with respect to x
+%
+% m2 : (Int) Degree of f(x,y) with respect to y
+%
+% % Outputs
+%
+% fxy_matrix : (Matrix) Contains coefficients of polynomial f(x,y)
+
 
 % Initialise an empty matrix fxy
 fxy_matrix = zeros(m1+1,m2+1);

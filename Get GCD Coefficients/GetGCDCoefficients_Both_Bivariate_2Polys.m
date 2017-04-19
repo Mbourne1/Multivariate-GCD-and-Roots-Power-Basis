@@ -1,21 +1,25 @@
-function dxy_matrix = GetGCDCoefficients_Both_Bivariate_2Polys(fxy, gxy, uxy, vxy, m, n, k)
+function dxy = GetGCDCoefficients_Both_Bivariate_2Polys(fxy, gxy, uxy, vxy, m, n, k)
 % Given the matrices of coefficients of f(x,y) and g(x,y), the quotient
 % polynomials u(x,y) and v(x,y), and optimal values for alpha, theta_{1}
 % and theta_{2}, calculate the coefficients of the GCD d(x,y).
 %
 % % Inputs
 %
-% [fxy, gxy] : Coefficients of polynomial f(x,y) and g(x,y)
+% fxy : (Matrix) Coefficients of polynomial f(x,y)
 %
-% [uxy, vxy] : Coefficients of polynomial u(x,y) and v(x,y)
+% gxy : (Matrix) Coefficients of polynomial g(x,y)
 %
-% [m, n] : Total degree of f(x,y) and g(x,y)
+% uxy : (Matrix) Coefficients of polynomial u(x,y)
+%
+% vxy : (Matrix) Coefficients of polynomial v(x,y)
+%
+% m n : (Int) (Int) Total degree of f(x,y) and g(x,y)
 % 
-% k : Total degree of d(x,y)
+% k : (Int) Total degree of d(x,y)
 %
 % % Outputs
 %
-% dxy_matrix : Coefficients of polynomial d(x,y)
+% dxy : (Matrix) Coefficients of polynomial d(x,y)
 
 
 
@@ -28,8 +32,6 @@ function dxy_matrix = GetGCDCoefficients_Both_Bivariate_2Polys(fxy, gxy, uxy, vx
 
 % Get degrees of polynomial f(x,y)
 [m1, m2] = GetDegree_Bivariate(fxy);
-
-% Get degree of polynomial g(x,y)
 [n1, n2] = GetDegree_Bivariate(gxy);
 
 % Get degrees of polynomial u(x,y)
@@ -39,8 +41,7 @@ function dxy_matrix = GetGCDCoefficients_Both_Bivariate_2Polys(fxy, gxy, uxy, vx
 t1 = m1-(m1_k1);
 t2 = m2-(m2_k2);
 
-% %
-% %
+
 % Build matrices C(u) and C(v)
 % Get number of zeros in d(x,y)
 nNonZeros_dxy = GetNumNonZeros(t1, t2, k);
@@ -49,6 +50,7 @@ nZeros_dxy = (t1+1) * (t2+1) - nNonZeros_dxy;
 nNonZeros_ud = GetNumNonZeros(m1, m2, m);
 nNonZeros_vd = GetNumNonZeros(n1, n2, n);
 
+% Build the coefficient matrix
 C1 = BuildT1_Both_Bivariate(uxy, m-k, k, t1, t2);
 C2 = BuildT1_Both_Bivariate(vxy, n-k, k, t1, t2);
 
@@ -88,7 +90,7 @@ dxy_vec = ...
         ];
 
 % Arrange d(x,y) into a matrix form based on its dimensions.
-dxy_matrix = GetAsMatrix(dxy_vec,t1,t2);
+dxy = GetAsMatrix(dxy_vec, t1, t2);
 
 
 

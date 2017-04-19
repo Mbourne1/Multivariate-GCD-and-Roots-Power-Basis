@@ -73,32 +73,29 @@ for i = 0:1:highest_pwr
     % Get the degree of f_{i+1} with respect to x
     vDeg_y_arr_fxy(i+1) = double(feval(symengine, 'degree', (arr_sym_fxy{i+1}),y));
     
-    %m1 = double(feval(symengine, 'degree', symbolic_poly,x));
 end
 
 
 % Get the degree structure of the polynomials h_{i}
 vDegt_arr_hxy = abs(diff(vDeg_t_arr_fxy));
 
-% Get the degree structure of the polynomials w_{i}
-deg_struct_w = abs(diff([vDegt_arr_hxy; 0]));
-
-% Get the multiplicities of the roots.
-vMultiplicities = find(deg_struct_w~=0);
-
-% Get the sequence of polynomials h_{i}(x) in symbolic form
-for i = 1:1:length(arr_sym_fxy)-1
-    arr_sym_hxy{i,1} = arr_sym_fxy{i} / arr_sym_fxy{i+1};
-end
-
-% %
-% %
 % Get coefficients vectors of f_{i}(x) and h_{i}(x)
 nPolys_arr_fxy = size(arr_sym_fxy,1);
-nPolys_arr_hxy = size(arr_sym_hxy,1);
+nPolys_arr_hxy = nPolys_arr_fxy - 1;
 
-arr_fxy = cell(nPolys_arr_fxy,1);
-arr_hxy = cell(nPolys_arr_hxy,1);
+
+% Get the sequence of polynomials h_{i}(x) in symbolic form
+arr_sym_hxy = cell(nPolys_arr_hxy,1);
+
+for i = 1 : 1 : nPolys_arr_hxy
+    
+    arr_sym_hxy{i,1} = arr_sym_fxy{i} / arr_sym_fxy{i+1};
+    
+end
+
+
+arr_fxy = cell(nPolys_arr_fxy, 1);
+arr_hxy = cell(nPolys_arr_hxy, 1);
 
 
 for i = 1:1:nPolys_arr_fxy
@@ -114,6 +111,8 @@ end
 % %
 % %
 % %
+
+% Get number of polynomials in array f_{i}(x)
 nPolys_arr_fxy = size(arr_fxy,1);
 
 % Ensure that each f_{i}(x,y) is in a matrix of size m+1 x m+1
@@ -145,7 +144,9 @@ end
 % Initialise array
 arr_hxy_Separate_Respective = cell(nPolys_arr_hxy,1);
 
+
 for i = 1:1:nPolys_arr_fxy - 1
+    
    fxy = arr_fxy{i};
    gxy = arr_fxy{i+1};
    arr_hxy_Separate_Respective{i} = Deconvolve_Bivariate_Single_Respective(fxy,gxy);

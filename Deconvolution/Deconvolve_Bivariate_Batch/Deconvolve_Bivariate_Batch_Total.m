@@ -3,9 +3,10 @@ function arr_hxy = Deconvolve_Bivariate_Batch_Total(arr_fxy,vDegt_arr_fxy)
 %
 % Inputs.
 %
-% arr_fxy : Array of polynomials f(x,y)
+% arr_fxy : (Array of Matrices) Array of polynomials f(x,y)
 %
-% vDeg_fxy : Vector containing the total degree of the polynomials f{i}
+% vDeg_fxy : (Vector) Vector containing the total degree of the polynomials
+% f{i}
 
 % %
 % %

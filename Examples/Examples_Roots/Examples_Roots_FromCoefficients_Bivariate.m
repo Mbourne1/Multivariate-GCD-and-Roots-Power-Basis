@@ -2,11 +2,13 @@ function [fxy, m] = Examples_Roots_FromCoefficients_Bivariate(ex_num)
 %
 % % Inputs
 %
-% ex_num : Example Number
+% ex_num : (String) Example Number
 %
 % % Outputs
 %
-% fxy : Coefficients of polynomial f(x,y)
+% fxy : (Matrix) Coefficients of polynomial f(x,y)
+%
+% m : (Int) Total degree of polynomial f(x,y)
 
 % Add path to examples files
 addpath(genpath('../Examples'))
@@ -15,7 +17,7 @@ addpath(genpath('../Examples'))
 [f_root_sym_mult_arr] = Roots_Examples_Bivariate(ex_num);
 
 % Get the coefficients of the bivariate polynomial f(x,y)
-[fxy, m, m1, m2] = GetCoefficientsFromSymbolicRoots(f_root_sym_mult_arr);
+[fxy, m, ~, ~] = GetCoefficientsFromSymbolicRoots(f_root_sym_mult_arr);
 
 
 

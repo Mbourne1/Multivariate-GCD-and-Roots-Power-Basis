@@ -6,31 +6,31 @@ function [] = o_gcd_Bivariate_3Polys(ex_num, emin, emax, mean_method, bool_alpha
 %
 % % Inputs.
 %
-% ex_num  : Example Number (String)
+% ex_num : (String) Example Number (String)
 %
-% emin    : Minimum Noise level
+% emin : (Float) Minimum Noise level
 %
-% emax : Maximum signal to noise ratio
+% emax : (Float) Maximum signal to noise ratio
 %
-% mean_method :
+% mean_method : (String)
 %       'Geometric Mean Matlab Method'
 %       'None'
 %
-% bool_alpha_theta ('y'/'n')
-%       'y' - Include Preprocessing
-%       'n' - Exclude Preprocessing
+% bool_alpha_theta (Boolean)
+%       true - Include Preprocessing
+%       false - Exclude Preprocessing
 %
-% low_rank_approx_method ('y'/'n')
+% low_rank_approx_method (String)
 %       'Standard SNTLN'
 %       'None'
 %
-% apf_method
+% apf_method (String)
 %       'None'
 %       'Standard APF Linear'
 %       'Standard APF Nonlinear'
 %
 %
-% degree_method
+% degree_method (String)
 %       'Relative' : Define polynomials in terms of degree with respect to
 %                    x and y, so matrices of coefficients are rectangular.
 %       'Total' :   Define polynomials in terms of total degree, so matrices
@@ -42,9 +42,9 @@ function [] = o_gcd_Bivariate_3Polys(ex_num, emin, emax, mean_method, bool_alpha
 %
 % % Example
 %
-% >> o_gcd_Bivariate_3Polys('1',1e-10,1e-12, 'Geometric Mean Matlab Method', 'y','None','None','Both')
+% >> o_gcd_Bivariate_3Polys('1', 1e-10, 1e-12, 'Geometric Mean Matlab Method', true, 'None', 'None', 'Both')
 %
-% >> o_gcd_Bivariate_3Polys('1',1e-10,1e-12, 'Geometric Mean Matlab Method', 'y','Standard STLN','Standard Nonlinear APF','Relative')
+% >> o_gcd_Bivariate_3Polys('1', 1e-10, 1e-12, 'Geometric Mean Matlab Method', true, 'Standard STLN','Standard Nonlinear APF','Relative')
 
 
 % Set the Global Variables
@@ -77,7 +77,7 @@ fprintf('EXAMPLE NUMBER %s \n',ex_num)
 fprintf('EMIN : %s \n',emin)
 fprintf('EMAX : %s \n',emax)
 fprintf('MEAN METHOD : %s \n', mean_method)
-fprintf('PREPROCESSING : %s \n',bool_alpha_theta)
+fprintf('PREPROCESSING : %s \n',num2str(bool_alpha_theta))
 fprintf('LOW RANK METHOD : %s \n',low_rank_approx_method)
 fprintf('APF METHOD : %s \n', apf_method)
 fprintf('DEGREE METHOD : %s \n', degree_method)
@@ -89,7 +89,7 @@ fprintf('DEGREE METHOD : %s \n', degree_method)
     m,m1,m2,...
     n,n1,n2,...
     o,o1,o2,...
-    t_exact, t1_exact, t2_exact] = Examples_GCD_3Polys(ex_num);
+    t_exact, t1_exact, t2_exact] = Examples_GCD_Bivariate_3Polys(ex_num);
 
 
 
@@ -111,9 +111,17 @@ DisplayDegreeStructure_3Polys();
 
 
 % Get GCD d(x,y) and quotient polynomials u(x,y) and v(x,y)
-lower_limit = 1;
-upper_limit = min([m,n,o]);
-t_limits = [lower_limit,upper_limit];
+lowerLimit_t = 1;
+upperLimit_t = min([m,n,o]);
+limits_t = [lowerLimit_t,upperLimit_t];
+
+lowerLimit_t1 = 0;
+upperLimit_t1 = min([m1, n1, o1]);
+limits_t1 = [lowerLimit_t1, upperLimit_t1];
+
+lowerLimit_t2 = 0;
+upperLimit_t2 = min([m2, n2, o2]);
+limits_t2 = [lowerLimit_t2, upperLimit_t2];
 
 
 
@@ -138,7 +146,7 @@ end
 
 % Get the GCD by my method
 [fxy_calc, gxy_calc, hxy_calc, dxy_calc, uxy_calc, vxy_calc, wxy_calc, t,t1,t2] = ...
-    o_gcd_mymethod_3Polys(fxy, gxy, hxy, m, n, o, t_limits);
+    o_gcd_mymethod_Bivariate_3Polys(fxy, gxy, hxy, m, n, o, limits_t, limits_t1, limits_t2);
 
 
 
@@ -149,10 +157,10 @@ end
 switch SETTINGS.DEGREE_METHOD
     case 'Relative'
         
-        error.dxy = GetDistanceBetweenPolynomials(dxy_exact,dxy_calc,'d(x,y)');
-        error.uxy = GetDistanceBetweenPolynomials(uxy_exact,uxy_calc,'u(x,y)');
-        error.vxy = GetDistanceBetweenPolynomials(vxy_exact,vxy_calc,'v(x,y)');
-        error.wxy = GetDistanceBetweenPolynomials(wxy_exact,wxy_calc,'w(x,y)');
+        error.dxy = GetDistanceBetweenPolynomials(dxy_exact, dxy_calc, 'd(x,y)');
+        error.uxy = GetDistanceBetweenPolynomials(uxy_exact, uxy_calc, 'u(x,y)');
+        error.vxy = GetDistanceBetweenPolynomials(vxy_exact, vxy_calc, 'v(x,y)');
+        error.wxy = GetDistanceBetweenPolynomials(wxy_exact, wxy_calc, 'w(x,y)');
         
     case 'Total'
         
@@ -213,7 +221,24 @@ end
 
 
 
-function []= PrintToFile_GCD_3Polys(m,n,o,t,t1,t2,error)
+function []= PrintToFile_GCD_3Polys(m, n, o, t, t1, t2, error)
+%
+% % Inputs
+%
+% m : (Int) Degree of polynomial f(x,y)
+%
+% n : (Int) Degree of polynomial g(x,y)
+%
+% o : (Int) Degree of polynomial h(x,y)
+%
+% t : (Int) Degree of polynomial d(x,y)
+%
+% t1 : (Int) Degree of polynomial d(x,y) with respect to x
+%
+% t2 : (Int) Degree of polynomial d(x,y) with respect to y
+%
+% error : Error.uxy Error.vxy Error.wxy Error.dxy
+
 
 global SETTINGS
 

@@ -1,26 +1,26 @@
-function [idx_col] = GetOptimalColumn_Total(Sk)
+function [idx_optColumn] = GetOptimalColumn_Total(Sk)
 % Get index of the optimal column of the Sylvester Matrix S_{k} to be
 % removed.
 %
 % % Inputs.
 %
-% Sk : Sylvester subresultant matrix S_{k}(f,g)
+% Sk : (Matrix) Sylvester subresultant matrix S_{k}(f,g)
 %
 % % Outputs
 %
-% idx_col : Index of column to be removed
+% idx_col : (Int) Index of column to be removed
 
 
 % From the given subresultant find the optimal column for removal.
-[~,nCols_T1] = size(Sk);
+[~,nColumns_T1] = size(Sk);
 
 % Take the QR decomposition of the Subresultant
 % [Qk,Rk] = qr(Sk);
 
 
-vResiduals = zeros(nCols_T1,1);
+vResiduals = zeros(nColumns_T1,1);
 
-for i = 1 : 1 : nCols_T1
+for i = 1 : 1 : nColumns_T1
     
     %     Sk_temp = Sk;
     %     % Rem
@@ -46,14 +46,14 @@ for i = 1 : 1 : nCols_T1
 end
 
 % Obtain the column for which the residual is minimal.
-[~,idx_col] = min(log10(vResiduals));
+[~,idx_optColumn] = min(log10(vResiduals));
 
 % Obtain the column for which the residual is minimal.
 global SETTINGS
 if(SETTINGS.PLOT_GRAPHS)
     
     figure_title = sprintf([mfilename ' : ' 'Optimal Column Calculation' ]);
-    [~,idx_col] = min(log10(vResiduals));
+    [~,idx_optColumn] = min(log10(vResiduals));
     figure('name',figure_title);
     plot(log10(vResiduals),'-s');
     hold on

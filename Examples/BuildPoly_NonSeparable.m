@@ -1,22 +1,30 @@
-function [fxy_matrix] = BuildPoly_NonSeparable(roots)
+function [fxy] = BuildPoly_NonSeparable(arr_roots)
 % Given a set of bivariate polynomial roots where each root is in matrix
 % form, obtain the coefficients of the original polynomial.
+%
+% % Inputs
+% 
+% arr_roots : array 
+%
+% % Outputs
+% 
+% fxy : (Matrix) Coefficients of polynomial f(x,y)
 
 % Get the number of roots in the set
-num_roots = size(roots,1);
+nRoots = size(arr_roots,1);
 
 % initalise process by setting the first root to be the roots to be
 % multiplied by.
-new_p1_mtrx = roots{1,1};
+new_p1_matrix = arr_roots{1,1};
 
 % for all remaining roots, in turn, multiply
-for i = 2:1:num_roots
+for i = 2:1:nRoots
     
     % let p2 be the polynomial of the root which is being multiplied by p1
-    p2 = roots{i,1};
+    p2 = arr_roots{i,1};
     
     % get dimensions of the poly so far
-    [r,c] = size(new_p1_mtrx);
+    [r,c] = size(new_p1_matrix);
     
     
     % Get degree of the convolved polynomial with respect to x and y
@@ -36,7 +44,7 @@ for i = 2:1:num_roots
         for i2 = 0:1:t
             i1 = t -i2;
             if (i1< r) && (i2 < c)
-                vec_poly_p1 = [vec_poly_p1 ; new_p1_mtrx(i1+1,i2+1)];
+                vec_poly_p1 = [vec_poly_p1 ; new_p1_matrix(i1+1,i2+1)];
             end
         end
     end
@@ -53,17 +61,17 @@ for i = 2:1:num_roots
     new_p1_vec = new_p1_vec';
     
     % rebuild polynomial 1 as a matrix
-    rows = new_deg_p1_x + 1;
-    cols = new_deg_p1_y + 1;
+    nRows = new_deg_p1_x + 1;
+    nCols = new_deg_p1_y + 1;
     
-    diags = rows + cols - 1;
+    diags = nRows + nCols - 1;
     
     count = 1;
     for tot = 0:1:diags-1
         for i3 = tot:-1:0
             j3 = tot - i3;
-            if i3<rows && j3<cols
-                new_p1_mtrx(i3+1,j3+1) =  new_p1_vec(count);
+            if i3<nRows && j3<nCols
+                new_p1_matrix(i3+1,j3+1) =  new_p1_vec(count);
                 count = count + 1;
             end
         end
@@ -71,6 +79,6 @@ for i = 2:1:num_roots
     
 end
 
-fxy_matrix = new_p1_mtrx;
+fxy = new_p1_matrix;
 
 end

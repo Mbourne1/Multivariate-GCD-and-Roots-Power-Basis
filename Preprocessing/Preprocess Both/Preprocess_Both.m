@@ -4,26 +4,26 @@ function [lambda, mu, alpha, th1, th2] = Preprocess_Both(fxy, gxy, m, n)
 %
 % Inputs.
 %
-% fxy : Matrix of coefficients of polynomial f(x,y)
+% fxy : (Matrix) Coefficients of polynomial f(x,y)
 %
-% gxy : Matrix of coefficients of polynomial g(x,y)
+% gxy : (Matrix) coefficients of polynomial g(x,y)
 %
-% m : total degree of polynomial f(x,y)
+% m : (Int) Total degree of polynomial f(x,y)
 %
-% n : Total degree of polynomial g(x,y)
+% n : (Int) Total degree of polynomial g(x,y)
 %
 % Outputs.
 %
 %
-% lambda : Geometric mean of coefficients of f(x,y)
+% lambda : (Float) Geometric mean of coefficients of f(x,y)
 %
-% mu : Geometric mean of coefficients of g(x,y)
+% mu : (Float) Geometric mean of coefficients of g(x,y)
 %
-% alpha : Optimal \alpha
+% alpha : (Float) Optimal \alpha
 %
-% th1 : Optimal \theta_{1}
+% th1 : (Float) Optimal \theta_{1}
 %
-% th2 : Optimal \theta_{2}
+% th2 : (Float) Optimal \theta_{2}
 
 % Global variables
 
@@ -47,7 +47,7 @@ fxy_n = fxy ./ lambda;
 gxy_n = gxy ./ mu;
 
 switch SETTINGS.BOOL_ALPHA_THETA
-    case 'y'
+    case true
         
         
         optimization_method = 'Together';
@@ -92,38 +92,38 @@ switch SETTINGS.BOOL_ALPHA_THETA
         v_gww = GetAsVector(gww);
         
         % Plot the coefficients of f(x,y) and f(w,w)
-        PlotCoefficients(v_fxy,v_fww,'f')
+        %PlotCoefficients(v_fxy,v_fww,'f')
         % Plot the coefficients of g(x,y) and g(w,w)
-        PlotCoefficients(v_gxy,alpha.*v_gww,'g')
+        %PlotCoefficients(v_gxy,alpha.*v_gww,'g')
         
         % Get maximum coefficient of f(x)
-        max_fx = max(abs(v_fxy(v_fxy~=0)));
+        %max_fx = max(abs(v_fxy(v_fxy~=0)));
         % Get minimum coefficient of f(x)
-        min_fx = min(abs(v_fxy(v_fxy~=0)));
+        %min_fx = min(abs(v_fxy(v_fxy~=0)));
         
         % Get maximum coefficient of g(x)
-        max_gx = max(abs(v_gxy(v_gxy~=0)));
+        %max_gx = max(abs(v_gxy(v_gxy~=0)));
         % Get minimum coefficient of g(x)
-        min_gx = min(abs(v_gxy(v_gxy~=0)));
+        %min_gx = min(abs(v_gxy(v_gxy~=0)));
         
-        PrintToFile([m1,m2], [n1,n2], max_fx, min_fx, max_gx, min_gx, 1, 1, 1);
+        %PrintToFile([m1,m2], [n1,n2], max_fx, min_fx, max_gx, min_gx, 1, 1, 1);
         
         
         % Get maximum coefficient of f(x)
-        max_fw = max(abs(v_fww(v_fww~=0)));
+        %max_fw = max(abs(v_fww(v_fww~=0)));
         % Get minimum coefficient of f(x)
-        min_fw = min(abs(v_fww(v_fww~=0)));
+        %min_fw = min(abs(v_fww(v_fww~=0)));
         
         
         
-        a_gw = alpha.*v_gww;
+        %a_gw = alpha.*v_gww;
         % Get maximum coefficient of g(x)
-        max_gw = max(abs(a_gw(a_gw~=0)));
+        %max_gw = max(abs(a_gw(a_gw~=0)));
         
         % Get minimum coefficient of g(x)
-        min_gw = min(abs(a_gw(a_gw~=0)));
+        %min_gw = min(abs(a_gw(a_gw~=0)));
         
-        PrintToFile([m1,m2], [n1,n2], max_fw, min_fw, max_gw, min_gw, alpha, th1, th2);
+        %PrintToFile([m1,m2], [n1,n2], max_fw, min_fw, max_gw, min_gw, alpha, th1, th2);
         
         
         %str1 = sprintf('Condition S(f(x),g(x)) : %2.4e', cond(BuildT_Both_Bivariate_2Polys(fxy, gxy, 1, 1)));
@@ -133,7 +133,7 @@ switch SETTINGS.BOOL_ALPHA_THETA
         %fprintf([mfilename ' : ' str2 '\n']);
         
         
-    case 'n'
+    case false
         
         % Set linprog outputs to be 1
         th1 = 1;

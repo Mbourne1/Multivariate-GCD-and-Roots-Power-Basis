@@ -1,21 +1,22 @@
-function [] = plotSingularValues_degreeRelative(arr_SingularValues, myLimits_k1, myLimits_k2, limits_k1, limits_k2)
+function [] = plotSingularValues_degreeRelative(arr_SingularValues, limits_k1, limits_k2, limits_t1, limits_t2)
 %
 % % Inputs
 %
-% arr_SingularValues : Array of all Singular Values of each S_{k1,k2} 
+% arr_SingularValues : (Array) Array of all Singular Values of each S_{k1,k2} 
 %
-% myLimits_k1 : 
+% limits_k1 : (Int Int) upper and lower bounds on k1
 %
-% myLimits_k2 :
+% limits_k2 : (Int Int) upper and lower bounds on k2
 %
-% limits_k1 : upper and lower bounds on k1
+% limits_k1 : (Int Int) upper and lower bounds on t1
 %
-% limits_k2 : upper and lower bounds on k2
+% limits_k2 : (Int Int) upper and lower bounds on t2
 
-lowerLimit_k1 = myLimits_k1(1);
-upperLimit_k1 = myLimits_k1(2);
-lowerLimit_k2 = myLimits_k2(1);
-upperLimit_k2 = myLimits_k2(2);
+% Get upper and lower limits for k_{1} and k_{2}
+lowerLimit_k1 = limits_k1(1);
+upperLimit_k1 = limits_k1(2);
+lowerLimit_k2 = limits_k2(1);
+upperLimit_k2 = limits_k2(2);
 
 % Get the number of Sylvester subresultants
 nSubresultants_k1 = upperLimit_k1 - lowerLimit_k1 + 1;

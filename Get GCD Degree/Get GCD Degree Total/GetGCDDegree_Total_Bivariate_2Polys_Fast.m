@@ -3,25 +3,32 @@ function [t] = GetGCDDegree_Total_Bivariate_2Polys_Fast(fxy, gxy, m, n, myLimits
 %
 % % Inputs
 %
-% [fxy, gxy] : Coefficients of polynomial f(x,y) and g(x,y)
+% fxy : (Matrix) Coefficients of polynomial f(x,y) 
 %
-% [m, n] : Total degree of polynomial f(x,y) and g(x,y)
+% gxy : (Matrix) Coefficients of polynomial g(x,y)
 %
-% myLimits_t :
+% m : (Int) Total degree of polynomial f(x,y)
 %
-% limits_t :
+% n : (Int) Total degree of polynomial g(x,y)
+%
+% myLimits_t : (Int) (Int) 
+%
+% limits_t : (Int) (Int)
 %
 % % Outputs
 %
-% t : Total degree of the GCD d(x,y)
+% t : (Int) Total degree of the GCD d(x,y)
 
 % %
 % Calculate the Degree of the GCD
 
+
+% Get my upper and lower limits
 myLowerLimit = myLimits_t(1);
 myUpperLimit = myLimits_t(2);
 
-% Get the number of Sylvesters subresultant matrices to be built
+% Get the number of Sylvesters subresultant matrices to be built based on
+% my upper and lower limits
 nSubresultants = myUpperLimit - myLowerLimit + 1;
 
 % Initialise some cell arrays
