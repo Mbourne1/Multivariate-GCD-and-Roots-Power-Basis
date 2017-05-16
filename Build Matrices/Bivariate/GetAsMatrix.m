@@ -1,42 +1,27 @@
-function fxy_matrix = GetAsMatrix (f_vec,m1,m2)
-% Given the vector of coefficients of f(x,y), format the coefficients as a
-% matrix, so that there are (m_{1}+1) rows and (m_{2}+1) columns.
+function fxy_matrix = GetAsMatrix (fxy_vec, m1, m2)
 %
 % % Inputs
 %
-% f_vec : (Vector) Contains coefficients of polynomial f(x,y)
+% fxy_vec
 %
-% m1 : (Int) Degree of f(x,y) with respect to x
+% m1 : (Int)
 %
-% m2 : (Int) Degree of f(x,y) with respect to y
-%
-% % Outputs
-%
-% fxy_matrix : (Matrix) Contains coefficients of polynomial f(x,y)
+% m2 : (Int)
 
 
-% Initialise an empty matrix fxy
-fxy_matrix = zeros(m1+1,m2+1);
-
-% Intialise a counter which will go through each entry of f_vec (The vector
-% of coefficients of of f).
-count = 1;
-
-% Get number of diagonals in the matrix fxy.
-num_diags = (m1+1) + (m2+1) -1;
-
-for tot = 0:1:num_diags -1
-    for i = tot:-1:0
-        j = tot-i;
-        if i > m1 || j> m2
-            % restrict to only the i and j values within the matrix.
-        else
-            fxy_matrix(i+1,j+1) = f_vec(count);
-            count = count + 1;
-        end
-    end
+switch SETTINGS.VECTORISATION_METHOD
+    
+    case 'Version 1'
+        
+        fxy_matrix = GetAsMatrix_Version1(fxy_vec, m1, m2);
+        
+    case 'Version 2'
+        
+        fxy_matrix = GetAsMatrix_Version2(fxy_vec, m1, m2);
+        
+    otherwise
+        
+        error('Error')
+        
 end
-
-
-
-end
+end 

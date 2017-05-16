@@ -1,4 +1,4 @@
-function fxy = GetAsMatrix_NewMethod(v_fxy, m1, m2)
+function fxy = GetAsMatrix_Version2(v_fxy, m1, m2)
 % Given a vector of coefficients of the polynomial f(x,y), return the
 % matrix of coefficients.
 %

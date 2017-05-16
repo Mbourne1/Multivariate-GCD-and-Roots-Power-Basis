@@ -1,5 +1,5 @@
 
-function T1 = BuildT1_Relative_Bivariate_2Polys_NewMethod(fxy, n1_k1, n2_k2)
+function T1 = BuildT1_Relative_Bivariate_Version2(fxy, n1_k1, n2_k2)
 %
 % % Inputs
 %
