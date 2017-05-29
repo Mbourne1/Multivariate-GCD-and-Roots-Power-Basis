@@ -26,31 +26,31 @@ nPolys_arr_fxy = size(arr_fxy,1);
 nPolys_arr_hxy = nPolys_arr_fxy - 1;
 
 % Get the total degree of polynomials in the array h_{i}(x,y)
-vDeg_t_arr_hxy = diff(vDeg_t_arr_fxy);
+vDeg_t_arr_hxy = abs(diff(vDeg_t_arr_fxy));
 
 % Get the degree of polynomials h_{i}(x,y) with respect to x and y
-vDeg_x_arr_hxy = diff(vDeg_x_arr_fxy);
-vDeg_y_arr_hxy = diff(vDeg_y_arr_fxy);
+vDeg_x_arr_hxy = abs(diff(vDeg_x_arr_fxy));
+vDeg_y_arr_hxy = abs(diff(vDeg_y_arr_fxy));
 
 % Initialise an array to store convolution matrices 
 arr_T1 = cell(nPolys_arr_hxy, 1);
 
 % For each of the polynomials in the array f_{i}(x,y) excluding the first,
 % build the convolution matrix
-for i = 1 : 1 : nPolys_arr_hxy
+for i = 2 : 1 : nPolys_arr_fxy
     
-    fxy = arr_fxy(i+1);
-    m_current = vDeg_t_arr_fxy(i+1);
+    fxy = arr_fxy{i};
+    m_current = vDeg_t_arr_fxy(i);
     
-    n  = vDeg_t_arr_hxy(i);
-    n1 = vDeg_x_arr_hxy(i);
-    n2 = vDeg_y_arr_hxy(i);
+    n  = vDeg_t_arr_hxy(i-1);
+    n1 = vDeg_x_arr_hxy(i-1);
+    n2 = vDeg_y_arr_hxy(i-1);
     
     % Build the matrix T(f(x,y))
     T1 = BuildT1_Both_Bivariate(fxy, m_current, n, n1, n2);
     
     % Add T1 to array of matrices
-    arr_T1{i} = T1;
+    arr_T1{i-1} = T1;
     
 end
 

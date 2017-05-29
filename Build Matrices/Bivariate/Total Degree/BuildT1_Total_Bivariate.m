@@ -13,17 +13,20 @@ function T1 = BuildT1_Total_Bivariate(fxy_matrix, m, n_k)
 % m : (Int) Total degree of polynomial f(x,y).
 %
 % n_k : (Int) Total degree of polynomial v(x,y).
-
+%
+% % Outputs
+%
+% T1 : (Matrix)
 
 % Get size of f(x,y)
-[nRows_f, nCols_f] = size(fxy_matrix);
+[nRows_f, nColumns_f] = size(fxy_matrix);
 
 % Initalise a zero matrix
 zero_matrix = zeros(m+n_k+1, m+n_k+1);
 
 % Get number of elements in v(x,y)
-nElements_v = nchoosek( n_k+1 + 1 , 2);
-nColumnsT = nElements_v;
+nCoefficients_vxy = nchoosek( n_k+1 + 1 , 2);
+nColumnsT = nCoefficients_vxy;
 
 % Get the number of elements in f*v
 nRowsT = nchoosek((m+n_k+1) + 1,2);
@@ -32,13 +35,13 @@ nRowsT = nchoosek((m+n_k+1) + 1,2);
 T1 = zeros(nRowsT, nColumnsT);
 
 % Get number of diagonals in the matrix v(x,y)
-nDiags_v = (n_k+1);
+nDiagonals_vxy = (n_k+1);
 
 % Initialise a counter
 count = 1;
 
 % for each diagonal in M(v)
-for tot = 0 : 1 : nDiags_v -1
+for tot = 0 : 1 : nDiagonals_vxy - 1
     for i = tot:-1:0
         
         % Initialise a temporary zero matrix
@@ -50,10 +53,10 @@ for tot = 0 : 1 : nDiags_v -1
             
             % Wrap the entries of fxy_matrix_padded 1 downward
             % wrap the entires of fxy_matrix 1 place to the right           
-            temp_mat((i+1):(nRows_f+i),(j+1):(nCols_f+j)) = fxy_matrix;
+            temp_mat((i+1):(nRows_f+i),(j+1):(nColumns_f+j)) = fxy_matrix;
             
             % Produce temporary vector from the coefficients       
-            temp_vec = GetAsVector(temp_mat);
+            temp_vec = GetAsVector_Version1(temp_mat);
             
             % Remove the last nchoosek(n-k+1,2) entries from temp vec
             % only keep the nchoosek(n-k+2,2) non-zero values which are the

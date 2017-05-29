@@ -60,14 +60,14 @@ vecx =[
     ]  ;
 
 % Get number of coefficients in u(x,y) and v(x,y)
-nCoeffs_vxy = nchoosek(n-k+2, 2);
-nCoeffs_uxy = nchoosek(m-k+2, 2);
+nCoefficients_vxy = nchoosek(n-k+2, 2);
+nCoefficients_uxy = nchoosek(m-k+2, 2);
 
 % get the vector of coefficients of v
-vxy_calc = vecx(1:nCoeffs_vxy);
+vxy_calc = vecx(1:nCoefficients_vxy);
       
 % get the vector of coefficients of u
-uxy_calc = (-1).*vecx(nCoeffs_vxy+1:end);
+uxy_calc = (-1).*vecx(nCoefficients_vxy+1:end);
             
         
 
@@ -77,8 +77,8 @@ uxy_calc = (-1).*vecx(nCoeffs_vxy+1:end);
 zeros_vww = zeros(nchoosek(n-k-1+2, 2), 1);
 zeros_uww = zeros(nchoosek(m-k-1+2, 2), 1);
 
-uxy = GetAsMatrix([uxy_calc;zeros_uww], m-k, m-k);
-vxy = GetAsMatrix([vxy_calc;zeros_vww], n-k, n-k);
+uxy = GetAsMatrix_Version1([uxy_calc;zeros_uww], m-k, m-k);
+vxy = GetAsMatrix_Version1([vxy_calc;zeros_vww], n-k, n-k);
 
 
 

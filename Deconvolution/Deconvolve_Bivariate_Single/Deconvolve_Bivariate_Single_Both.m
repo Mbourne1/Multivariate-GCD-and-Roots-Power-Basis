@@ -49,7 +49,7 @@ C1 = BuildT1_Both_Bivariate(gxy, n, m-n, m1-n1, m2-n2);
 % Create Right hand side vector f(x,y)
 
 % Get the polynomial f(x,y) in vector form
-f = GetAsVector(fxy);
+f = GetAsVector_Version1(fxy);
 
 % Remove zeros from f(x,y).
 f = f(1:nNonZeros_gh, 1);
@@ -66,7 +66,7 @@ hxy_vec = ...
     ];
 
 % Get h(x,y) as a vector
-hxy_matrix = GetAsMatrix(hxy_vec, m1-n1, m2-n2);
+hxy_matrix = GetAsMatrix_Version1(hxy_vec, m1-n1, m2-n2);
 
 
 end

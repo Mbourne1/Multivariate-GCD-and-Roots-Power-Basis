@@ -24,15 +24,15 @@ fxy_matrix = zeros(m1+1,m2+1);
 count = 1;
 
 % Get number of diagonals in the matrix fxy.
-num_diags = (m1+1) + (m2+1) -1;
+nDiagonals = (m1 + 1) + (m2 + 1) -1;
 
-for tot = 0:1:num_diags -1
+for tot = 0:1:nDiagonals -1
     for i = tot:-1:0
         j = tot-i;
         if i > m1 || j> m2
             % restrict to only the i and j values within the matrix.
         else
-            fxy_matrix(i+1,j+1) = fxy_vec(count);
+            fxy_matrix(i+1, j+1) = fxy_vec(count);
             count = count + 1;
         end
     end

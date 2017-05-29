@@ -1,4 +1,4 @@
-function [fxy_lr,gxy_lr,uxy_lr,vxy_lr] = STLN_Both(fxy, gxy, m, n, k, k1, k2, idx_col)
+function [fxy_lr, gxy_lr, uxy_lr, vxy_lr] = STLN_Both(fxy, gxy, m, n, k, k1, k2, idx_col)
 % STLN(fxy,gxy,m,n,t1,t2,opt_col)
 %
 % Given coefficients f(x,y) and g(x,y) find the low rank approximation of
@@ -8,27 +8,31 @@ function [fxy_lr,gxy_lr,uxy_lr,vxy_lr] = STLN_Both(fxy, gxy, m, n, k, k1, k2, id
 %
 % % Inputs.
 %
-% [fxy, gxy] : Coefficients of polynomial f(x,y) and g(x,y)
+% fxy : (Matrix) Coefficients of the polynomial f(x,y) 
 %
-% [m, n] : Total degree of f(x,y) and g(x,y)
+% gxy : (Matrix) Coefficients of the polynomial g(x,y)
 %
-% k : Degree of d(x,y)
+% m : (Int) Total degree of f(x,y)
 %
-% k1 : degree of d(x,y) with respect to x
+% n : (Int) Total degree of g(x,y)
 %
-% k2 : degree of d(x,y) with respect to y
+% k : (Int) Total Degree of d(x,y)
 %
-% idx_col : index of optimal column for removal from S_{t_{1},t_{2}}(f,g)
+% k1 : (Int) Degree of d(x,y) with respect to x
+%
+% k2 : (Int) Degree of d(x,y) with respect to y
+%
+% idx_col : (Int) index of optimal column for removal from S_{t_{1},t_{2}}(f,g)
 %
 % % Outputs
 %
-% fxy_lr : Coefficients of f(x,y) with added perturbations
+% fxy_lr : (Matrix) Coefficients of f(x,y) with added perturbations
 %
-% gxy_lr : Coefficients of g(x,y) with added perturbations
+% gxy_lr : (Matrix) Coefficients of g(x,y) with added perturbations
 %
-% uxy_lr : Coefficients of u(x,y)
+% uxy_lr : (Matrix) Coefficients of u(x,y)
 %
-% vxy_lr : Coefficients of v(x,y)
+% vxy_lr : (Matrix) Coefficients of v(x,y)
 
 global SETTINGS
 
@@ -39,25 +43,25 @@ global SETTINGS
 [n1, n2] = GetDegree_Bivariate(gxy);
 
 % Get the number of coefficients in the polynomial f(x,y)
-nCoeff_fxy = (m1+1) * (m2+1);
+nCoefficients_fxy = (m1+1) * (m2+1);
 nNonZeros_fxy = GetNumNonZeros(m1,m2,m);
-nZeros_fxy = nCoeff_fxy - nNonZeros_fxy;
+nZeros_fxy = nCoefficients_fxy - nNonZeros_fxy;
 
 % Get the number of coefficients in the polynomial g(x,y)
-nCoeff_gxy = (n1+1) * (n2+1);
+nCoefficients_gxy = (n1+1) * (n2+1);
 nNonZeros_gxy = GetNumNonZeros(n1,n2,n);
-nZeros_gxy = nCoeff_gxy - nNonZeros_gxy;
+nZeros_gxy = nCoefficients_gxy - nNonZeros_gxy;
 
 % Get number of zeros in v
-nCoeff_vxy = (n1-k1+1) * (n2-k2+1);
+nCoefficients_vxy = (n1-k1+1) * (n2-k2+1);
 nNonZeros_vxy = GetNumNonZeros(n1-k1,n2-k2,n-k);
-nZeros_vxy = nCoeff_vxy - nNonZeros_vxy;
+nZeros_vxy = nCoefficients_vxy - nNonZeros_vxy;
 
 
 % Get number of zeros in u(x,y)
-nCoeff_uxy = (m1-k1+1) * (m2-k2+1);
+nCoefficients_uxy = (m1-k1+1) * (m2-k2+1);
 nNonZeros_uxy = GetNumNonZeros(m1-k1, m2-k2, m-k);
-nZeros_uxy = nCoeff_uxy - nNonZeros_uxy;
+nZeros_uxy = nCoefficients_uxy - nNonZeros_uxy;
 
 % Build the matrix T_{n1-k1,n2-k2}(f)
 Tf = BuildT1_Both_Bivariate(fxy, m, n-k, n1-k1, n2-k2);
@@ -95,14 +99,14 @@ v_zg = z(nNonZeros_fxy + 1:end);
 % Get zf as a matrix
 % EDIT 10/03/2016 - vZ_fxy has zeros removed, so include the zeros to form
 % a matrix m1+1 * m2+1
-mat_zf = GetAsMatrix(...
+mat_zf = GetAsMatrix_Version1(...
     [
     v_zf;
     zeros(nZeros_fxy,1)
     ],m1,m2);
 
 % Get zg as a matrix
-mat_zg = GetAsMatrix(...
+mat_zg = GetAsMatrix_Version1(...
     [
     v_zg;
     zeros(nZeros_gxy,1)
@@ -125,10 +129,10 @@ x = ...
 Yk = BuildY_BothDegree_STLN(x, m, m1, m2, n, n1, n2, k, k1, k2);
 
 % Test Y_{k}
-v_fxy = GetAsVector(fxy);
+v_fxy = GetAsVector_Version1(fxy);
 v_fxy = v_fxy(1:nNonZeros_fxy,:);
 
-v_gxy = GetAsVector(gxy);
+v_gxy = GetAsVector_Version1(gxy);
 v_gxy = v_gxy(1:nNonZeros_gxy,:);
 
 test1a = Yk * [v_fxy;v_gxy];
@@ -167,7 +171,7 @@ start_point     =   ...
 
 yy = start_point;
 
-f = -(yy-start_point);
+f = -(yy - start_point);
 
 % Initialise the iteration counter
 ite = 1;
@@ -181,14 +185,14 @@ while condition(ite) >  SETTINGS.MAX_ERROR_SNTLN &&  ite < SETTINGS.MAX_ITERATIO
     ite = ite + 1;
     
     % Get small petrubations by LSE problem ||Ey-f||  subject to  Cy=g
-    y_lse = LSE(E,f,C,res_vec);
+    y_lse = LSE(E, f, C, res_vec);
     
     % Increment cummulative peturbations
     yy = yy + y_lse;
     
     % obtain the small changes to z and x
     nEntries_z      = nNonZeros_fxy + nNonZeros_gxy;
-    delta_zk        = y_lse(1:nEntries_z);
+    delta_zk        = y_lse(1 : nEntries_z);
     delta_xk        = y_lse((nEntries_z+1):end);
     
     % Update z and x
@@ -196,11 +200,11 @@ while condition(ite) >  SETTINGS.MAX_ERROR_SNTLN &&  ite < SETTINGS.MAX_ITERATIO
     xk    = xk + delta_xk;
     
     % Split vector z into vectors z_f and z_g
-    v_zf = z(1:nNonZeros_fxy);
+    v_zf = z(1 : nNonZeros_fxy);
     v_zg = z(nNonZeros_fxy + 1:end);
     
     % Get zf as a matrix
-    mat_zf = GetAsMatrix(...
+    mat_zf = GetAsMatrix_Version1(...
         [
         v_zf;
         zeros(nZeros_fxy,1)
@@ -208,7 +212,7 @@ while condition(ite) >  SETTINGS.MAX_ERROR_SNTLN &&  ite < SETTINGS.MAX_ITERATIO
         ,m1,m2);
     
     % Get zg as a matrix
-    mat_zg = GetAsMatrix(...
+    mat_zg = GetAsMatrix_Version1(...
         [
         v_zg;
         zeros(nZeros_gxy,1)
@@ -273,8 +277,8 @@ x = [...
 vec_vxy = x(1:nNonZeros_vxy);
 vec_uxy = -1.* x(nNonZeros_vxy+1:end);
 
-vxy_lr = GetAsMatrix([vec_vxy ; zeros(nZeros_vxy,1)], n1-k1, n2-k2);
-uxy_lr = GetAsMatrix([vec_uxy ; zeros(nZeros_uxy,1)], m1-k1, m2-k2);
+vxy_lr = GetAsMatrix_Version1([vec_vxy ; zeros(nZeros_vxy,1)], n1-k1, n2-k2);
+uxy_lr = GetAsMatrix_Version1([vec_uxy ; zeros(nZeros_uxy,1)], m1-k1, m2-k2);
 
 PlotGraphs_STLN()
 

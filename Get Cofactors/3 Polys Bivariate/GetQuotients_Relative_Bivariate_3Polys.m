@@ -52,21 +52,21 @@ vecx =[
     ]  ;
 
 % Get number of coefficients in u(x,y) and v(x,y) and w(x,y)
-nCoeffs_vxy = (n1-k1+1) * (n2-k2+1);
-nCoeffs_wxy = (o1-k1+1) * (o2-k2+1);
+nCoefficients_vxy = (n1-k1+1) * (n2-k2+1);
+nCoefficients_wxy = (o1-k1+1) * (o2-k2+1);
 
 % Get the vector of coefficients of v
-vxy_calc = vecx(1:nCoeffs_vxy);
+vec_vxy = vecx(1:nCoefficients_vxy);
 
-wxy_calc = vecx(nCoeffs_vxy + 1 : nCoeffs_vxy + nCoeffs_wxy);
+vec_wxy = vecx(nCoefficients_vxy + 1 : nCoefficients_vxy + nCoefficients_wxy);
       
 % Get the vector of coefficients of u
-uxy_calc = (-1).*vecx(nCoeffs_vxy + nCoeffs_wxy +1 : end);
+vec_uxy = (-1).*vecx(nCoefficients_vxy + nCoefficients_wxy +1 : end);
         
 % % Get u(x,y) and v(x,y) and w(x,y) in matrix form
-uxy = GetAsMatrix(uxy_calc, m1-k1, m2-k2);
-wxy = GetAsMatrix(wxy_calc, o1-k1, o2-k2);
-vxy = GetAsMatrix(vxy_calc, n1-k1, n2-k2);
+uxy = GetAsMatrix_Version1(vec_uxy, m1-k1, m2-k2);
+wxy = GetAsMatrix_Version1(vec_wxy, o1-k1, o2-k2);
+vxy = GetAsMatrix_Version1(vec_vxy, n1-k1, n2-k2);
 
 
 end

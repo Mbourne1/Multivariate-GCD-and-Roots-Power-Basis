@@ -48,27 +48,5 @@ end
 % Obtain the column for which the residual is minimal.
 [~,idx_optColumn] = min(log10(vResiduals));
 
-% Obtain the column for which the residual is minimal.
-global SETTINGS
-if(SETTINGS.PLOT_GRAPHS)
-    
-    figure_title = sprintf([mfilename ' : ' 'Optimal Column Calculation' ]);
-    [~,idx_optColumn] = min(log10(vResiduals));
-    figure('name',figure_title);
-    plot(log10(vResiduals),'-s');
-    hold on
-    title('Residuals from removing each column c_{t_{1},t_{2},j} of S_{t_{1},t_{2}}')
-    xlabel('k: Index of subresultant colum removednfrom S_{t_{1},t_{2}}')
-    ylabel('log_{10} Residual')
-    hold off
-    
-end
-
-%% Print the optimal column and minimal residual
-% fprintf('\n')
-% fprintf('Optimal column for removal is given by %i \n',opt_col)
-% fprintf('Minimal Residual %0.5e',min(residuals_QR));
-% fprintf('\n')
-
 
 end

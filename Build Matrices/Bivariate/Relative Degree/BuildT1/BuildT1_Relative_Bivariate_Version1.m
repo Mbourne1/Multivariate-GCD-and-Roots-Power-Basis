@@ -1,4 +1,3 @@
-
 function T1 = BuildT1_Relative_Bivariate_Version1(fxy, n1_k1, n2_k2)
 % Given the polynomial f(x,y) build the partition T(f) of the Sylvester
 % matrix S(f,g) = [T(f) T(g)]. 
@@ -36,12 +35,12 @@ nColumns_T1 = (n1_k1 + 1) * (n2_k2 + 1);
 T1 = zeros(nRows_T1, nColumns_T1);
 
 % Get number of diagonals in the matrix v(x,y)
-nDiagonals_v = (n1_k1+1) + (n2_k2+1) - 1;
+nDiagonals_vxy = (n1_k1+1) + (n2_k2+1) - 1;
 
 count = 1;
 
 % for each diagonal in v(x,y)
-for tot = 0 : 1 : nDiagonals_v
+for tot = 0 : 1 : nDiagonals_vxy
     
     for i = tot:-1:0
         
@@ -58,7 +57,7 @@ for tot = 0 : 1 : nDiagonals_v
             
             
             % Produce temporary vector from the coefficients       
-            temp_vec = GetAsVector(temp_mat);
+            temp_vec = GetAsVector_Version1(temp_mat);
             
             % Set the kth column 
             

@@ -26,9 +26,9 @@ catch
     dist = 10000;
 end
 
-LineBreakLarge()
+
 fprintf([mfilename ' : ' sprintf('Distance of %s exact from %s computed a - b / a : \t %2.4e \n',name,name,dist)]);
-LineBreakLarge()
+
 
 
 

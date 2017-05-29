@@ -22,13 +22,13 @@ function [j1, j2] = GivenCol_GetIndex_Relative(n1,n2,idx_optColumn)
 i_matrix = ones(n1+1,n2+1);
 di_mat = diag(0:1:n1);
 i_matrix = di_mat * i_matrix ;
-i_vec = GetAsVector(i_matrix);
+i_vec = GetAsVector_Version1(i_matrix);
 
 % Build the matrix of j coefficients
 j_matrix = ones(n1+1,n2+1);
 di_mat = diag(0:1:n2);
 j_matrix = j_matrix * di_mat;
-j_vec = GetAsVector(j_matrix);
+j_vec = GetAsVector_Version1(j_matrix);
 
 % Get the values j_{1} and j_{2}
 j1 = i_vec(idx_optColumn);

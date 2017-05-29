@@ -6,17 +6,17 @@ function P = BuildP1_TotalDegree_SNTLN(m,n,k,idx_col)
 %
 % %   Inputs
 %
-% m : Total degree of f(x,y)
+% m : (Int) Total degree of f(x,y)
 %
-% n : Total degree of g(x,y)
+% n : (Int) Total degree of g(x,y)
 %
-% k : Total degree of d(x,y)
+% k : (Int) Total degree of d(x,y)
 %
-% th1 : Optimal value of theta_{1}
+% th1 : (Float) Optimal value of theta_{1}
 %
-% th2 : Optimal value of theta_{2}
+% th2 : (Float) Optimal value of theta_{2}
 %
-% idx_col : Optimal column for removal from S(f,g)
+% idx_col : (Int) Optimal column for removal from S(f,g)
 
 
 % Get the number of coefficients in f(x,y)
@@ -31,7 +31,7 @@ vec = [...
     ones(nNonZeros_fxy,1);...
     zeros(nZeros_fxy,1);...
     ];
-mat = GetAsMatrix(vec,m,m);
+mat = GetAsMatrix_Version1(vec,m,m);
 
 
 % Produce a zero matrix to fill the space
@@ -53,7 +53,7 @@ nCols_f = m+1;
 padd_mat(ihat:i+nRows_f, jhat:j+nCols_f) = mat;
 
 % Get the padded matrix as a vector
-vec_padd_mat = GetAsVector(padd_mat);
+vec_padd_mat = GetAsVector_Version1(padd_mat);
 nCoeff_fv = nchoosek(m+n-k+2,2);
 vec_padd_mat = vec_padd_mat(1:nCoeff_fv);
 

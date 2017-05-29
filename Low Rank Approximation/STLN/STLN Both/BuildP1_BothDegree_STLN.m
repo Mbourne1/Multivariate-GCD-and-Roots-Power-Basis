@@ -8,25 +8,29 @@ function P = BuildP1_BothDegree_STLN(m,m1,m2,n,n1,n2,t,t1,t2,idx_col)
 %
 % % Inputs
 %
-% m : Total degree of polynomial f(x,y)
+% m : (Int) Total degree of polynomial f(x,y)
 % 
-% m1 : Degree of polynomial f(x,y) with respect to x
+% m1 : (Int) Degree of polynomial f(x,y) with respect to x
 %
-% m2 : Degree of polynomial f(x,y) with respect to y
+% m2 : (Int) Degree of polynomial f(x,y) with respect to y
 %
-% n : Total degree of polynomal g(x,y)
+% n : (Int) Total degree of polynomal g(x,y)
 %
-% n1 : Degree of polynomial g(x,y) with respect to x
+% n1 : (Int) Degree of polynomial g(x,y) with respect to x
 %
-% n2 : Degree of polynomial g(x,y) with respect to y
+% n2 : (Int) Degree of polynomial g(x,y) with respect to y
 %
-% t : Total degree of polynomial d(x,y)
+% t : (Int) Total degree of polynomial d(x,y)
 %
-% t1 : Degree of GCD d(x,y) with respect to x
+% t1 : (Int) Degree of GCD d(x,y) with respect to x
 %
-% t2 : Degree of GCD d(x,y) with respect to y
+% t2 : (Int) Degree of GCD d(x,y) with respect to y
 %
-% idx_col : Index of optiml column for removal from S(f,g)
+% idx_col : (Int)Index of optiml column for removal from S(f,g)
+%
+% % Outputs
+%
+% P : (Matrix) 
 
 % Get number of nonzeros of f(x,y).
 nNonZeros_fxy = GetNumNonZeros(m1,m2,m);
@@ -39,7 +43,7 @@ vec = [...
     zeros(nZeros_fxy_relative,1)
     ];
 
-mat = GetAsMatrix(vec,m1,m2);
+mat = GetAsMatrix_Version1(vec,m1,m2);
 
 
 % Produce a zero matrix to fill the space
@@ -54,14 +58,14 @@ ihat = i+1;
 jhat = j+1;
 
 %
-nRows_f = m1+1;
-nCols_f = m2+1;
+nRows_f = m1 + 1;
+nCols_f = m2 + 1;
 
 % insert the theta matrix into the zero matrix
 padd_mat(ihat:i+nRows_f, jhat:j+nCols_f) = mat;
 
 % Get the padded matrix as a vector
-vec_padd_mat = GetAsVector(padd_mat);
+vec_padd_mat = GetAsVector_Version1(padd_mat);
 
 % Diagonalise the vector.
 diag_mat_vec_padd_mat = diag(vec_padd_mat);

@@ -47,6 +47,10 @@ SETTINGS.PLOT_GRAPHS = true;
 % Problem Type : 'GCD' or 'Roots'
 SETTINGS.PROBLEM_TYPE = problem_type;
 
+% SETTINGS.VECTORISATION METHOD
+%   Version 1 - Read diagonally
+%   Version 2 - Read down rows then across columns
+SETTINGS.VECTORISATION_METHOD = 'Version 2';
 
 %-------------------------------------------------------------------------
 %

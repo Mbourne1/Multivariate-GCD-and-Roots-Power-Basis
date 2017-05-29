@@ -41,30 +41,23 @@ t2 = m2-(m2_t2);
 % Build Matrix C
 
 % Build the Cauchy matrix of coefficients of u(\omega_{1},\omega_{2})
-C1 = BuildT1_Relative_Bivariate(uxy, t1, t2);
-
 % Build the Cauchy matrix of coefficients of v(\omega_{1},\omega_{2})
-C2 = BuildT1_Relative_Bivariate(vxy, t1, t2);
-
 % Build the Cauchy matrix of coefficients of w(\omega_{1},\omega_{2})
-C3 = BuildT1_Relative_Bivariate(wxy,t1,t2);
+C1 = BuildT1_Relative_Bivariate_Version1(uxy, t1, t2);
+C2 = BuildT1_Relative_Bivariate_Version1(vxy, t1, t2);
+C3 = BuildT1_Relative_Bivariate_Version1(wxy, t1, t2);
 
 % Build the RHS vector of coefficients of f and g
 C = [C1; C2; C3];
 
 
 % % 
-% Build Vector f(w,w)
+% Build Vectors
 
-% Get fww_matrix as a vector
-fxy_vec = GetAsVector(fxy);
-
-% %
-% Get gxy_matrix as a vector
-gxy_vec = GetAsVector(gxy);
-
-% Get hxy matrix as a vector
-hxy_vec = GetAsVector(hxy);
+% Get vectors of coefficients of f(x,y), g(x,y) and h(x,y)
+fxy_vec = GetAsVector_Version1(fxy);
+gxy_vec = GetAsVector_Version1(gxy);
+hxy_vec = GetAsVector_Version1(hxy);
 
 % % Build the RHS vector
 rhs_vec = [fxy_vec;
@@ -78,7 +71,7 @@ x = SolveAx_b(C,rhs_vec);
 dxy_vec = x;
 
 % Arrange dw into a matrix form based on its dimensions.
-dxy = GetAsMatrix(dxy_vec,t1,t2);
+dxy = GetAsMatrix_Version1(dxy_vec,t1,t2);
 
 
 end

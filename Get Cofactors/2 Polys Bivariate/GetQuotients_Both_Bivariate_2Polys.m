@@ -14,8 +14,13 @@ function [uxy, vxy] = GetQuotients_Both_Bivariate_2Polys(fxy, gxy, m, n, k, k1, 
 %
 % k1 : (Int) Degree of GCD d(x,y).
 %
-% k2 : (Int) Degree of GCD d(x,y).
+% k2 : (Int) Degree of GCD d(x,y)
+%
+% % Outputs
 
+%
+% % Note : When both total and relative degree are used, always structure
+% matrices and vectors in the 'Version 1' style.
 % Get the degree of polynomial f(x,y) and g(x,y)
 [m1, m2] = GetDegree_Bivariate(fxy);
 [n1, n2] = GetDegree_Bivariate(gxy);
@@ -62,10 +67,10 @@ uxy_vec = [...
             ];
         
 % Arrange u(x,y) as a matrix.
-uxy = GetAsMatrix(uxy_vec, m1-k1, m2-k2);
+uxy = GetAsMatrix_Version1(uxy_vec, m1-k1, m2-k2);
 
 % Arrange v(x,y) as a matrix.
-vxy = GetAsMatrix(vxy_vec, n1-k1, n2-k2);
+vxy = GetAsMatrix_Version1(vxy_vec, n1-k1, n2-k2);
 
 
 

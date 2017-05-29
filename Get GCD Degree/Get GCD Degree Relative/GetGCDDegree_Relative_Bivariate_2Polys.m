@@ -20,6 +20,11 @@ function [t1,t2] = GetGCDDegree_Relative_Bivariate_2Polys(fxy, gxy, limits_t1, l
 %
 % t2 : (Int) Degree of d(x,y) with respect to y
 
+
+% Get degree of f(x,y) and g(x,y)
+[m1, m2] = GetDegree_Bivariate(fxy);
+[n1, n2] = GetDegree_Bivariate(gxy);
+
 % Get limits
 lowerLimit_t1 = limits_t1(1);
 upperLimit_t1 = limits_t1(2);
@@ -109,7 +114,7 @@ switch SETTINGS.RANK_REVEALING_METRIC
             end
         end
         
-        mat_metric = mat_MinimumSingularValues;
+        mat_metric = log10(mat_MinimumSingularValues);
         
         % Plot Graphs
         if (SETTINGS.PLOT_GRAPHS)
@@ -144,7 +149,7 @@ switch SETTINGS.RANK_REVEALING_METRIC
             
         end
         
-        mat_metric = matMaxRowNorm ./ matMinRowNorm;
+        mat_metric = log10(matMaxRowNorm ./ matMinRowNorm);
         
     case 'R1 Row Diagonals'
         
@@ -168,7 +173,7 @@ switch SETTINGS.RANK_REVEALING_METRIC
         end
         
         mat_Ratio = mat_MinR1Diagonal ./ mat_MaxR1Diagonal;
-        mat_metric = mat_Ratio;
+        mat_metric = log10(mat_Ratio);
         
         % Plot Graphs
         if (SETTINGS.PLOT_GRAPHS)
@@ -187,12 +192,12 @@ switch SETTINGS.RANK_REVEALING_METRIC
 end
 
 % Compute the degree of the GCD
-delta_x = diff(log10(mat_metric),1,1);
+delta_x = diff((mat_metric),1,1);
 vec_delta_x = sum(delta_x,2);
 [~, idx] = max(vec_delta_x);
 t1 = lowerLimit_t1 + idx - 1;
 
-delta_y = diff(log10(mat_metric),1,2);
+delta_y = diff((mat_metric),1,2);
 vec_delta_y = sum(delta_y,1);
 [~, idx] = max(vec_delta_y);
 t2 = lowerLimit_t2 + idx - 1;

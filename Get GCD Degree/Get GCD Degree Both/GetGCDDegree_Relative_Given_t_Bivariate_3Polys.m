@@ -1,4 +1,4 @@
-function [t1,t2] = GetGCDDegree_Relative_Given_t_Bivariate_3Polys(fxy, gxy, hxy, m, n, o, t, limits_t1, limits_t2)
+function [t1,t2] = GetGCDDegree_Relative_Given_t_Bivariate_3Polys(fxy, gxy, hxy, m, n, o, t, limits_t1, limits_t2, rank_range)
 % Get the degree structure (t_{1} and t_{2}) of the GCD d(x,y) of the two
 % polynomials f(x,y) and g(x,y)
 %
@@ -121,14 +121,45 @@ end
 
 % Compute the degree of the GCD
 delta_x = diff(log10(mat_metric),1,1);
-vec_delta_x = sum(delta_x,2);
-[~, idx] = max(vec_delta_x);
-t1 = lowerLimit_k1 + idx - 1;
+vDelta_x = sum(delta_x,2);
+[maxDelta_x, idx] = max(vDelta_x);
+% Determine whether the delta is significant
+if maxDelta_x < SETTINGS.THRESHOLD
+    
+    % delta is insignificant. 
+    t1 = upperLimit_k1;
+    
+    %if 
+        % All subresultants are rank deficient (Singular)
+    %    t1 = 0
+    %else
+        % All subresultants are full rank (non-singular)
+    %    t1 = upperLimit_k1
+    %end
+    
+    
+else 
+    t1 = lowerLimit_k1 + idx - 1;
+end
+
+
 
 delta_y = diff(log10(mat_metric),1,2);
-vec_delta_y = sum(delta_y,1);
-[~, idx] = max(vec_delta_y);
-t2 = lowerLimit_k2 + idx - 1;
+vDelta_y = sum(delta_y,1);
+[maxDelta_y, idx] = max(vDelta_y);
+
+if maxDelta_y < SETTINGS.THRESHOLD
+    
+    % Delta is insignificant
+    %t2 = 0;
+    
+    t2 = upperLimit_k2;
+    
+else
+    % Delta is significant
+    t2 = lowerLimit_k2 + idx - 1;
+end
+
 
 
 fprintf([mfilename ' : ' 'The Calculated Degree of the GCD is given by \n'])

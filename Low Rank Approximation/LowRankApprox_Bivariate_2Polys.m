@@ -1,5 +1,5 @@
 function [fxy_lr, gxy_lr, uxy_lr, vxy_lr, alpha_lr, th1_lr,th2_lr] = ...
-    LowRankApprox_2Polys(fxy, gxy, alpha, th1, th2, m, n, k, k1, k2, idx_col)
+    LowRankApprox_Bivariate_2Polys(fxy, gxy, alpha, th1, th2, m, n, k, k1, k2, idx_col)
 % Compute low rank approximation of the sylvester matrix formed from
 % coefficients of f(x,y) and g(x,y). Return the modified forms of f(x,y)
 % and g(x,y).
@@ -47,8 +47,8 @@ switch SETTINGS.LOW_RANK_APPROXIMATION_METHOD
     case 'Standard STLN'
         
         % Get preprocessed polynomials
-        fww = GetWithThetas(fxy,th1,th2);
-        gww = GetWithThetas(gxy,th1,th2);
+        fww = GetWithThetas(fxy, th1, th2);
+        gww = GetWithThetas(gxy, th1, th2);
         
         % Get Low rank approximation by STLN
         [fww_lr, a_gww_lr, uww_lr, vww_lr] = STLN(fww, alpha.*gww, m, n, k, k1, k2, idx_col);
@@ -57,15 +57,13 @@ switch SETTINGS.LOW_RANK_APPROXIMATION_METHOD
         gww_lr = a_gww_lr ./ alpha;
         
         % Get f(x,y) from f(w,w).
-        fxy_lr = GetWithoutThetas(fww_lr, th1, th2);
-        
         % Get g(x,y)_lr from g(w,w).
+        fxy_lr = GetWithoutThetas(fww_lr, th1, th2);
         gxy_lr = GetWithoutThetas(gww_lr, th1, th2);
         
         % Get u(x,y) from u(w,w)
-        uxy_lr = GetWithoutThetas(uww_lr, th1, th2);
-        
         % Get u(x,y) from u(w,w)
+        uxy_lr = GetWithoutThetas(uww_lr, th1, th2);
         vxy_lr = GetWithoutThetas(vww_lr, th1, th2);
         
         alpha_lr = alpha;
@@ -98,14 +96,14 @@ switch SETTINGS.LOW_RANK_APPROXIMATION_METHOD
         % Update f(x,y) g(x,y) theta1 theta2 and alpha to their new values post
         % SNTLN
         
-        fww = GetWithThetas(fxy,th1,th2);
-        gww = GetWithThetas(gxy,th1,th2);
+        fww = GetWithThetas(fxy, th1, th2);
+        gww = GetWithThetas(gxy, th1, th2);
         
         % Get f(w,w)_lr from f(x,y)_lr
-        fww_lr = GetWithThetas(fxy,th1_lr,th2_lr);
+        fww_lr = GetWithThetas(fxy, th1_lr, th2_lr);
         
         % Get g(w,w)_lr from g(x,y)_lr
-        gww_lr = GetWithThetas(gxy,th1_lr,th2_lr);
+        gww_lr = GetWithThetas(gxy, th1_lr, th2_lr);
         
         % 
         test1 = (fww - fww_lr);

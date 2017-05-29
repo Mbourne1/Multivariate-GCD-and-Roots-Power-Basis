@@ -4,24 +4,24 @@ function Y = BuildY_TotalDegree_SNTLN(x,m,n,k,alpha,th1,th2)
 %
 % % Inputs
 %
-% x : Least squares solution to A_{k,k1,k2}x = c_{k,k1,k2} with zero
+% x : (Vector) Least squares solution to A_{k,k1,k2}x = c_{k,k1,k2} with zero
 % inserted.
 %
-% m : Total degeree of polynomial f(x,y) 
+% m : (Int) Total degeree of polynomial f(x,y) 
 % 
-% n : Total degree of polynomial g(x,y)
+% n : (Int) Total degree of polynomial g(x,y)
 %
-% k : Total degree of d(x,y)
+% k : (Int) Total degree of d(x,y)
 %
-% alpha : Optimal value of \alpha
+% alpha : (Float) Optimal value of \alpha
 % 
-% th1 : Optimal value of \theta_{1}
+% th1 : (Float) Optimal value of \theta_{1}
 %
-% th2 : Optimal value of \theta_{2}
+% th2 : (Float) Optimal value of \theta_{2}
 %
 % % Outputs.
 %
-% Y : Matrix Y.
+% Y : (Matrix) Matrix Y.
 
 
 % Separate the x into x1 and x2
@@ -46,14 +46,14 @@ x1_vec = [x1_vec ; zeros(nZeros_x1_mat,1)];
 x2_vec = [x2_vec ; zeros(nZeros_x2_mat,1)];
 
 % Get x1 and x2 as matrices.
-x1_mat = GetAsMatrix(x1_vec,n-k,n-k);
-x2_mat = GetAsMatrix(x2_vec,m-k,m-k);
+x1_mat = GetAsMatrix_Version1(x1_vec, n-k, n-k);
+x2_mat = GetAsMatrix_Version1(x2_vec, m-k, m-k);
 
 % Build the convolution matrix T_{m,m1,m2}(x1)
-T_x1 = BuildT1_Total(x1_mat,n-k,m);
+T_x1 = BuildT1_Total_Bivariate(x1_mat, n-k, m);
 
 % Build the convolution matrix T_{n,n1,n2}(x2)
-T_x2 = BuildT1_Total(x2_mat,m-k,n);
+T_x2 = BuildT1_Total_Bivariate(x2_mat, m-k, n);
 
 % Multiply the two convolution matrices T(x1) T(x2) by the thetas 
 % corresponding to f(w,w) and g(w,w) so [T(x1) T(x2)]* [f;g]
@@ -62,7 +62,7 @@ T_x2 = BuildT1_Total(x2_mat,m-k,n);
 th1_mat = diag(th1.^(0:1:m));
 th2_mat = diag(th2.^(0:1:m));
 fww_thetas_mat = th1_mat * ones(m+1,m+1) * th2_mat;
-th_mat_fww = GetAsVector(fww_thetas_mat);
+th_mat_fww = GetAsVector_Version1(fww_thetas_mat);
 th_mat_fww = th_mat_fww(1:nNonZeros_fxy);
 th_mat_fww = diag(th_mat_fww);
 
@@ -70,7 +70,7 @@ th_mat_fww = diag(th_mat_fww);
 th1_mat = diag(th1.^(0:1:n));
 th2_mat = diag(th2.^(0:1:n));
 gww_thetas_mat = th1_mat * ones(n+1,n+1) * th2_mat;
-th_mat_gww = GetAsVector(gww_thetas_mat);
+th_mat_gww = GetAsVector_Version1(gww_thetas_mat);
 th_mat_gww = th_mat_gww(1:nNonZeros_gxy);
 th_mat_gww = diag(th_mat_gww);
 

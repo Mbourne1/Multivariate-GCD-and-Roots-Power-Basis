@@ -25,10 +25,10 @@ function Sk = BuildT_Relative_Bivariate_3Polys(fxy, gxy, hxy, k1,k2)
 [o1, o2] = GetDegree_Bivariate(hxy);
 
 % Build the partitions of the Sylvester subresultant matrix S_{k1,k2}(f,g)
-T1 = BuildT1_Relative_Bivariate(fxy, n1-k1, n2-k2);
-T2 = BuildT1_Relative_Bivariate(fxy, o1-k1, o2-k2);
-T3 = BuildT1_Relative_Bivariate(gxy, m1-k1, m2-k2);
-T4 = BuildT1_Relative_Bivariate(hxy, m1-k1, m2-k2);
+T1 = BuildT1_Relative_Bivariate_Version1(fxy, n1-k1, n2-k2);
+T2 = BuildT1_Relative_Bivariate_Version1(fxy, o1-k1, o2-k2);
+T3 = BuildT1_Relative_Bivariate_Version1(gxy, m1-k1, m2-k2);
+T4 = BuildT1_Relative_Bivariate_Version1(hxy, m1-k1, m2-k2);
 
 % Build the Sylvester subresultant matrix
 diagonal = blkdiag(T1,T2);

@@ -21,10 +21,10 @@ function T1 = BuildT1_Both_Bivariate(fxy, m, n_k, n1_k1, n2_k2)
 
 
 % Get the degree of polynomial f(x,y).
-[m1,m2] = GetDegree_Bivariate(fxy);
+[m1, m2] = GetDegree_Bivariate(fxy);
 
 % Build the first partition containing coefficients of fxy
-T1 = BuildT1_Relative_Bivariate(fxy, n1_k1, n2_k2);
+T1 = BuildT1_Relative_Bivariate_Version1(fxy, n1_k1, n2_k2);
 
 % Get number of nonzeros in v(x,y)
 nNoneZeros_vxy = GetNumNonZeros(n1_k1, n2_k2, n_k);

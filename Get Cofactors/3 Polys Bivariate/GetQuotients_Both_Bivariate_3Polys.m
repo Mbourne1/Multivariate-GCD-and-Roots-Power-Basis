@@ -83,9 +83,9 @@ uxy_calc = [...
         
 
 % Arrange coefficients of u(x,y), v(x,y) and w(x,y) as a matrix.
-uxy = GetAsMatrix(uxy_calc, m1-k1, m2-k2);
-wxy = GetAsMatrix(wxy_calc, o1-k1, o2-k2);
-vxy = GetAsMatrix(vxy_calc, n1-k1, n2-k2);
+uxy = GetAsMatrix_Version1(uxy_calc, m1-k1, m2-k2);
+wxy = GetAsMatrix_Version1(wxy_calc, o1-k1, o2-k2);
+vxy = GetAsMatrix_Version1(vxy_calc, n1-k1, n2-k2);
 
 
 

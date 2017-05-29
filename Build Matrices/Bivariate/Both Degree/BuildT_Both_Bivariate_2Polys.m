@@ -25,8 +25,8 @@ function Skk1k2 = BuildT_Both_Bivariate_2Polys(fxy, gxy, m, n, k, k1, k2)
 [n1, n2] = GetDegree_Bivariate(gxy);
 
 % % Build the partitions of the Sylvester matrix S_{t}(f,g)% 
-T1 = BuildT1_Both_Bivariate(fxy, m, n-k, n1-k1, n2-k2);
-T2 = BuildT1_Both_Bivariate(gxy, n, m-k, m1-k1, m2-k2);
+T1 = BuildT1_Both_Bivariate(fxy, m, n-k, n1 - k1, n2 - k2);
+T2 = BuildT1_Both_Bivariate(gxy, n, m-k, m1 - k1, m2 - k2);
 
 Skk1k2 = [T1 T2];
 

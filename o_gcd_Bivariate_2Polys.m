@@ -142,7 +142,8 @@ limits_t1 = [0 min(m1, n1)];
 limits_t2 = [0 min(m2, n2)];
 
 % Get the GCD by my method
-[fxy_calc, gxy_calc, dxy_calc, uxy_calc, vxy_calc, t, t1, t2] = o_gcd_mymethod_Bivariate_2Polys(fxy, gxy, m, n, limits_t, limits_t1, limits_t2 );
+[fxy_calc, gxy_calc, dxy_calc, uxy_calc, vxy_calc, t, t1, t2] = ...
+    o_gcd_mymethod_Bivariate_2Polys(fxy, gxy, m, n, limits_t, limits_t1, limits_t2 );
 
 
 
@@ -153,9 +154,11 @@ limits_t2 = [0 min(m2, n2)];
 switch SETTINGS.DEGREE_METHOD
     case 'Relative'
         
+        LineBreakLarge()
         my_error.dxy = GetDistanceBetweenPolynomials(dxy_exact, dxy_calc,'d(x,y)');
         my_error.uxy = GetDistanceBetweenPolynomials(uxy_exact, uxy_calc,'u(x,y)');
         my_error.vxy = GetDistanceBetweenPolynomials(vxy_exact, vxy_calc,'v(x,y)');
+        LineBreakLarge()
         
     case 'Total'
         
@@ -169,15 +172,19 @@ switch SETTINGS.DEGREE_METHOD
         vxy_exact_total = zeros(n-t_exact+1, n-t_exact+1);
         vxy_exact_total(1:n1-t1_exact+1,1:n2-t2_exact+1) = vxy_exact;
         
+        LineBreakLarge()
         my_error.dxy = GetDistanceBetweenPolynomials(dxy_exact_total, dxy_calc, 'd(x,y)');
         my_error.uxy = GetDistanceBetweenPolynomials(uxy_exact_total, uxy_calc, 'u(x,y)');
         my_error.vxy = GetDistanceBetweenPolynomials(vxy_exact_total, vxy_calc, 'v(x,y)');
+        LineBreakLarge()
         
     case 'Both'
-
+        
+        LineBreakLarge()
         my_error.dxy = GetDistanceBetweenPolynomials(dxy_exact, dxy_calc,'d(x,y)');
         my_error.uxy = GetDistanceBetweenPolynomials(uxy_exact, uxy_calc,'u(x,y)');
         my_error.vxy = GetDistanceBetweenPolynomials(vxy_exact, vxy_calc,'v(x,y)');
+        LineBreakLarge()
         
 end
 

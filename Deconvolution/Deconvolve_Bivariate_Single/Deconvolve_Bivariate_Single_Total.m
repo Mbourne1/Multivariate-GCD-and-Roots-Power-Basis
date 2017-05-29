@@ -38,7 +38,7 @@ gxy = temp_mat;
 C1 = BuildT1_Total_Bivariate(gxy, n, m-n);
 
 % Get the polynomial f(x,y) in vector form
-v_fxy = GetAsVector(fxy);
+v_fxy = GetAsVector_Version1(fxy);
 
 % Get number of coefficients in f(x,y)
 nCoefficients_fxy = nchoosek(m+2, 2);
@@ -58,7 +58,7 @@ v_hxy = temp_vec;
 
 
 % Get h(x,y) as a vector
-hxy_matrix = GetAsMatrix(v_hxy, m-n, m-n);
+hxy_matrix = GetAsMatrix_Version1(v_hxy, m-n, m-n);
 
 
 end

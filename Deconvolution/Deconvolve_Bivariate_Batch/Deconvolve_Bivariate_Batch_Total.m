@@ -87,7 +87,7 @@ arr_rhs = cell(nPolys_arr_fxy -1,1);
 for i = 1:1:nPolys_arr_fxy - 1
     
     % Temporarily label the ith entry of the array as fxy
-    v_fxy = GetAsVector(arr_fxy{i});
+    v_fxy = GetAsVector_Version1(arr_fxy{i});
     
     % Remove the corresponding zeros
     
@@ -139,7 +139,7 @@ for i = 1:nPolys_arr_hxy
     temp_vec = zeros((n+1)*(n+1),1);
     temp_vec(1:nNonZeros) = vec_hxy(1:nNonZeros);
     
-    mat = GetAsMatrix(temp_vec,n,n);
+    mat = GetAsMatrix_Version1(temp_vec, n, n);
     
     arr_hxy{i} = mat;
     vec_hxy(1:nNonZeros) = [];

@@ -62,7 +62,7 @@ for i1 = 1:1:nSubresultants_k1
     k1 = lowerLimit_t1 + (i1-1);
     
     % Produce first row of Sylvester matrices.
-    arr_Sk1k2{i1,1} = BuildT_Relative_Bivariate_2Polys_NewMethod(fxy,gxy,k1,0);
+    arr_Sk1k2{i1,1} = BuildT_Relative_Bivariate_2Polys(fxy, gxy, k1, 0);
     
     % Get QR decomposition
     [arr_Q{i1,1}, arr_R{i1,1}] = qr(arr_Sk1k2{i1,1});
@@ -149,7 +149,7 @@ for i1 = 1:1:nSubresultants_k1
         % Remove columns from previous sylvester matrix
         Sk1k2_prev(:,vec_cols) = [];
         
-        Sk1k2_test = BuildT_Relative_Bivariate_2Polys_NewMethod(fxy,gxy,k1,k2);
+        Sk1k2_test = BuildT_Relative_Bivariate_2Polys(fxy, gxy, k1, k2);
         
         arr_Sk1k2{i1,i2} = Sk1k2_prev;
         

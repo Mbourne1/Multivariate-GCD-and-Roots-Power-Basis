@@ -67,7 +67,7 @@ end
 pre_th1s = diag(th1.^(0:1:m));
 post_th2s = diag(th2.^(0:1:m));
 fww_thetas_mat = pre_th1s * ones(m+1,m+1) * post_th2s;
-vec = GetAsVector(fww_thetas_mat);
+vec = GetAsVector_Version1(fww_thetas_mat);
 vec = vec(1:nNonZeros_fxy);
 th_f = diag(vec);
 
@@ -75,7 +75,7 @@ th_f = diag(vec);
 pre_th1s = diag(th1.^(0:1:n));
 post_th2s = diag(th2.^(0:1:n));
 gww_thetas_mat = pre_th1s * ones(n+1,n+1) * post_th2s;
-vec = GetAsVector(gww_thetas_mat);
+vec = GetAsVector_Version1(gww_thetas_mat);
 vec = vec(1:nNonZeros_gxy);
 th_g = diag(vec);
 

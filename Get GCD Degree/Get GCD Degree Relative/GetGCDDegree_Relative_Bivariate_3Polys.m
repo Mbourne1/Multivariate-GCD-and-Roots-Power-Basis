@@ -1,4 +1,4 @@
-function [t1,t2] = GetGCDDegree_Relative_Bivariate_3Polys(fxy, gxy, hxy, myLimits_t1, myLimits_t2, limits_t1, limits_t2)
+function [t1,t2] = GetGCDDegree_Relative_Bivariate_3Polys(fxy, gxy, hxy, limits_k1, limits_k2, limits_t1, limits_t2)
 % Get the degree structure (t_{1} and t_{2}) of the GCD d(x,y) of the two
 % polynomials f(x,y) and g(x,y)
 %
@@ -30,10 +30,10 @@ function [t1,t2] = GetGCDDegree_Relative_Bivariate_3Polys(fxy, gxy, hxy, myLimit
 [o1, o2] = GetDegree_Bivariate(hxy);
 
 % Get limits
-lowerLimit_k1 = myLimits_t1(1);
-upperLimit_k1 = myLimits_t1(2);
-lowerLimit_k2 = myLimits_t2(1);
-upperLimit_k2 = myLimits_t2(2);
+lowerLimit_k1 = limits_k1(1);
+upperLimit_k1 = limits_k1(2);
+lowerLimit_k2 = limits_k2(1);
+upperLimit_k2 = limits_k2(2);
 
 nSubresultants_k1 = upperLimit_k1 - lowerLimit_k1 + 1;
 nSubresultants_k2 = upperLimit_k2 - lowerLimit_k2 + 1;
@@ -97,7 +97,7 @@ switch SETTINGS.RANK_REVEALING_METRIC
         mat_metric = mat_MinimumSingularValues;
         
         %plotSingularValues_degreeRelative(arr_SingularValues, myLimits_t1, myLimits_t2, limits_t1, limits_t2);
-        plotMinimumSingularValues_degreeRelative(mat_MinimumSingularValues, myLimits_t1, myLimits_t2, limits_t1, limits_t2);
+        plotMinimumSingularValues_degreeRelative(mat_MinimumSingularValues, limits_k1, limits_k2, limits_t1, limits_t2);
         
     case 'R1 Row Norms'
         
@@ -122,8 +122,8 @@ switch SETTINGS.RANK_REVEALING_METRIC
         end
         
         
-        plotDiagonalsR1_degreeRelative(arr_DiagonalsR1, myLimits_t1, myLimits_t2, limits_t1, limits_t2);
-        plotMaxMinDiagonals_degreeRelative(max_matrix,min_matrix, myLimits_t1, myLimits_t2, limits_t1, limits_t2);
+        plotDiagonalsR1_degreeRelative(arr_DiagonalsR1, limits_k1, limits_k2, limits_t1, limits_t2);
+        plotMaxMinDiagonals_degreeRelative(max_matrix,min_matrix, limits_k1, limits_k2, limits_t1, limits_t2);
         
         mat_metric = min_matrix./max_matrix;
         

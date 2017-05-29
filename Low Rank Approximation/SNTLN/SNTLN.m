@@ -3,46 +3,46 @@ function [fxy_lr, gxy_lr, uxy_lr, vxy_lr, alpha_lr,th1_lr,th2_lr] = ...
 %
 % % Inputs
 %
-% fxy : Coefficients of polynomial f(x,y)
+% fxy : (Matrix) Coefficients of polynomial f(x,y)
 %
-% gxy : Coefficients of polynomial g(x,y)
+% gxy : (Matrix) Coefficients of polynomial g(x,y)
 %
-% alpha : Optimal value of \alpha
+% alpha : (Float) Optimal value of \alpha
 %
-% th1 : Optimal value of \theta_{1}
+% th1 : (Float) Optimal value of \theta_{1}
 %
-% th2 : Optimal value of \theta_{2}
+% th2 : (Float) Optimal value of \theta_{2}
 %
-% m : Total degree of polynomial f(x,y)
+% m : (Int) Total degree of polynomial f(x,y)
 %
-% n : Total degree of polynomial g(x,y)
+% n : (Int) Total degree of polynomial g(x,y)
 %
-% t : Total degree of polynomial d(x,y)
+% t : (Int) Total degree of polynomial d(x,y)
 %
-% t1 : Degree of d(x,y) with respect to x
+% t1 : (Int) Degree of d(x,y) with respect to x
 %
-% t2 : Degree of d(x,y) with respcet to y
+% t2 : (Int) Degree of d(x,y) with respcet to y
 %
-% idx_col : Index of the optimal column to be removed from the Sylvester
+% idx_col : (Int) Index of the optimal column to be removed from the Sylvester
 % subresultant matrix.
 %
 % % Outputs.
 %
-% fxy_lr : Coefficients of polynomial f(x,y) + \delta f(x,y)
+% fxy_lr : (Matrix) Coefficients of polynomial f(x,y) + \delta f(x,y)
 %
-% gxy_lr : Coefficients of polynomial g(x,y) + \delta g(x,y)
+% gxy_lr : (Matrix) Coefficients of polynomial g(x,y) + \delta g(x,y)
 %
-% uxy_lr : Coefficients of polynomial u(x,y) + \delta u(x,y)
+% uxy_lr : (Matrix) Coefficients of polynomial u(x,y) + \delta u(x,y)
 %
-% vxy_lr : Coefficients of polynomial g(x,y) + \delta g(x,y)
+% vxy_lr : (Matrix) Coefficients of polynomial g(x,y) + \delta g(x,y)
 %
-% alpha_lr : \alpha + \delta \alpha
+% alpha_lr : (Float) \alpha + \delta \alpha
 %
-% th1_lr : \theta_{1} + \delta \theta_{1}
+% th1_lr : (Float) \theta_{1} + \delta \theta_{1}
 %
-% th1_lr : \theta_{2} + \delta \theta_{2}
+% th1_lr : (Float) \theta_{2} + \delta \theta_{2}
 %
-% x_lr : The solution vector x in the problem Ax = b.
+% x_lr : (Vector) The solution vector x in the problem Ax = b.
 
 % Initialise Global Settings
 global SETTINGS
@@ -66,4 +66,12 @@ switch SETTINGS.DEGREE_METHOD
             SNTLN_Both(fxy, gxy, alpha, th1, th2, m, n, t, t1, t2, idx_col);
 end
 
+
+
 end
+
+
+
+
+
+

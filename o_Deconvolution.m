@@ -95,7 +95,7 @@ end
 
 
 arr_fxy = cell(nPolys_arr_fxy, 1);
-arr_hxy = cell(nPolys_arr_hxy, 1);
+arr_hxy_exact = cell(nPolys_arr_hxy, 1);
 
 
 for i = 1:1:nPolys_arr_fxy
@@ -104,7 +104,7 @@ end
 
 
 for i = 1:1:nPolys_arr_hxy
-    arr_hxy{i,1} = double(rot90(coeffs(arr_sym_hxy{i},[x,y],'All'),2));
+    arr_hxy_exact{i,1} = double(rot90(coeffs(arr_sym_hxy{i},[x,y],'All'),2));
 end
 
 %--------------------------------------------------------------------------
@@ -128,160 +128,169 @@ end
 % Ensure that each h_{i}(x,y) is in a matrix of size (n+1,n+1) when
 % comparing with the outputs of this deconvolution method.
 arr_hxy_total = cell(nPolys_arr_hxy,1);
+
 for i = 1:1:nPolys_arr_hxy
     n = vDegt_arr_hxy(i);
     temp_mat = zeros(n+1,n+1);
-    [nRows,nCols] = size(arr_hxy{i});
-    temp_mat(1:nRows,1:nCols) = arr_hxy{i};
+    [nRows,nCols] = size(arr_hxy_exact{i});
+    temp_mat(1:nRows,1:nCols) = arr_hxy_exact{i};
     arr_hxy_total{i} = temp_mat;
 end
 
-%--------------------------------------------------------------------------
-%
-%   TESTING : SEPARATE - Relative Degree
-%
+% Deconvolution Methods
 
-% Initialise array
-arr_hxy_Separate_Respective = cell(nPolys_arr_hxy,1);
+arr_method = {...
+    'Separate Total',...
+    'Separate Respective',...
+    'Separate Both',...
+    'Batch Total',...
+    'Batch Respective',...
+    'Batch Both'};
 
+nMethods = length(arr_method);
+arr_hxy = cell(nMethods,1);
+arr_vErrors = cell(nMethods,1);
+arr_error_norm = cell(nMethods,1);
 
-for i = 1:1:nPolys_arr_fxy - 1
+for i = 1 : 1 : nMethods
+
+    method_name = arr_method{i};
     
-   fxy = arr_fxy{i};
-   gxy = arr_fxy{i+1};
-   arr_hxy_Separate_Respective{i} = Deconvolve_Bivariate_Single_Respective(fxy,gxy);
-   
-   
-end
+    switch method_name
+        
+        case 'Separate Total'
+           
+           % Intialise array
+            arr_hxy_Separate_Total = cell(nPolys_arr_hxy,1);
 
-vErrors_Separate_Relative = GetError(arr_hxy_Separate_Respective,arr_hxy);
-my_error.Separate_Relative = (norm(vErrors_Separate_Relative));
-%--------------------------------------------------------------------------
-%
-%   TESTING : SEPARATE - Total Degree 
-%
+            for j = 1 : 1 : nPolys_arr_fxy - 1
 
-% Intialise array
-arr_hxy_Separate_Total = cell(nPolys_arr_hxy,1);
+               fxy = arr_fxy{j};
+               m = vDeg_t_arr_fxy(j);
+               gxy = arr_fxy{j+1};
+               n = vDeg_t_arr_fxy(j+1);
 
-for i = 1:1:nPolys_arr_fxy - 1
-   
-   fxy = arr_fxy{i};
-   m = vDeg_t_arr_fxy(i);
-   gxy = arr_fxy{i+1};
-   n = vDeg_t_arr_fxy(i+1);
-   
-   arr_hxy_Separate_Total{i} = Deconvolve_Bivariate_Single_Total(fxy,gxy,m,n);
-end
+               arr_hxy_Separate_Total{j} = Deconvolve_Bivariate_Single_Total(fxy, gxy, m, n);
+               
+            end
+            
+            arr_hxy{i} = arr_hxy_Separate_Total;
+            
+        case 'Separate Respective'
+            
+             % Initialise array
+            arr_hxy_Separate_Respective = cell(nPolys_arr_hxy, 1);
 
-vErrors_Separate_Total = GetError(arr_hxy_Separate_Total, arr_hxy_total);
-my_error.Separate_Total = (norm(vErrors_Separate_Total));
-%--------------------------------------------------------------------------
-%
-%   TESTING : SEPARATE - BOTH
-%
+            for j = 1:1:nPolys_arr_fxy - 1
 
-% Intialise array
-arr_hxy_Separate_Both = cell(nPolys_arr_hxy,1);
+               fxy = arr_fxy{j};
+               gxy = arr_fxy{j+1};
+               arr_hxy_Separate_Respective{j} = Deconvolve_Bivariate_Single_Respective(fxy, gxy);
 
-for i = 1:1:nPolys_arr_fxy - 1
+            end
+            
+            arr_hxy{i} = arr_hxy_Separate_Respective;
+            
+        case 'Separate Both'
+            
+            % Intialise array
+            arr_hxy_Separate_Both = cell(nPolys_arr_hxy,1);
+
+            for j = 1:1:nPolys_arr_fxy - 1
+
+                fxy = arr_fxy{j};
+                m = vDeg_t_arr_fxy(j);
+                gxy = arr_fxy{j+1};
+                n = vDeg_t_arr_fxy(j+1);
+
+               arr_hxy_Separate_Both{j} = Deconvolve_Bivariate_Single_Both(fxy, gxy, m, n);
+            end
+            
+            arr_hxy{i} = arr_hxy_Separate_Both;
+        
+        case 'Batch Total'
+            arr_hxy{i} = Deconvolve_Bivariate_Batch_Total(arr_fxy_total, vDeg_t_arr_fxy);            
+            
+        case 'Batch Respective'
+            
+            arr_hxy{i} = Deconvolve_Bivariate_Batch_Respective(arr_fxy);
+                        
+        case 'Batch Both'
+            arr_hxy{i} = Deconvolve_Bivariate_Batch_Both(arr_fxy, vDeg_t_arr_fxy, vDeg_x_arr_fxy, vDeg_y_arr_fxy);
+
+    end
     
-    fxy = arr_fxy{i};
-    m = vDeg_t_arr_fxy(i);
-    gxy = arr_fxy{i+1};
-    n = vDeg_t_arr_fxy(i+1);
+     % Get vector of error of each h_{i}(x,y) as a vector
+    arr_vErrors{i} = GetError(arr_hxy{i}, arr_hxy_exact);
+    arr_error_norm{i} = (norm(arr_vErrors{i}));
     
-   arr_hxy_Separate_Both{i} = Deconvolve_Bivariate_Single_Both(fxy,gxy,m,n);
+    
 end
 
-vErrors_Separate_Both = GetError(arr_hxy_Separate_Both, arr_hxy);
-my_error.Separate_Both = (norm(vErrors_Separate_Both));
-% -------------------------------------------------------------------------
-%
-%   TESTING : BATCH - TOTAL
-%
-arr_hxy_Batch_Total = Deconvolve_Bivariate_Batch_Total(arr_fxy_total,vDeg_t_arr_fxy);
 
-% Get vector of error of each h_{i}(x,y) as a vector
-vErrors_Batch_Total = GetError(arr_hxy_Batch_Total,arr_hxy_total);
-my_error.Batch_Total = (norm(vErrors_Batch_Total));
-
-%--------------------------------------------------------------------------
-% 
-%   TESTING : BATCH - RESPECTIVE
-%
-% 
-arr_hxy_Batch_Relative = Deconvolve_Bivariate_Batch_Respective(arr_fxy);
-
-% Get vector of error of each h_{i}(x,y) as a vector
-vErrors_Batch_Relative = GetError(arr_hxy_Batch_Relative,arr_hxy);
-my_error.Batch_Relative = (norm(vErrors_Batch_Relative));
-%--------------------------------------------------------------------------
-% 
-%   TESTING : BATCH - BOTH  
-% 
-
-arr_hxy_Batch_Both = Deconvolve_Bivariate_Batch_Both(arr_fxy, vDeg_t_arr_fxy, vDeg_x_arr_fxy, vDeg_y_arr_fxy);
-
-% Get vector of error of each h_{i}(x,y) as a vector
-vErrors_Batch_Both = GetError(arr_hxy_Batch_Both, arr_hxy);
-my_error.Batch_Both = (norm(vErrors_Batch_Both));
-
-%-------------------------------------------------------------------------
-
-display(my_error)
-
-PrintToResultsFile(ex_num,my_error);
+PrintToResultsFile(ex_num, arr_method, arr_error_norm);
 
 
 end
 
-function [] = PrintToResultsFile(ex_num, my_error)
+function [] = PrintToResultsFile(ex_num, arr_methods, arr_error_norm)
 %
 % % Inputs
 %
 % ex_num :Example Number
 %
-% bool_preproc
+% arr_methods : (Array of Strings)
+%
+% arr_error_norm : (Array of Floats)
 
+
+% Get number of methods used
+nMethods = length(arr_methods);
 
 fullFileName = sprintf('Deconvolution/Results/Results_o_deconvolutions%s.txt',datetime('today'));
+
+
 
 % If file already exists append a line
 if exist(fullFileName, 'file')
     
     fileID = fopen(fullFileName,'a');
-    WriteNewLine()
+    
+    for i = 1:1: nMethods
+        method_name = arr_methods{i};
+        error_norm = arr_error_norm{i};
+        WriteNewLine(method_name, error_norm)
+    end
     fclose(fileID);
     
 else % File doesnt exist so create it
     
     fileID = fopen( fullFileName, 'wt' );
     WriteHeader()
-    WriteNewLine()
+    for i = 1:1: nMethods
+        method_name = arr_methods{i};
+        error_norm = arr_error_norm{i};
+        WriteNewLine(method_name, error_norm)
+    end
     fclose(fileID);
     
 end
 
-    function WriteNewLine()
+    function WriteNewLine(method_name, error_norm)
         
         %
-        fprintf(fileID,'%s,%s,%s,%s,%s,%s,%s,%s \n',...
+        fprintf(fileID,'%s,%s,%s,%s \n',...
             datetime('now'),...
             ex_num,...
-            my_error.Separate_Total,...
-            my_error.Separate_Relative,...
-            my_error.Separate_Both ,...
-            my_error.Batch_Total,...
-            my_error.Batch_Relative,...
-            my_error.Batch_Both...
+            method_name,...
+            error_norm...            
             );
         
     end
 
     function WriteHeader()
         
-        fprintf(fileID,'DATE,EX_NUM,BOOL_PREPROC,NOISE,Sep_Total,Sep_Relative,Sep_Both,Batch_Total,Batch_Relative,Batch_Both \n');
+        fprintf(fileID,'DATE, EX_NUM, method_name, error_norm \n');
         
     end
 

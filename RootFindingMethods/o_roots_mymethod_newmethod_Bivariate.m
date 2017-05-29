@@ -34,160 +34,18 @@ vDeg_t_arr_fxy(ite,1) = M(ite);
 vDeg_x_arr_fxy(ite, 1) = m1;
 vDeg_y_arr_fxy(ite, 1) = m2;
 
+
+rank_range = [-10 0];
+
 % Whilst the most recently calculated GCD has a degree greater than
 % zero. ie is not a constant, perform a gcd calculation on it and its
 % derivative.
-while vDeg_x_arr_fxy(ite,1) > 0 || vDeg_y_arr_fxy(ite,1) > 0
+while (vDeg_x_arr_fxy(ite,1) > 0 || vDeg_y_arr_fxy(ite,1) > 0) && vDeg_t_arr_fxy(ite,1) > 1
     
-    %
-    fprintf(sprintf('Iteration Number : %i \n',ite))
-    fprintf(sprintf('Computing f_{%i} : The GCD of f_{%i} and its derivatives \n', ite, ite-1))
-    
-    
-    if (vDeg_x_arr_fxy(ite,1) == 1) && (vDeg_y_arr_fxy(ite,1) == 1)
-    
-        % Derivative with respect to x or y is constant (1), so polynomials
-        % will be coprime.
-        LineBreakLarge();
-        fprintf('COPRIME in BOTH VARIABLES! \n\n')
-        LineBreakLarge();
-        
-        %vDeg_t_arr_fxy(ite+1) = vDeg_t_arr_fxy - 1;
-        %vDeg_x_arr_fxy(ite+1) = vDeg_t_arr_fxy - 1;
-        %vDeg_y_arr_fxy(ite+1) = vDeg_t_arr_fxy - 1;
-        
-        vDeg_t_arr_fxy(ite+1) = 0;
-        vDeg_x_arr_fxy(ite+1) = 0;
-        vDeg_y_arr_fxy(ite+1) = 0;
-        
-        arr_fxy{ite+1,1} = 1;
-        
-        break;
-    end
-    
-    if (vDeg_x_arr_fxy(ite,1) == 0) || (vDeg_x_arr_fxy(ite,1) == 0)
-        
-        error('To Be completed')
-        % Derivative with respect to x or y is constant (1), so polynomials
-        % will be coprime.
-        LineBreakLarge();
-        fprintf('DERIVATIVE WRT X OR Y VANISHES SO POLYNOMIALS ARE COPRIME! \n\n')
-        LineBreakLarge();
-        
-        
-        if vDeg_x_arr_fxy(ite,1) == 0
-            % Constant in terms of x, so do gcd of f and its derivative wrt
-            % y
-            
-            fxy = arr_fxy{ite};
-            
-            % Get the derivative of f(x,y) with respect to x
-            gxy = Differentiate_wrt_y(arr_fxy{ite}, vDeg_t_arr_fxy(ite));
-            
-            % Get the total degree of f(x,y) and g(x,y)
-            m =  vDeg_t_arr_fxy(ite);
-            n = m-1;
-            
-            % Set limits of total degree of GCD
-            
-            limits_t = [1, n];
-            
-            [fxy_o, ~, dxy_o, uxy_o, vxy_o, t, t1, t2] = ...
-                o_gcd_mymethod_2Polys(fxy, gxy, m, n, limits_t);
-            
-            arr_fxy{ite,1} = fxy_o;
-            arr_fxy{ite+1,1} = dxy_o;
-            arr_uxy{ite,1} = uxy_o;
-            arr_vxy{ite,1} = vxy_o;
-            
-            % Set total degree of d(x,y) and degree with respect to x and y
-            vDeg_x_arr_fxy(ite+1,1) = t1;
-            vDeg_y_arr_fxy(ite+1,1) = t2;
-            vDeg_t_arr_fxy(ite+1,1) = t;
-
-            % Get number of distinct roots of f(ite)
-            vNumDistinctRoots(ite,1) = vDeg_t_arr_fxy(ite) - vDeg_t_arr_fxy(ite+1);
-
-            fprintf([mfilename ' : ' sprintf('The computed deg(GCD(f_{%i},f_{%i}) is : %i \n',ite,ite,vDeg_t_arr_fxy(ite+1))]);
-            fprintf([mfilename ' : ' sprintf('Number of distinct roots in f_{%i} : %i \n',ite,vNumDistinctRoots(ite))]);
-            fprintf([mfilename ' : ' sprintf('Total degree of f_{%i} : %i \n',ite , vDeg_t_arr_fxy(ite+1))])
-            fprintf([mfilename ' : ' sprintf('Degree of f_{%i} with respect to x : %i \n',ite , vDeg_x_arr_fxy(ite+1))])
-            fprintf([mfilename ' : ' sprintf('Degree of f_{%i} with respect to y : %i \n',ite , vDeg_y_arr_fxy(ite+1))])
-            LineBreakLarge()
-            
-            
-        end
-        
-        if vDeg_x_arr_fxy(ite,1) == 0
-            % Constant in terms of x, so do gcd of f and its derivative wrt
-            % y
-            
-            fxy = arr_fxy{ite};
-            
-            % Get the derivative of f(x,y) with respect to x
-            gxy = Differentiate_wrt_x(arr_fxy{ite}, vDeg_t_arr_fxy(ite));
-            
-            % Get the total degree of f(x,y) and g(x,y
-            m = vDeg_t_arr_fxy(ite);
-            
-            n = m - 1;
-            
-            limits_t = [1,m-1];
-            
-            [fxy_o, ~, dxy_o, uxy_o, vxy_o, t, t1, t2] = ...
-                o_gcd_mymethod_2Polys(fxy,gxy,m,n,limits_t);
-            
-            arr_fxy{ite,1} = fxy_o;
-            arr_fxy{ite+1,1} = dxy_o;
-            arr_uxy{ite,1} = uxy_o;
-            arr_vxy{ite,1} = vxy_o;
-            
-            % Set total degree of d(x,y) and degree with respect to x and y
-            vDeg_x_arr_fxy(ite+1,1) = t1;
-            vDeg_y_arr_fxy(ite+1,1) = t2;
-            vDeg_t_arr_fxy(ite+1,1) = t;
-
-            % Get number of distinct roots of f(ite)
-            vNumDistinctRoots(ite,1) = vDeg_t_arr_fxy(ite) - vDeg_t_arr_fxy(ite+1);
-
-            fprintf([mfilename ' : ' sprintf('The computed deg(GCD(f_{%i},f_{%i}) is : %i \n',ite,ite,vDeg_t_arr_fxy(ite+1))]);
-            fprintf([mfilename ' : ' sprintf('Number of distinct roots in f_{%i} : %i \n',ite,vNumDistinctRoots(ite))]);
-            fprintf([mfilename ' : ' sprintf('Total degree of f_{%i} : %i \n',ite , vDeg_t_arr_fxy(ite+1))])
-            fprintf([mfilename ' : ' sprintf('Degree of f_{%i} with respect to x : %i \n',ite , vDeg_x_arr_fxy(ite+1))])
-            fprintf([mfilename ' : ' sprintf('Degree of f_{%i} with respect to y : %i \n',ite , vDeg_y_arr_fxy(ite+1))])
-            LineBreakLarge()
-            
-            
-        end
-        
-        
-        
-    end
-    
-    
-    
-    %     if (vDeg_x_arr_fxy(ite,1) == 1) && (vDeg_x_arr_fxy(ite,1) <= 1)
-    %         % The derivative with respect to x is a constant
-    %
-    %         % The GCD is a constant
-    %         arr_fxy{ite+1,1} = Differentiate_wrt_x(arr_fxy{ite},vDeg_t_arr_fxy(ite));
-    %
-    %         % Deconvolve
-    %         arr_uxy{ite+1,1} = Deconvolve_Bivariate_Single(arr_fxy{ite},arr_fxy{ite+1},vDeg_t_arr_fxy(ite), vDeg_t_arr_fxy(ite)-1);
-    %
-    %
-    %
-    %         % Get total degree of d(x,y) and degree with respect to x and y
-    %         vDeg_t_arr_fxy(ite+1,1) = vDeg_t_arr_fxy(ite)-1;
-    %         vDeg_x_arr_fxy(ite+1,1) = vDeg_x_arr_fxy(ite)-1;
-    %         vDeg_y_arr_fxy(ite+1,1) = vDeg_y_arr_fxy(ite)-1;
-    %
-    %         break;
-    %     end
-    
+  
+ 
     
     LineBreakLarge()
-    fprintf([mfilename ' : ' sprintf('GCD Calculation Loop iteration = %i \n', ite)]);
     fprintf([mfilename ' : ' sprintf('Compute GCD of f_{%i} and derivative f_{%i}\n\n',ite-1,ite-1)]);
     
     fxy = arr_fxy{ite};
@@ -211,9 +69,9 @@ while vDeg_x_arr_fxy(ite,1) > 0 || vDeg_y_arr_fxy(ite,1) > 0
     % Get the upper and lower limit of the degree of the GCD(f, f')
     if ite > 1
         
-        lowerLimit_t = vDeg_t_arr_fxy(ite) - vNumDistinctRoots(ite-1);
-        lowerLimit_t1 = vDeg_x_arr_fxy(ite) - vNumDistinctFactors_x(ite-1);
-        lowerLimit_t2 = vDeg_y_arr_fxy(ite) - vNumDistinctFactors_y(ite-1);
+        lowerLimit_t = vDeg_t_arr_fxy(ite) - vNumberDistinctRoots(ite-1);
+        lowerLimit_t1 = vDeg_x_arr_fxy(ite) - vNumberDistinctFactors_x(ite-1);
+        lowerLimit_t2 = vDeg_y_arr_fxy(ite) - vNumberDistinctFactors_y(ite-1);
         
         upperLimit_t =  min([m, n, o]);
         upperLimit_t1 = min([m1,n1,o1]);
@@ -221,9 +79,9 @@ while vDeg_x_arr_fxy(ite,1) > 0 || vDeg_y_arr_fxy(ite,1) > 0
         
     else
         
-        lowerLimit_t = 1;
-        lowerLimit_t1 = 1;
-        lowerLimit_t2 = 1;
+        lowerLimit_t = 0;
+        lowerLimit_t1 = 0;
+        lowerLimit_t2 = 0;
         
         upperLimit_t = min([m,n,o]);
         upperLimit_t1 = min([m1,n1,o1]);
@@ -250,25 +108,28 @@ while vDeg_x_arr_fxy(ite,1) > 0 || vDeg_y_arr_fxy(ite,1) > 0
     limits_t1 = [lowerLimit_t1, upperLimit_t1];
     limits_t2 = [lowerLimit_t2, upperLimit_t2];
     
-    [fxy_o, ~, ~, dxy_o, uxy_o, vxy_o, ~, t, t1, t2 ] = ...
-        o_gcd_mymethod_Bivariate_3Polys(fxy, gxy, hxy, m, n, o, limits_t, limits_t1, limits_t2);
+    [fxy_o, ~, ~, dxy_o, uxy_o, vxy_o, wxy_o, t, t1, t2, rank_range ] = ...
+        o_gcd_mymethod_Bivariate_3Polys(fxy, gxy, hxy, m, n, o, limits_t, limits_t1, limits_t2, rank_range);
+    
+    
     
     %[arr_fxy{ite,1},~,arr_fxy{ite+1,1},arr_uxy{ite,1},arr_vxy{ite,1},t,t1,t2] = o_gcd_mymethod(arr_fxy{ite},gxy,m,n,);
-    arr_fxy{ite,1} = fxy_o;
-    arr_fxy{ite+1,1} = dxy_o;
-    arr_uxy{ite,1} = uxy_o;
-    arr_vxy{ite,1} = vxy_o;
+    arr_fxy{ite, 1} = fxy_o;
+    arr_fxy{ite+1, 1} = dxy_o;
+    arr_uxy{ite, 1} = uxy_o;
+    arr_vxy{ite, 1} = vxy_o;
+    arr_wxy{ite, 1} = wxy_o;
     
     
     % Set total degree of d(x,y) and degree with respect to x and y
-    vDeg_x_arr_fxy(ite+1,1) = t1;
-    vDeg_y_arr_fxy(ite+1,1) = t2;
-    vDeg_t_arr_fxy(ite+1,1) = t;
+    vDeg_x_arr_fxy(ite+1, 1) = t1;
+    vDeg_y_arr_fxy(ite+1, 1) = t2;
+    vDeg_t_arr_fxy(ite+1, 1) = t;
     
     % Get number of distinct roots of f(ite)
-    vNumDistinctRoots(ite,1) = vDeg_t_arr_fxy(ite) - vDeg_t_arr_fxy(ite+1);
-    vNumDistinctFactors_x(ite,1) = vDeg_x_arr_fxy(ite) - vDeg_x_arr_fxy(ite+1);
-    vNumDistinctFactors_y(ite,1) = vDeg_y_arr_fxy(ite) - vDeg_y_arr_fxy(ite+1);
+    vNumberDistinctRoots(ite, 1) = vDeg_t_arr_fxy(ite) - vDeg_t_arr_fxy(ite+1);
+    vNumberDistinctFactors_x(ite, 1) = vDeg_x_arr_fxy(ite) - vDeg_x_arr_fxy(ite+1);
+    vNumberDistinctFactors_y(ite, 1) = vDeg_y_arr_fxy(ite) - vDeg_y_arr_fxy(ite+1);
     
     
     LineBreakLarge();
@@ -357,31 +218,31 @@ if num_entries_hx > 1
             for i = 1 : 1 : num_entries_hx - 1 % For each pair of q_{x}(i) and q_{x}(i+1)
                 
                 % Deconvolve
-                arr_wxy{i,1} = Deconvolve_Bivariate_Single(arr_hxy{i},arr_hxy{i+1},vDeg_t_hxy(i),vDeg_t_hxy(i+1));
+                arr_wwxy{i,1} = Deconvolve_Bivariate_Single(arr_hxy{i},arr_hxy{i+1},vDeg_t_hxy(i),vDeg_t_hxy(i+1));
                 
             end
             
         case 'Batch' % Batch deconvolution
             
-            arr_wxy = Deconvolve_Bivariate_Batch(arr_hxy, vDeg_t_hxy, vDeg_x_hxy, vDeg_y_hxy);
+            arr_wwxy = Deconvolve_Bivariate_Batch(arr_hxy, vDeg_t_hxy, vDeg_x_hxy, vDeg_y_hxy);
             
         otherwise
             error('err')
             
     end
     
-    vDeg_x_wxy = vDeg_x_hxy(1:end-1) - vDeg_x_hxy(2:end);
-    vDeg_y_wxy = vDeg_y_hxy(1:end-1) - vDeg_y_hxy(2:end);
-    vDeg_t_wxy = vDeg_t_hxy(1:end-1) - vDeg_t_hxy(2:end);
+    vDeg_x_wwxy = vDeg_x_hxy(1:end-1) - vDeg_x_hxy(2:end);
+    vDeg_y_wwxy = vDeg_y_hxy(1:end-1) - vDeg_y_hxy(2:end);
+    vDeg_t_wwxy = vDeg_t_hxy(1:end-1) - vDeg_t_hxy(2:end);
     
     
     % Set the final w_{x}(i+1) to be equal to h_{x}(i+1)
-    arr_wxy{end+1,1} = arr_hxy{end};
+    arr_wwxy{end+1,1} = arr_hxy{end};
     
     % Set the final degree structure
-    vDeg_x_wxy(end) = vDeg_x_hxy(end);
-    vDeg_y_wxy(end) = vDeg_y_hxy(end);
-    vDeg_t_wxy(end) = vDeg_t_hxy(end);
+    vDeg_x_wwxy(end) = vDeg_x_hxy(end);
+    vDeg_y_wwxy(end) = vDeg_y_hxy(end);
+    vDeg_t_wwxy(end) = vDeg_t_hxy(end);
     
 else
     
@@ -389,9 +250,9 @@ else
     arr_wxy{1} = arr_hxy{1};
     
     % Get the degree structure of h_{x,i}
-    vDeg_x_wxy(1) = vDeg_x_hxy(1);
-    vDeg_y_wxy(1) = vDeg_y_hxy(1);
-    vDeg_t_wxy(1) = vDeg_t_hxy(1);
+    vDeg_x_wwxy(1) = vDeg_x_hxy(1);
+    vDeg_y_wwxy(1) = vDeg_y_hxy(1);
+    vDeg_t_wwxy(1) = vDeg_t_hxy(1);
 end
 
 for i = 1:1:size(arr_wxy,1)

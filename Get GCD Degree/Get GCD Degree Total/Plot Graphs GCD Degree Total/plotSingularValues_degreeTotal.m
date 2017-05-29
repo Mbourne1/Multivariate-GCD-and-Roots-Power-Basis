@@ -1,21 +1,20 @@
-function plotSingularValues_degreeTotal(arr_SingularValues, myLimits_t, limits_t)
+function plotSingularValues_degreeTotal(arr_SingularValues, limits_k, limits_t)
 % 
 % % Inputs
 %
-% arr_SingularValues
+% arr_SingularValues : (Array of Vectors) Each vector contains singular
+% values of S_{k}(f,g)
 %
-% myLimits_t :
+% limits_k : [(Int) (Int)]
 %
-% limits_t :
+% limits_t : [(Int) (Int)]
+
+%
+lowerLimit_k = limits_k(1);
+upperLimit_k = limits_k(2);
 
 
-myLowerLimit = myLimits_t(1);
-myUpperLimit = myLimits_t(2);
-
-lowerLimit = limits_t(1);
-upperLimit = limits_t(2);
-
-nSubresultants = myUpperLimit - myLowerLimit + 1;
+nSubresultants = upperLimit_k - lowerLimit_k + 1;
 
 figure_name = sprintf([mfilename ' : ' 'Plotting Singular Values']);
 figure('name', figure_name)
@@ -24,7 +23,7 @@ hold on
 
 for i = 1 : 1 : nSubresultants
    
-    k = myLowerLimit + (i-1);
+    k = lowerLimit_k + (i-1);
     
     % Get vector of singular values of S_{k}
     vSingularValues = arr_SingularValues{i};
@@ -36,8 +35,9 @@ for i = 1 : 1 : nSubresultants
     
 end
 
-vline(lowerLimit);
-vline(upperLimit);
+
+vline(limits_t, {'-r','-r'});
+
 
 hold off
 

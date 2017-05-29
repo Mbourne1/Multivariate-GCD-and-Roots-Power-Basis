@@ -128,7 +128,7 @@ end
 
 
 LineBreakMedium();
-fprintf([mfilename ' : ' sprintf('The calculated relative degree is : t_{1} = %i, t_{2} = %i \n',t1,t2)])
+fprintf([mfilename ' : ' sprintf('The calculated relative degree is : t_{1} = %i, t_{2} = %i \n',t1, t2)])
 LineBreakMedium();
 
 

@@ -28,10 +28,10 @@ function [fxy_lr,gxy_lr,uxy_lr,vxy_lr] = STLN_Relative(fxy, gxy, k1, k2, idx_col
 global SETTINGS
 
 % Get degree of polynomials f(x,y)
-[m1, m2] = GetDegree_Bivariate_Bivariate(fxy);
+[m1, m2] = GetDegree_Bivariate(fxy);
 
 % Get degree of polynomial g(x,y)
-[n1, n2] = GetDegree_Bivariate_Bivariate(gxy);
+[n1, n2] = GetDegree_Bivariate(gxy);
 
 % Get the number of coefficients in the polynomial f(x,y)
 nCoeffs_fxy = (m1+1) * (m2+1);

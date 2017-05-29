@@ -1,5 +1,5 @@
-function [fxy_o, gxy_o, hxy_o, dxy_o, uxy_o, vxy_o, wxy_o, t, t1, t2] = ...
-    o_gcd_mymethod_Bivariate_3Polys(fxy, gxy, hxy, m, n, o, limits_t, limits_t1, limits_t2)
+function [fxy_o, gxy_o, hxy_o, dxy_o, uxy_o, vxy_o, wxy_o, t, t1, t2, rank_range] = ...
+    o_gcd_mymethod_Bivariate_3Polys(fxy, gxy, hxy, m, n, o, limits_t, limits_t1, limits_t2, rank_range)
 % o_gcd_mymethod(fxy, gxy, m, n, limits_t)
 
 % Given two bivariate polynomials, return the GCD d(x,y) and the coprime
@@ -23,15 +23,26 @@ function [fxy_o, gxy_o, hxy_o, dxy_o, uxy_o, vxy_o, wxy_o, t, t1, t2] = ...
 % % Inputs.
 %
 %
-% [fxy, gxy, hxy] : Matrices of coefficients of polynomials f(x,y), g(x,y)
-% and h(x,y)
+% fxy : (Matrix) Matrix of the coefficients of polynomial f(x,y)
 %
-% [m, n, o] : Total degree of polynomial f(x,y) g(x,y) and h(x,y)
+% gxy : (Matrix) Matrix of the coefficients of polynomial g(x,y)
+% 
+% hxy : (Matrix) Matrix of the coefficients of polynomial h(x,y)
+%
+% m : (Int) Total degree of the polynomial f(x,y)
+%
+% n : (Int) Total degree of the polynomial g(x,y)
+%
+% o : (Int) Total degree of the polynomial h(x,y)
 %
 %
 % % Outputs
 %
-% [uxy, vxy, wxy] : Calculated coefficients of u(x,y) v(x,y) and w(x,y)
+% uxy : (Matrix) Calculated coefficients of the polynomial u(x,y) 
+%
+% vxy : (Matrix) Calculated coefficients of the polynomial v(x,y)
+%
+% wxy : (Matrix) Calculated coefficients of the polynomial w(x,y)
 %
 % dxy : Calculated coefficients of d(x,y)
 
@@ -66,9 +77,9 @@ hww = GetWithThetas(hxy_n, th1, th2);
 [n1, n2] = GetDegree_Bivariate(gxy);
 [o1, o2] = GetDegree_Bivariate(hxy);
 
-myLimits_t = [0 min([m,n,o])];
-myLimits_t1 = [0 min([m1, n1, o1])];
-myLimits_t2 = [0 min([m2, n2, o2])];
+limits_k = [0 min([m,n,o])];
+limits_k1 = [0 min([m1, n1, o1])];
+limits_k2 = [0 min([m2, n2, o2])];
 
 
 
@@ -80,8 +91,8 @@ myLimits_t2 = [0 min([m2, n2, o2])];
 switch SETTINGS.DEGREE_METHOD
     case 'Total'
         % Must compute t1 and t2 so do so with relative method
-        [t] = GetGCDDegree_Total_WithLimits_Bivariate_3Polys(fww, alpha.*gww, hww, ...
-            m, n, o, myLimits_t, limits_t);
+        [t, rank_range] = GetGCDDegree_Total_Bivariate_3Polys(fww, alpha.*gww, hww, ...
+            m, n, o, limits_t, rank_range);
         t1 = 1000;
         t2 = 1000;
         
@@ -90,14 +101,15 @@ switch SETTINGS.DEGREE_METHOD
     case 'Relative'
         
         t = 1000;
-        [t1,t2] = GetGCDDegree_Relative_Bivariate_3Polys(fww, alpha.*gww, hww, myLimits_t1, myLimits_t2, limits_t1, limits_t2);
+        [t1, t2] = GetGCDDegree_Relative_Bivariate_3Polys(fww, alpha.*gww, ...
+            hww, limits_k1, limits_k2, limits_t1, limits_t2, rank_range);
         
     case 'Both'
         
         [t] = GetGCDDegree_Total_Bivariate_3Polys(fww, alpha.*gww, hww,...
-            m, n, o, limits_t);
+            m, n, o, limits_t, rank_range);
         
-        [t1,t2] = GetGCDDegree_Relative_Given_t_Bivariate_3Polys(fww, alpha*gww, hww, m , n, o, t, limits_t1, limits_t2);
+        [t1, t2] = GetGCDDegree_Relative_Given_t_Bivariate_3Polys(fww, alpha*gww, hww, m , n, o, t, limits_t1, limits_t2, rank_range);
         
     otherwise
         error('err')
@@ -107,6 +119,7 @@ end
 
 LineBreakLarge();
 fprintf([mfilename ' : ' sprintf('The calculated relative degree is : t_{1} = %i, t_{2} = %i \n',t1,t2)])
+fprintf([mfilename ' : ' sprintf('The calculated total degree is :  %i \n',t)])
 LineBreakLarge();
 
 

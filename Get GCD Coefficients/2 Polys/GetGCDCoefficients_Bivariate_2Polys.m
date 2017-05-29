@@ -35,3 +35,5 @@ switch SETTINGS.DEGREE_METHOD
         error([mfilename ' : DEGREE_METHOD must be Total, Relative, or Both'])
         
 end
+
+end

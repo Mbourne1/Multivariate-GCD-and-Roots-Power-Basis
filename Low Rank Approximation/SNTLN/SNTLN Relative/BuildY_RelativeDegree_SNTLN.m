@@ -47,10 +47,10 @@ x1_xy = GetAsMatrix(x1_vec,n1-k1,n2-k2);
 x2_xy = GetAsMatrix(x2_vec,m1-k1,m2-k2);
 
 % Build convolution matrix of x_{1}
-T1 = BuildT1_Relative(x1_xy,m1,m2);
+T1 = BuildT1_Relative_Bivariate(x1_xy, m1, m2);
 
 % Build convolution matrix of x_{2}
-T2 = BuildT1_Relative(x2_xy,n1,n2);
+T2 = BuildT1_Relative_Bivariate(x2_xy, n1, n2);
 
 % Get a vector of thetas corresponding to coefficients of f(\omega,\omega)
 th1_mat = diag(th1.^(0:1:m1));

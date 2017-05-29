@@ -8,34 +8,34 @@ function [fxy_lr, gxy_lr, uxy_lr, vxy_lr] = ...
 %
 % Inputs.
 %
-% fxy : Coefficients of polynomial f(x,y)
+% fxy : (Matrix) Coefficients of polynomial f(x,y)
 %
-% gxy : Coefficients of polynomial g(x,y)
+% gxy : (Matrix) Coefficients of polynomial g(x,y)
 %
-% m : Total degree of f(x,y)
+% m : (Int) Total degree of f(x,y)
 %
-% n : Total degree of g(x,y)
+% n : (Int) Total degree of g(x,y)
 %
-% k : Total degree of d(x,y) 
+% k : (Int) Total degree of d(x,y) 
 %
-% idx_col : Index of optimal column for removal from S_{k_{1},k_{2}}(f,g)
+% idx_col : (Int) Index of optimal column for removal from S_{k_{1},k_{2}}(f,g)
 %
 % Outputs
 %
-% fxy_lr : Coefficients of f(x,y) with added perturbations
+% fxy_lr : (Matrix) Coefficients of f(x,y) with added perturbations
 %
-% gxy_lr : Coefficients of g(x,y) with added perturbations
+% gxy_lr : (Matrix) Coefficients of g(x,y) with added perturbations
 %
-% uxy_lr : Coefficients of polynomial u(x,y)
+% uxy_lr : (Matrix) Coefficients of polynomial u(x,y)
 %
-% vxy_lr : Coefficients of polynomial v(x,y)
+% vxy_lr : (Matrix) Coefficients of polynomial v(x,y)
 
 %
 % pad the coefficients of fxy and gxy
 % this is equivalent to degree elevating so that f is of degree (m,m), and
 % g is of degree (n,n)
-fxy_matrix_padd = zeros(m+1,m+1);
-gxy_matrix_padd = zeros(n+1,n+1);
+fxy_matrix_padd = zeros(m+1, m+1);
+gxy_matrix_padd = zeros(n+1, n+1);
 
 [r,c] = size(fxy);
 fxy_matrix_padd(1:r,1:c) = fxy;
@@ -45,32 +45,32 @@ gxy_matrix_padd(1:r,1:c) = gxy;
 
 fxy = fxy_matrix_padd;
 gxy = gxy_matrix_padd;
-%%
+%
 global SETTINGS
 
 % Get the number of coefficients in the polynomial f(x,y)
-nNonZeros_fxy = nchoosek(m+2,2);
-nZeros_fxy = nchoosek(m+1,2);
+nNonZeros_fxy = nchoosek(m+2, 2);
+nZeros_fxy = nchoosek(m+1, 2);
 
 % Get the number of coefficients in the polynomial g(x,y)
-nNonZeros_gxy = nchoosek(n+2,2);
-nZeros_gxy = nchoosek(n+1,2);
+nNonZeros_gxy = nchoosek(n+2, 2);
+nZeros_gxy = nchoosek(n+1, 2);
 
 % Get the number of coefficients in v(x,y)
-nNonZeros_vxy = nchoosek(n-k+2,2);
-nZeros_vxy = nchoosek(n-k+1,2);
+nNonZeros_vxy = nchoosek(n-k+2, 2);
+nZeros_vxy = nchoosek(n-k+1, 2);
 
 % Get the number of coefficients in u(x,y)
-nNonZeros_uxy = nchoosek(m-k+2,2);
-nZeros_uxy = nchoosek(m-k+1,2);
+nNonZeros_uxy = nchoosek(m-k+2, 2);
+nZeros_uxy = nchoosek(m-k+1, 2);
 
 % Build the Sylvester Matrix S_{k1,k2}(f,g)
 
 % Build the partiton T_{n1-k1,n2-k2}(f)
-Tk_fxy = BuildT1_Total(fxy,m,n-k);
+Tk_fxy = BuildT1_Total_Bivariate(fxy, m, n-k);
 
 % Build the partition T_{m1-k1,m2-k2}(g)
-Tk_gxy = BuildT1_Total(gxy,n,m-k);
+Tk_gxy = BuildT1_Total_Bivariate(gxy, n, m-k);
 
 % Build the Sylvester subresultant matrix S_{k1,k2}(f,g)
 Sk_fg = [Tk_fxy Tk_gxy];
@@ -96,10 +96,10 @@ v_zf_xy = z(1:nNonZeros_fxy );
 v_zg_xy = z(nNonZeros_fxy+1:end);
 
 % Get zf as a matrix
-z_fxy = GetAsMatrix([v_zf_xy; zeros(nZeros_fxy,1)], m, m);
+z_fxy = GetAsMatrix_Version1([v_zf_xy; zeros(nZeros_fxy,1)], m, m);
 
 % Get zg as a matrix
-z_gxy = GetAsMatrix([v_zg_xy; zeros(nZeros_gxy,1)], n, n);
+z_gxy = GetAsMatrix_Version1([v_zg_xy; zeros(nZeros_gxy,1)], n, n);
 
 % Get the vector x
 % A_{t} x = c_{t}
@@ -108,9 +108,9 @@ xk = SolveAx_b(Ak_fg,ck);
 
 x = ...
     [
-    xk(1:idx_col-1);
-    0;
-    xk(idx_col:end);
+        xk(1:idx_col-1);
+        0;
+        xk(idx_col:end);
     ];
 
 
@@ -118,31 +118,31 @@ x = ...
 % Build the matrix Y_{t}
 % Where Y(x) * z = E(z) * x
 
-Yk = BuildY_TotalDegree_STLN(x,m,n,k);
+Yk = BuildY_TotalDegree_STLN(x, m, n, k);
 
 % Get vector of coefficients of f(x,y)
-v_fxy = GetAsVector(fxy);
+v_fxy = GetAsVector_Version1(fxy);
 v_fxy = v_fxy(1:nNonZeros_fxy);
 
 % Get vector of coefficients of g(x,y)
-v_gxy = GetAsVector(gxy);
+v_gxy = GetAsVector_Version1(gxy);
 v_gxy = v_gxy(1:nNonZeros_gxy);
 
 % % Test the funciton which constructs Y_{k}
 test1a = Yk * [v_fxy;v_gxy];
 test1b = Ak_fg * xk;
 test1 = norm(test1a - test1b);
-display(test1);
+
 
 % Build the matrix P_{t}
 % Where P * [f;g] = c_{t}
-Pk = BuildP_TotalDegree_STLN(m,n,idx_col,k);
+Pk = BuildP_TotalDegree_STLN(m, n, idx_col, k);
 
 % Test the function which constructs P_{k}
 test2a = Pk * [v_fxy;v_gxy];
 test2b = ck;
 test2 = norm(test2a - test2b);
-display(test2);
+
 
 % % Build the Matrix C consisting of H_{z} and H_{x}
 H_z = Yk - Pk;
@@ -159,13 +159,13 @@ res_vec = (ck + hk) - (Ak_fg*xk);
 
 start_point     =   ...
     [...
-    z;...
-    xk;
+        z;...
+        xk;
     ];
 
 yy = start_point;
 
-f = -(yy-start_point);
+f = -(yy - start_point);
 
 % Initialise the iteration counter
 ite = 1;
@@ -179,13 +179,13 @@ while condition(ite) >  SETTINGS.MAX_ERROR_SNTLN &&  ite < SETTINGS.MAX_ITERATIO
     ite = ite + 1;
     
     % Get small petrubations by LSE problem ||Ey-f||  subject to  Cy=g
-    y_lse = LSE(E,f,C,res_vec);
+    y_lse = LSE(E, f, C, res_vec);
     
     % Increment cummulative peturbations
     yy = yy + y_lse;
     
     % obtain the small changes to z and x
-    nNonZeroEntries_z      = nNonZeros_fxy + nNonZeros_gxy;
+    nNonZeroEntries_z  = nNonZeros_fxy + nNonZeros_gxy;
     delta_zk        = y_lse(1:nNonZeroEntries_z);
     delta_xk        = y_lse((nNonZeroEntries_z+1):end);
     
@@ -198,14 +198,14 @@ while condition(ite) >  SETTINGS.MAX_ERROR_SNTLN &&  ite < SETTINGS.MAX_ITERATIO
     v_zg_xy = z(nNonZeros_fxy + 1 : end);
     
     % Get coefficients of zf(x,y) in a matrix
-    z_fxy = GetAsMatrix([v_zf_xy; zeros(nZeros_fxy,1)], m, m);
+    z_fxy = GetAsMatrix_Version1([v_zf_xy; zeros(nZeros_fxy,1)], m, m);
     
     % Get coefficients of zg(x,y) in a matrix
-    z_gxy = GetAsMatrix([v_zg_xy;zeros(nZeros_gxy,1)], n, n);
+    z_gxy = GetAsMatrix_Version1([v_zg_xy; zeros(nZeros_gxy,1)], n, n);
     
     % Build the matrix B_{t} = [E1(zf) E2(zg)]
-    E1 = BuildT1_Total(z_fxy, m, n-k);
-    E2 = BuildT1_Total(z_gxy, n, m-k);
+    E1 = BuildT1_Total_Bivariate(z_fxy, m, n-k);
+    E2 = BuildT1_Total_Bivariate(z_gxy, n, m-k);
     
     % Build the matrix B_{t} equivalent to S_{t}
     Bt = [E1 E2];
@@ -228,7 +228,7 @@ while condition(ite) >  SETTINGS.MAX_ERROR_SNTLN &&  ite < SETTINGS.MAX_ITERATIO
         xk(idx_col:end)];
     
     % Build the matrix Y_{t} where Y_{t}(x)*z = E_{t}(z) * x
-    Yk = BuildY_TotalDegree_STLN(x,m,n,k);
+    Yk = BuildY_TotalDegree_STLN(x, m, n, k);
     
     % Get the residual vector
     res_vec = (ck + hk) - ((Ak_fg + Ak_zfzg)*xk);
@@ -239,7 +239,7 @@ while condition(ite) >  SETTINGS.MAX_ERROR_SNTLN &&  ite < SETTINGS.MAX_ITERATIO
     C = [H_z H_x];
     
     % Update fnew - used in LSE Problem.
-    f = -(yy-start_point);
+    f = -(yy - start_point);
     
     % Update the termination criterion
     condition(ite) = norm(res_vec)./norm(ck + hk) ;
@@ -265,8 +265,8 @@ x = [...
 vec_vxy = x(1:nNonZeros_vxy);
 vec_uxy = -1 .* x(nNonZeros_vxy+1:end);
 
-vxy_lr = GetAsMatrix([vec_vxy ; zeros(nZeros_vxy,1)],n-k,n-k);
-uxy_lr = GetAsMatrix([vec_uxy ; zeros(nZeros_uxy,1)],m-k,m-k);
+vxy_lr = GetAsMatrix_Version1([vec_vxy ; zeros(nZeros_vxy,1)], n-k, n-k);
+uxy_lr = GetAsMatrix_Version1([vec_uxy ; zeros(nZeros_uxy,1)], m-k, m-k);
 
 end
 

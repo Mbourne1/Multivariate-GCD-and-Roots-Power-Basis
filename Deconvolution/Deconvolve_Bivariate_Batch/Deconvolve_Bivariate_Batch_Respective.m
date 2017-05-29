@@ -36,12 +36,12 @@ end
 nPolys_arr_hxy = nPolys_arr_fxy - 1;
 
 % Get degree structure of polynomials in array h_{i}(x,y)
-vDeg_x_hxy = diff(vDeg_x_fxy);
-vDeg_y_hxy = diff(vDeg_y_fxy);
+vDeg_x_hxy = abs(diff(vDeg_x_fxy));
+vDeg_y_hxy = abs(diff(vDeg_y_fxy));
 
 arr_T1 = cell(nPolys_arr_hxy,1);
 
-for i = 1:1:nPolys_arr_hxy
+for i = 2:1:nPolys_arr_fxy
     
    
     % Temporarily call the ith entry f(x,y)
@@ -49,16 +49,16 @@ for i = 1:1:nPolys_arr_hxy
     
 
     % Get the degree of h{i-1}(x,y)
-    n1 = vDeg_x_hxy(i);
-    n2 = vDeg_y_hxy(i);
+    n1 = vDeg_x_hxy(i-1);
+    n2 = vDeg_y_hxy(i-1);
     
     % Get number of coefficients in h_{i}(x,y)
-    vNCoefficients_hxy(i) = (n1 + 1) * (n2+1);
+    vNCoefficients_hxy(i-1) = (n1 + 1) * (n2+1);
     
     % Build the matrix T(f(x,y))
     T1 = BuildT1_Relative_Bivariate(fxy, n1, n2);
      
-    arr_T1{i-1} = T1;
+    arr_T1{i - 1} = T1;
 end
 
 % Build the coefficient matrix
@@ -117,7 +117,7 @@ for i = 1:1:nPolys_arr_fxy - 1
     
 end
 
-vRHS = cell2mat(arr_rhs');
+vRHS = cell2mat(arr_rhs);
 
 
 end

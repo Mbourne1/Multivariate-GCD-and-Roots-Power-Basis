@@ -5,45 +5,45 @@ function Pk = BuildP_BothDegree_SNTLN(m,m1,m2,n,n1,n2,k,k1,k2,alpha,th1,th2,idx_
 %
 % Inputs
 %
-% m : Total degree of polynomial f(x,y)
+% m : (Int) Total degree of polynomial f(x,y)
 %
-% m1 : Degree of f(x,y) with respect to x
+% m1 : (Int) Degree of f(x,y) with respect to x
 %
-% m2 : Degree of f(x,y) with respect to y
+% m2 : (Int) Degree of f(x,y) with respect to y
 %
-% n : Total degree of polynomial g(x,y)
+% n : (Int) Total degree of polynomial g(x,y)
 %
-% n1 : Degree of g(x,y) with respect to x
+% n1 : (Int) Degree of g(x,y) with respect to x
 %
-% n2 : Degree of g(x,y) with respect to y
+% n2 : (Int) Degree of g(x,y) with respect to y
 %
-% k : Total degree of d(x,y)
+% k : (Int) Total degree of d(x,y)
 %
-% k1 : Degree of d(x,y) with respect to x
+% k1 : (Int) Degree of d(x,y) with respect to x
 %
-% k2 : Degree of d(x,y) with respect to y
+% k2 : (Int) Degree of d(x,y) with respect to y
 %
-% alpha : Optimal value of \alpha
+% alpha : (Float) Optimal value of \alpha
 %
-% th1 : Optimal value of \theta_{1}
+% th1 : (Float) Optimal value of \theta_{1}
 %
-% th2 : Optimal value of \theta_{2}
+% th2 : (Float) Optimal value of \theta_{2}
 %
-% idx_col : Index of column removed from S_{k_{1},k_{2}}
+% idx_col : (Int) Index of column removed from S_{k_{1},k_{2}}
 %
 %
 % % Outputs
 %
-% P : Matrix P
+% P : (Matrix) P
 
 % Get the number of coefficients in polynomial f
 % % nCoeff_f = (m1+1).*(m2+1);
-nNonZeros_fxy = GetNumNonZeros(m1,m2,m);
+nNonZeros_fxy = GetNumNonZeros(m1, m2, m);
 nZeros_fxy = (m1+1)*(m2+1) - nNonZeros_fxy;
 
 % Get the number of coefficients in polynomial g(x,y)
 % % nCoeff_g = (n1+1).*(n2+1);
-nNonZeros_gxy = GetNumNonZeros(n1,n2,n);
+nNonZeros_gxy = GetNumNonZeros(n1, n2, n);
 nZeros_gxy = (n1+1)*(n2+1) - nNonZeros_gxy;
 
 % Get number of Rows in Sylvester matrix S_{k,k1,k2}
@@ -52,15 +52,15 @@ nRows_Skk1k2 = GetNumNonZeros(m1+n1-k1,m2+n2-k2,m+n-k);
 
 % Get number of columns in first partition of the Sylvester subresultant
 % matrix.
-nCols_T1 = GetNumNonZeros(n1-k1,n2-k2,n-k);
+nColumns_T1 = GetNumNonZeros(n1-k1,n2-k2,n-k);
 
-if idx_col <= nCols_T1
+if idx_col <= nColumns_T1
     % Optimal column in first partition
     
     % % Build the matrix P
     
     % Build the matrix P1
-    P1 = BuildP1_BothDegree_SNTLN(m,m1,m2,n,n1,n2,k,k1,k2,idx_col);
+    P1 = BuildP1_BothDegree_SNTLN(m, m1, m2, n, n1, n2, k, k1, k2, idx_col);
     
     % Build the matrix P2
     P2 = zeros(nRows_Skk1k2,nNonZeros_gxy);
@@ -73,9 +73,9 @@ else
     
     % Build the matrix P2
     % Get the position of the optimal column with respect to T(g)
-    idx_col_rel = idx_col - nCols_T1;
+    idx_col_rel = idx_col - nColumns_T1;
     
-    P2 = BuildP1_BothDegree_SNTLN(n,n1,n2,m,m1,m2,k,k1,k2,idx_col_rel);
+    P2 = BuildP1_BothDegree_SNTLN(n, n1, n2, m, m1, m2, k, k1, k2, idx_col_rel);
     
     
     

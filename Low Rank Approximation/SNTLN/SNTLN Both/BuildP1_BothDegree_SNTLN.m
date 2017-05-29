@@ -31,7 +31,10 @@ function P1 = BuildP1_BothDegree_SNTLN(m,m1,m2,n,n1,n2,k,k1,k2,idx_col)
 % th2 : (Float) Optimal value of theta_{2}
 %
 % idx_col : (Int) Optimal column for removal from S(f,g)
-
+%
+% % Outputs
+%
+% P1 : (Matrix) 
 
 % Get number of nonzeros of f(x,y).
 nNonZeros_fxy = GetNumNonZeros(m1,m2,m);
@@ -44,7 +47,7 @@ vec = [...
     zeros(nZeros_fxy_relative,1)
     ];
 
-mat = GetAsMatrix(vec,m1,m2);
+mat = GetAsMatrix_Version1(vec,m1,m2);
 
 
 % Produce a zero matrix.
@@ -52,7 +55,7 @@ padd_mat = zeros(m1+n1-k1+1, m2+n2-k2+1);
 
 % % From the index of the optimal column, Get the number of multiplications
 % with respec to x and number with respect to y.
-[i,j] = GivenCol_GetIndex_Relative(n1-k1,n2-k2,idx_col);
+[i,j] = GivenCol_GetIndex_Relative(n1-k1, n2-k2, idx_col);
 
 ihat = i+1;
 jhat = j+1;
@@ -64,7 +67,7 @@ nCols_f = m2+1;
 padd_mat(ihat:i+nRows_f, jhat:j+nCols_f) = mat;
 
 % Get the padded matrix as a vector
-vec_padd_mat = GetAsVector(padd_mat);
+vec_padd_mat = GetAsVector_Version1(padd_mat);
 
 % Get the number of coefficients in the product fv
 nCoeff_fv = GetNumNonZeros(m1+n1-k1,m2+n2-k2,m+n-k);

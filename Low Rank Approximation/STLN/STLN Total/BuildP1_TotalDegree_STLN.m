@@ -1,5 +1,4 @@
-function P1 = BuildP1_TotalDegree_STLN(m,n,idx_col,k)
-% BuildPt_sub(m1,m2,n1,n2,opt_col,t1,t2)
+function P1 = BuildP1_TotalDegree_STLN(m, n, idx_col, k)
 %
 % Build the matrix P, used in SNTLN function. P is a matrix which is
 % obtained from the decomposition of a column vector c_{t} into a matrix
@@ -8,20 +7,20 @@ function P1 = BuildP1_TotalDegree_STLN(m,n,idx_col,k)
 %
 % % Inputs
 %
-% m :    Degree of polynomial f(x,y) 
+% m : (Int) Degree of polynomial f(x,y) 
 %
-% n :    Degree of polynomial g(x,y) 
+% n : (Int) Degree of polynomial g(x,y) 
 %
-% idx_col : Optimal column for removal from S(f,g)
+% idx_col : (Int) Optimal column for removal from S(f,g)
 %
-% t : Degree of GCD d(x,y) 
+% t : (Int) Degree of GCD d(x,y) 
 %
 % % Outputs 
 %
-% P1 : Matrix P1
+% P1 : (Matrix) P1
 
 % Build a matrix the same as f(x,y) replacing the coefficients with ones.
-mat = GetAsMatrix([...
+mat = GetAsMatrix_Version1([...
         ones(nchoosek(m+2,2),1) ;...
         zeros(nchoosek(m+1,2),1) ...
         ],m,m);
@@ -45,7 +44,7 @@ nCols_f = m+1;
 padd_mat(ihat:i+nRows_f, jhat:j+nCols_f) = mat;
 
 % Get the padded matrix as a vector
-vec_padd_mat = GetAsVector(padd_mat);
+vec_padd_mat = GetAsVector_Version1(padd_mat);
 vec_padd_mat = vec_padd_mat(1:nCoefficients_fv);
 
 % Diagonalise the vector.
