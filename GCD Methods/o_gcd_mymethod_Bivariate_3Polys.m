@@ -112,7 +112,7 @@ switch SETTINGS.DEGREE_METHOD
         [t1, t2] = GetGCDDegree_Relative_Given_t_Bivariate_3Polys(fww, alpha*gww, hww, m , n, o, t, limits_t1, limits_t2, rank_range);
         
     otherwise
-        error('err')
+        error('%s is not a valid DEGREE_METHOD', SETTINGS.DEGREE_METHOD)
 end
 
 

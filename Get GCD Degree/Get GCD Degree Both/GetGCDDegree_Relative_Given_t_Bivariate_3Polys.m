@@ -82,7 +82,7 @@ global SETTINGS
 % Residuals
 
 switch SETTINGS.RANK_REVEALING_METRIC
-    case 'Singular Values'
+    case 'Minimum Singular Values'
         mat_MinimumSingularValues = zeros( nSubresultants_k1, nSubresultants_k2);
         
         for i1 = 1:1: nSubresultants_k1
@@ -115,7 +115,7 @@ switch SETTINGS.RANK_REVEALING_METRIC
         error('Not Completed')
         
     otherwise 
-        error('Error : Not a valid rank revealing metric')
+        error(' %s is not a valid rank revealing metric', SETTINGS.RANK_REVEALING_METRIC)
 end
 
 

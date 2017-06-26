@@ -1,22 +1,20 @@
-function plotRowNorm_degreeTotal(arr_R1_RowNorm,  myLimits, limits)
+function plotRowNorm_degreeTotal(arr_R1_RowNorm,  limits_k, limits_t, rank_range)
 %
 % % Inputs
 %
-% arr_R1_RowNorm : 
+% arr_R1_RowNorm : (Array of Vectors)
 %
-% myLimits : My Limits on degree of GCD computation
+% limits_k : My Limits on degree of GCD computation
 %
-% limits : Actual limits on degree of GCD computation
+% limits_t : Actual limits on degree of GCD computation
 
 % Get my upper and lower limit
-myLowerLimit = myLimits(1);
-myUpperLimit = myLimits(2);
+lowerLimit_k = limits_k(1);
+upperLimit_k = limits_k(2);
 
-lowerLimit = limits(1);
-upperLimit = limits(2);
 
 % Get number of subresultant matrices
-nSubresultants = myUpperLimit - myLowerLimit + 1;
+nSubresultants = upperLimit_k - lowerLimit_k + 1;
 
 
 figure_name = sprintf([mfilename ' : ' 'Row Norms']);
@@ -27,7 +25,7 @@ for i = 1:1:nSubresultants
     
     vR1RowNorm = arr_R1_RowNorm{i};
     
-    k = myLowerLimit + (i-1);
+    k = lowerLimit_k + (i-1);
     
     % Produce a vector of i
     vec_k = k.* ones(length(vR1RowNorm),1);
@@ -36,8 +34,9 @@ for i = 1:1:nSubresultants
     
 end
 
-vline(lowerLimit)
-vline(upperLimit)
+vline(limits_t, {'-r','-r'});
+hline([rank_range mean(rank_range)],{'-r','-r','-r'});
+
 
 hold off
 

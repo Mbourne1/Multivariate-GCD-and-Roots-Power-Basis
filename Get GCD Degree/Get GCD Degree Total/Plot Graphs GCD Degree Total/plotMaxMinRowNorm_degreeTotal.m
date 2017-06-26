@@ -1,28 +1,28 @@
-function plotMaxMinRowNorm_degreeTotal(vRatio_MaxMin, myLimits, limits)
+function plotMaxMinRowNorm_degreeTotal(vRatio_MaxMin, limits_k, limits_t, rank_range)
 %
 % % Inputs
 %
-% vRatio_MaxMin : 
+% vRatio_MaxMin : [Vector]
 % 
-% myLimits : 
+% limits_k : [Int Int]
 %
-% limits :
+% limits_t : [Int Int]
+%
+% rank_range : [Float Float]
 
 
-
-myLowerLimit = myLimits(1);
-myUpperLimit = myLimits(2);
-
-lowerLimit = limits(1);
-upperLimit = limits(2);
+lowerLimit_k = limits_k(1);
+upperLimit_k = limits_k(2);
 
 figure_name = sprintf([mfilename ' : ' 'Plot Max : Min Row Norm']);
 figure('name',figure_name)
 hold on
-vec_x = myLowerLimit : 1 : myUpperLimit;
+vec_x = lowerLimit_k : 1 : upperLimit_k;
 plot(vec_x, log10(vRatio_MaxMin),'-s')
-vline(lowerLimit)
-vline(upperLimit)
+
+vline(limits_t, {'-r','-r'})
+hline([rank_range mean(rank_range)],{'-r','-r','-r'});
+
 hold off
 
 end

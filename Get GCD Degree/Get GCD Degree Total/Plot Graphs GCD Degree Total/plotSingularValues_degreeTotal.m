@@ -35,7 +35,7 @@ for i = 1 : 1 : nSubresultants
     
 end
 
-
+xlim(limits_k);
 vline(limits_t, {'-r','-r'});
 
 

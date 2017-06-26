@@ -1,18 +1,15 @@
-function [] = plotRowDiag_degreeTotal(arr_R1_diag, myLimits, limits)
+function [] = plotRowDiag_degreeTotal(arr_R1_diag, limits_k, limits_t)
 %
 % % Inputs
 %
-% arr_R1_diag :
+% arr_R1_diag : (Array of Vectors)
 %
-% myLimits :
+% limits_k : [Int Int]
 %
-% limits
+% limits_t : [Int Int]
 
-myLowerLimit = myLimits(1);
-myUpperLimit = myLimits(2);
-
-lowerLimit = limits(1);
-upperLimit = limits(2);
+myLowerLimit = limits_k(1);
+myUpperLimit = limits_k(2);
 
 nSubresultants = myUpperLimit - myLowerLimit + 1;
 
@@ -33,8 +30,7 @@ for i = 1 : 1 : nSubresultants
     
 end
 
-vline(lowerLimit);
-vline(upperLimit);
+vline(limits_t, {'-r','-r'});
 
 hold off
 

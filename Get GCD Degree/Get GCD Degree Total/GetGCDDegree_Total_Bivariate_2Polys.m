@@ -1,4 +1,4 @@
-function [t] = GetGCDDegree_Total_Bivariate_2Polys(fxy, gxy, m, n, limits_t)
+function [t] = GetGCDDegree_Total_Bivariate_2Polys(fxy, gxy, m, n, limits_t, rank_range)
 % Calculate the degree of the GCD of two bivariate power basis polynomials.
 %
 % % Inputs
@@ -10,6 +10,10 @@ function [t] = GetGCDDegree_Total_Bivariate_2Polys(fxy, gxy, m, n, limits_t)
 % m : (Int) Total degree of polynomial f(x,y) 
 % 
 % n : (Int) Total degree of polynomial g(x,y)
+%
+% limits_t : [Int Int] 
+%
+% rank_range : [Float Float]
 %
 %
 % % Outputs
@@ -86,13 +90,14 @@ end
 
 % R1 Row Norms
 % R1 Row Diagonals
-% Singular Values
+% Minimum Singular Values
 % Residuals
+
 global SETTINGS
 
 switch SETTINGS.RANK_REVEALING_METRIC
     
-    case 'Singular Values'
+    case 'Minimum Singular Values'
         
         % Initialise a vector to store minimum singular values
         vMinimumSingularValue = zeros(nSubresultants,1);
@@ -103,12 +108,12 @@ switch SETTINGS.RANK_REVEALING_METRIC
         
         if (SETTINGS.PLOT_GRAPHS)
             
-            plotMinimumSingularValues_degreeTotal(vMinimumSingularValue, limits_k, limits_t);
+            plotMinimumSingularValues_degreeTotal(vMinimumSingularValue, limits_k, limits_t, rank_range);
             plotSingularValues_degreeTotal(arr_SingularValues, limits_k, limits_t);
             
         end
         
-        metric = vMinimumSingularValue;
+        vMetric = log10(vMinimumSingularValue);
         
     case 'R1 Row Norms'
         % Get max/min row norms
@@ -127,14 +132,16 @@ switch SETTINGS.RANK_REVEALING_METRIC
         
         vRatio_MaxMin_RowNorm_R1 = vMinRowNormR1./vMaxRowNormR1;
         
-        metric = vRatio_MaxMin_RowNorm_R1;
+        
         
         if (SETTINGS.PLOT_GRAPHS)
             
-            plotRowNorm_degreeTotal(arr_R1_RowNorm, limits_k, limits_t)
-            plotMaxMinRowNorm_degreeTotal(vRatio_MaxMin_RowNorm_R1, limits_k, limits_t);
+            plotRowNorm_degreeTotal(arr_R1_RowNorm, limits_k, limits_t, rank_range)
+            plotMaxMinRowNorm_degreeTotal(vRatio_MaxMin_RowNorm_R1, limits_k, limits_t, rank_range);
             
         end
+        
+        vMetric = log10(vRatio_MaxMin_RowNorm_R1);
         
     case 'R1 Row Diagonals'
         
@@ -153,15 +160,22 @@ switch SETTINGS.RANK_REVEALING_METRIC
         
         % Get max/min diagonal entries
         vRatio_MaxMin_Diags_R1 = v_minDiagR1./v_maxDiagR1;
-        metric = vRatio_MaxMin_Diags_R1;
+        
         
         if(SETTINGS.PLOT_GRAPHS)
             plotRowDiag_degreeTotal(arr_R1_Diag, limits_k, limits_t);
             plotMaxMinRowDiag_degreeTotal(vRatio_MaxMin_Diags_R1, limits_k, limits_t);
         end
         
+        vMetric = log10(vRatio_MaxMin_Diags_R1);
+        
     case 'Residuals'
+        
         error('Not Developed')
+        
+    otherwise
+        error('%s is not a valid method',SETTINGS.RANK_REVEALING_METRIC);
+        
 end
 
 
@@ -175,7 +189,7 @@ if lowerLimit_k == upperLimit_k
     t = GetGCDDegree_OneSubresultant(Sk);
     return;
 else
-    t = GetGCDDegree_MultipleSubresultants(metric, limits_k );
+    t = GetGCDDegree_MultipleSubresultants(vMetric, limits_k, limits_t, rank_range );
 end
 
 % Plot graphs

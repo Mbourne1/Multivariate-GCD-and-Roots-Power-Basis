@@ -1,5 +1,6 @@
-function [] = o_roots_Bivariate(ex_num, emin, emax, mean_method, bool_alpha_theta, ...
-    low_rank_approx_method, apf_method, degree_method)
+function [] = o_roots_Bivariate(ex_num, emin, emax, mean_method, ...
+    bool_alpha_theta, low_rank_approx_method, apf_method, degree_method, ...
+    rank_revealing_metric, deconvolution_method_hxy, deconvolution_method_wxy)
 % o_roots_bivar(ex_num,el,mean_method,bool_alpha_theta,low_rank_approx_method)
 %
 % Given an example number and set of parameters, obtain the roots of the
@@ -35,19 +36,16 @@ function [] = o_roots_Bivariate(ex_num, emin, emax, mean_method, bool_alpha_thet
 %       'Relative'
 %       'Both'
 %
+% rank_revealing_metric
+%
 % % Examples
-% >> o_roots_Bivariate('1', 1e-10, 1e-12, 'None', false, 'None', 'None', 'Both')
-% >> o_roots_Bivariate('1', 1e-10, 1e-12, 'Geometric Mean Matlab Method', true , 'Standard STLN', 'Standard APF', 'Both')
+% >> o_roots_Bivariate('1', 1e-10, 1e-12, 'None', false, 'None', 'None', 'Both', 'Minimum Singular Values', 'Batch', 'Separate')
+% >> o_roots_Bivariate('1', 1e-10, 1e-12, 'Geometric Mean Matlab Method', true , 'Standard STLN', 'Standard APF', 'Both', 'Minimum Singular Values', 'Batch', 'Separate')
 
-
+%
 restoredefaultpath
-% %
-% Add subfolders
 addpath(genpath(pwd));
 
-
-% Set the problem type, used in logging to the outputs file.
-problem_type = 'Roots';
 
 
 if emax < emin
@@ -57,8 +55,9 @@ if emax < emin
    
 end
 
-SetGlobalVariables(problem_type, ex_num, emin, emax, mean_method, ...
-    bool_alpha_theta, low_rank_approx_method, apf_method, degree_method)
+SetGlobalVariables_Roots( ex_num, emin, emax, mean_method, ...
+    bool_alpha_theta, low_rank_approx_method, apf_method, degree_method, ...
+    rank_revealing_metric, deconvolution_method_hxy, deconvolution_method_wxy);
 
 % %
 % %

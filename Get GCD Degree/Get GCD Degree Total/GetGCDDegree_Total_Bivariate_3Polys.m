@@ -17,6 +17,8 @@ function [t, rank_range] = GetGCDDegree_Total_Bivariate_3Polys(fxy, gxy, hxy, m,
 %
 % limits_t : (Int Int) Minimum and Maximum values bounding the computation of t
 %
+% rank_range : [Float Float]
+%
 % % Outputs
 %
 % t : (Int) Total degree of the GCD d(x,y).
@@ -121,13 +123,13 @@ end
 
 % R1 Row Norms
 % R1 Row Diagonals
-% Singular Values
+% Minimum Singular Values
 % Residuals
 global SETTINGS
 
 switch SETTINGS.RANK_REVEALING_METRIC
     
-    case 'Singular Values'
+    case 'Minimum Singular Values'
         
         % Initialise a vector to store minimum singular values
         vMinimumSingularValue = zeros(nSubresultants,1);
@@ -195,6 +197,10 @@ switch SETTINGS.RANK_REVEALING_METRIC
         
     case 'Residuals'
         error('Not Developed')
+        
+    otherwise
+        
+        error('%s is not a valid rank revealing metric', SETTINGS.RANK_REVEALING_METRIC)
 end
 
 
@@ -209,7 +215,7 @@ if lowerLimit_k == upperLimit_k
     t = GetGCDDegree_OneSubresultant(Sk);
     return;
 else if lowerLimit_t == upperLimit_t
-        t = lowerLimit_t
+        t = lowerLimit_t;
     return;
 else
     

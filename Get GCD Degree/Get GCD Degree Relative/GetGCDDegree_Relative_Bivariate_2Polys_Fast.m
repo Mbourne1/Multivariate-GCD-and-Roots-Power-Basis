@@ -205,7 +205,7 @@ global SETTINGS
 % Residuals
 fprintf('Metric used to compute degree of GCD : %s \n', SETTINGS.RANK_REVEALING_METRIC)
 switch SETTINGS.RANK_REVEALING_METRIC
-    case 'Singular Values'
+    case 'Minimum Singular Values'
         
         
         mat_MinimumSingularValues = zeros(nSubresultants_k1, nSubresultants_k2);
@@ -232,7 +232,7 @@ switch SETTINGS.RANK_REVEALING_METRIC
         for i1 = 1:1:nSubresultants_k1
             for i2 = 1:1:nSubresultants_k2
                 
-                arr_R1_RowNorms{i1,i2} = sqrt(sum(arr_R1{i1, i2}.^2,2))./norm(R1{i1, i2});
+                arr_R1_RowNorms{i1,i2} = sqrt(sum(arr_R1{i1, i2}.^2,2))./norm(arr_R1{i1, i2});
                 
                 matMaxRowNorm(i1,i2) = max(arr_R1_RowNorms{i1,i2});
                 matMinRowNorm(i1,i2) = min(arr_R1_RowNorms{i1,i2});
@@ -282,7 +282,7 @@ switch SETTINGS.RANK_REVEALING_METRIC
         error('Code not yet developed for this branch')
         
     otherwise
-        error('error. Not a valid metric')
+        error('%s : is not a valid metric', SETTINGS.RANK_REVEALING_METRIC) 
 end
 
 % Compute the degree of the GCD

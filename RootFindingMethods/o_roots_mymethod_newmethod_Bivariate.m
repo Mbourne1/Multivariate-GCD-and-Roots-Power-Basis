@@ -147,7 +147,7 @@ end
 % Each h_{x}(i) is obtained by the deconvolution of q_{x}(i) and q_{x}(i+1)
 
 % Get number of polynomials in the series of polynomials q_{i}
-[nPolys_fxy] = size(arr_fxy,1);
+[nPolynomials_arr_fxy] = size(arr_fxy,1);
 
 % %
 % %     Get h_{i}(x)
@@ -163,11 +163,11 @@ switch SETTINGS.HXY_METHOD
     
     case 'From Deconvolutions'
         
-        switch SETTINGS.DECONVOLUTION_METHOD
+        switch SETTINGS.DECONVOLUTION_METHOD_HXY
             
             case 'Separate' % Separate deconvolution
                 
-                for i = 1 : 1 : nPolys_fxy - 1 % For each pair of q_{x}(i) and q_{x}(i+1)
+                for i = 1 : 1 : nPolynomials_arr_fxy - 1 % For each pair of q_{x}(i) and q_{x}(i+1)
                     
                     % Deconvolve
                     arr_hxy{i} = Deconvolve_Bivariate_Single(arr_fxy{i}, arr_fxy{i+1},vDeg_t_arr_fxy(i), vDeg_t_arr_fxy(i+1));
@@ -182,11 +182,12 @@ switch SETTINGS.HXY_METHOD
                 arr_hxy = Deconvolve_Bivariate_Batch(arr_fxy, vDeg_t_arr_fxy, vDeg_x_arr_fxy, vDeg_y_arr_fxy);
                 
             otherwise
-                error([mfilename ' : ' sprintf(' Deconvolution Method is either Separate or Batch')])
+                error('%s is not a valid deconvolution method', SETTINGS.DECONVOLUTION_METHOD_HXY);
                 
         end
         
     case 'From ux'
+        
         error('This method doesnt work for GCD of three polynomials')
         arr_hxy = arr_uxy;
         
@@ -207,15 +208,15 @@ vDeg_t_hxy = vDeg_t_arr_fxy(1:end-1) - vDeg_t_arr_fxy(2:end);
 % Each w_{x}(i) is obtained by the deconvolution of h_{x}(i) and h_{x}(i+1)
 
 % Get number of polynomials in the array of h_{x}
-[num_entries_hx] = size(arr_hxy,1);
+[nEntries_arr_hxy] = size(arr_hxy,1);
 
-if num_entries_hx > 1
+if nEntries_arr_hxy > 1
     
-    switch SETTINGS.DECONVOLUTION_METHOD
+    switch SETTINGS.DECONVOLUTION_METHOD_WXY
         
         case 'Separate' % Separate deconvolution
             
-            for i = 1 : 1 : num_entries_hx - 1 % For each pair of q_{x}(i) and q_{x}(i+1)
+            for i = 1 : 1 : nEntries_arr_hxy - 1 % For each pair of q_{x}(i) and q_{x}(i+1)
                 
                 % Deconvolve
                 arr_wwxy{i,1} = Deconvolve_Bivariate_Single(arr_hxy{i},arr_hxy{i+1},vDeg_t_hxy(i),vDeg_t_hxy(i+1));
@@ -227,7 +228,7 @@ if num_entries_hx > 1
             arr_wwxy = Deconvolve_Bivariate_Batch(arr_hxy, vDeg_t_hxy, vDeg_x_hxy, vDeg_y_hxy);
             
         otherwise
-            error('err')
+            error('%s is not a valid deconvolution option', SETTINGS.DECONVOLUTION_METHOD_WXY)
             
     end
     

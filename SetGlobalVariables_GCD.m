@@ -1,5 +1,6 @@
-function [] =  SetGlobalVariables(problem_type, ex_num, emin, emax, ...
-    mean_method, bool_alpha_theta, low_rank_approx_method, apf_method, degree_method)
+function [] =  SetGlobalVariables_GCD(problem_type, ex_num, emin, emax, ...
+    mean_method, bool_alpha_theta, low_rank_approx_method, apf_method,...
+    degree_method, rank_revealing_metric)
 % SetGlobalVariables()
 %
 %
@@ -37,7 +38,11 @@ function [] =  SetGlobalVariables(problem_type, ex_num, emin, emax, ...
 %   * Relative
 %   * Both
 %
-%
+% rank_revealing_metric
+%   * Minimum Singular Values
+%   * R1 Row Norms
+%   * R1 Row Diagonals
+%   * Residuals
 
 
 global SETTINGS
@@ -101,10 +106,10 @@ SETTINGS.THRESHOLD_RANK = 2;
 % Metric used to compute the degree of the GCD
 % R1 Row Norms
 % R1 Row Diagonals
-% Singular Values
+% Minimum Singular Values
 % Residuals
 
-SETTINGS.RANK_REVEALING_METRIC = 'Singular Values';
+SETTINGS.RANK_REVEALING_METRIC = rank_revealing_metric;
 
 %--------------------------------------------------------------------------
 %
@@ -128,25 +133,6 @@ SETTINGS.MAX_ERROR_SNTLN = 1e-10;
 %
 %
 SETTINGS.APF_METHOD = apf_method;
-
-%--------------------------------------------------------------------------
-%
-% SETTINGS : DECONVOLUTION
-%
-%
-
-
-% 
-% Batch - Perform batch of deconvolutions together
-% Separate - Each deconvolution is separate
-%
-SETTINGS.DECONVOLUTION_METHOD = 'Batch';
-
-%
-% 'From Deconvolutions'
-% 'From uxy'
-%
-SETTINGS.HXY_METHOD = 'From uxy';
 
 
 end

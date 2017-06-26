@@ -12,7 +12,6 @@ function plotMinimumSingularValues_degreeTotal(vMinimumSingularValues, limits_k,
 % rank_range : [Float Float]
 
 
-
 lowerLimit_k = limits_k(1);
 upperLimit_k = limits_k(2);
 
@@ -23,7 +22,9 @@ hold on
 xlabel('k');
 ylabel('log_{10} Singular Values');
 x_vec = lowerLimit_k : 1 : upperLimit_k;
+xlim(limits_k);
 plot(x_vec, log10(vMinimumSingularValues), '-s');
+
 hline([rank_range mean(rank_range)],{'-r','-r','-r'});
 vline(limits_t, {'-r','-r'});
 

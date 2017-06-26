@@ -89,13 +89,13 @@ end
 
 
 global SETTINGS
-% R1 Row Norms
-% R1 Row Diagonals
-% Singular Values
-% Residuals
+%   * R1 Row Norms
+%   * R1 Row Diagonals
+%   * Singular Values
+%   * Residuals
 
 switch SETTINGS.RANK_REVEALING_METRIC
-    case 'Singular Values'
+    case 'Minimum Singular Values'
         
         mat_MinimumSingularValues = zeros( nSubresultants_k1 , nSubresultants_k2);
         

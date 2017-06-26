@@ -1,4 +1,4 @@
-function [t] = GetGCDDegree_Total_Bivariate_2Polys_Fast(fxy, gxy, m, n, limits_t)
+function [t] = GetGCDDegree_Total_Bivariate_2Polys_Fast(fxy, gxy, m, n, limits_t, rank_range)
 % Calculate the degree of the GCD of two bivariate power basis polynomials.
 %
 % % Inputs
@@ -11,9 +11,13 @@ function [t] = GetGCDDegree_Total_Bivariate_2Polys_Fast(fxy, gxy, m, n, limits_t
 %
 % n : (Int) Total degree of polynomial g(x,y)
 %
-% myLimits_t : (Int) (Int) 
-%
 % limits_t : (Int) (Int)
+%
+% rank_range : [Float Float]
+%   * R1 Row Norms
+%   * R1 Row Diagonals
+%   * Singular Values
+%   * Residuals
 %
 % % Outputs
 %
@@ -24,7 +28,7 @@ function [t] = GetGCDDegree_Total_Bivariate_2Polys_Fast(fxy, gxy, m, n, limits_t
 
 
 % Get my upper and lower limits
-limits_k = [1 min(m,n)]
+limits_k = [1 min(m,n)];
 lowerLimit_k = limits_k(1);
 upperLimit_k = limits_k(2);
 
@@ -37,15 +41,12 @@ arr_R1_RowNorm = cell(nSubresultants,1);
 arr_R1_Diag = cell(nSubresultants,1);
 arr_SingularValues = cell(nSubresultants,1);
 
-
-
-
-%%
+% %
 % pad the coefficients of fxy and gxy
 % this is equivalent to degree elevating so that f is of degree (m,m), and
 % g is of degree (n,n)
-fxy_matrix_padd = zeros(m+1, m+1);
-gxy_matrix_padd = zeros(n+1, n+1);
+fxy_matrix_padd = zeros(m + 1, m + 1);
+gxy_matrix_padd = zeros(n + 1, n + 1);
 
 [m1, m2] = GetDegree_Bivariate(fxy);
 fxy_matrix_padd(1:m1+1, 1:m2+1) = fxy;
@@ -64,8 +65,8 @@ for i = 1 : 1 : nSubresultants
     if (i == 1)
         
     % Build the partitions of the Sylvester matrix
-    T_f = BuildT1_Total_Bivariate(fxy_matrix_padd, m, n-k);
-    T_g = BuildT1_Total_Bivariate(gxy_matrix_padd, n, m-k);
+    T_f = BuildT1_Total_Bivariate(fxy_matrix_padd, m, n - k);
+    T_g = BuildT1_Total_Bivariate(gxy_matrix_padd, n, m - k);
     
     % Build the sylvester matrix
     arr_Sk{i} = [T_f T_g];
@@ -145,7 +146,7 @@ global SETTINGS
 
 switch SETTINGS.RANK_REVEALING_METRIC
     
-    case 'Singular Values'
+    case 'Minimum Singular Values'
         
         vMinimumSingularValue = zeros(nSubresultants,1);
         
@@ -154,10 +155,11 @@ switch SETTINGS.RANK_REVEALING_METRIC
         end
         
         if(SETTINGS.PLOT_GRAPHS)
-            plotMinimumSingularValues_degreeTotal(vMinimumSingularValue, limits_k, limits_t);
             plotSingularValues_degreeTotal(arr_SingularValues, limits_k, limits_t);
+            plotMinimumSingularValues_degreeTotal(vMinimumSingularValue, limits_k, limits_t, rank_range);
         end
-        metric = vMinimumSingularValue;
+        
+        vMetric = vMinimumSingularValue;
         
     case 'R1 Row Norms'
         % Get max/min row norms
@@ -174,19 +176,20 @@ switch SETTINGS.RANK_REVEALING_METRIC
         end
         
         vRatio_MaxMin_RowNorm_R1 = vMaxRowNormR1./vMinRowNormR1;
-        metric = vRatio_MaxMin_RowNorm_R1;
+        vMetric = vRatio_MaxMin_RowNorm_R1;
         
         if(SETTINGS.PLOT_GRAPHS)
-            plotRowNorm_degreeTotal(arr_R1_RowNorm, limits_k, limits_t)
-            plotMaxMinRowNorm_degreeTotal(vRatio_MaxMin_RowNorm_R1, limits_k, limits_t);
+            plotRowNorm_degreeTotal(arr_R1_RowNorm, limits_k, limits_t, rank_range)
+            plotMaxMinRowNorm_degreeTotal(vRatio_MaxMin_RowNorm_R1, limits_k, limits_t, rank_range);
         end
         
     case 'R1 Row Diagonals'
         
-        v_maxDiagR1 = zeros(nSubresultants,1);
-        v_minDiagR1 = zeros(nSubresultants,1);
+        v_maxDiagR1 = zeros(nSubresultants, 1);
+        v_minDiagR1 = zeros(nSubresultants, 1);
         
-        for i = 1:1:nSubresultants
+        for i = 1 : 1 : nSubresultants
+            
             % Get the maximum diagonal of R1
             v_maxDiagR1(i) = max(abs(arr_R1_Diag{i}));
             
@@ -197,15 +200,21 @@ switch SETTINGS.RANK_REVEALING_METRIC
         
         % Get max/min diagonal entries
         vRatio_MaxMin_Diags_R1 = v_minDiagR1./v_maxDiagR1;
-        metric = vRatio_MaxMin_Diags_R1;
+        vMetric = vRatio_MaxMin_Diags_R1;
         
         if(SETTINGS.PLOT_GRAPHS)
+           
             plotRowDiag_degreeTotal(arr_R1_Diag, limits_k, limits_t);
-            plotMaxMinRowDiag_degreeTotal(vRatio_MaxMin_Diags_R1, limits_k, limits_t);
+            plotMaxMinRowDiag_degreeTotal(vRatio_MaxMin_Diags_R1, limits_k, limits_t, rank_range);
+            
         end
         
     case 'Residuals'
         error('Not Developed')
+        
+    otherwise
+        error('%s is not a valid rank revealing metric');
+        
 end
 
 
@@ -219,7 +228,7 @@ if lowerLimit_k == upperLimit_k
     t = GetGCDDegree_OneSubresultant(arr_Sk);
     return;
 else
-    t = GetGCDDegree_MultipleSubresultants(metric, limits_k );
+    t = GetGCDDegree_MultipleSubresultants(vMetric, limits_k, limits_t, rank_range );
 end
 
 
