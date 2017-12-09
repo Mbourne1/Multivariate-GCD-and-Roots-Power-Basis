@@ -38,12 +38,12 @@ parfor i1 = 1:1:length(arrExNum)
                             rank_revealing_metric = arrRankRevealingMetric{i7};
                             
                             
-                            for i7 = 1:1:length(arrDegreeMethod)
+                            for i8 = 1:1:length(arrDegreeMethod)
                                 
-                                degree_method = arrDegreeMethod{i7};
+                                degree_method = arrDegreeMethod{i8};
                                 
                                 
-                                %try
+                                try
                                     
                                     close all;
                                     clc;
@@ -52,13 +52,13 @@ parfor i1 = 1:1:length(arrExNum)
                                     fprintf(fileId,'%s','success \n');
                                     fclose(fileId);
                                     
-                                %catch err
+                                catch err
                                     
-                                %    fileId = fopen('log.txt','a')
-                                %    fprintf(fileId,'%s \n\n\n',getReport(err));
-                                %    fclose(fileId);
+                                    fileId = fopen('log.txt','a')
+                                    fprintf(fileId,'%s \n\n\n',getReport(err));
+                                    fclose(fileId);
                                     
-                                %end
+                                end
                                 
                             end
                         end

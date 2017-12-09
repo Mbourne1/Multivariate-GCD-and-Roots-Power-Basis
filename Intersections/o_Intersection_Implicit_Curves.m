@@ -1,4 +1,4 @@
-function [] = o_Intersection_Implicit_Curves(bool_preproc,low_rank_approx_method)
+function [] = o_Intersection_Implicit_Curves(bool_preproc, low_rank_approx_method)
 % Given two implicit curves, calculate the points of intersection
 
 
@@ -40,11 +40,11 @@ curve2_symbolic = GetSymbolicFromCoefficients(curve2_Coefficients,'x','y');
 % Plot the curve h(x,y) = f(x,y)-g(x,y) = 0
 curve3_symbolic = curve1_symbolic - curve2_symbolic;
 
-%% 
+% % 
 
 
 
-%%
+% %
 % % Plot the curves
 figure('name','Plot')
 hold on
@@ -54,10 +54,10 @@ ezplot(curve3_symbolic)
 hold off
 
 
-%%
+% %
 [dxy] = o1(curve1_Coefficients,curve2_Coefficients,m,n)
 
-%%
+% %
 % Get the coefficients of the curve C3
 C3 = ...
     [
